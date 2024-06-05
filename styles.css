@@ -17,15 +17,23 @@ body, html {
 
 .hidden-text {
     position: absolute;
-    color: dodgerblue; /* Updated color */
+    color: dodgerblue;
     font-size: 50px;
     font-weight: bold;
     pointer-events: none;
     font-family: 'Amatic SC', cursive;
+    display: none;
 }
 
 #canvas {
     position: absolute;
     top: 0;
     left: 0;
+}
+
+#crayon {
+    position: absolute;
+    width: 50px;  /* Adjust size as needed */
+    height: 50px;  /* Adjust size as needed */
+    display: none;
 }
