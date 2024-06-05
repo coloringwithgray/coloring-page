@@ -41,9 +41,8 @@ function drawLine(x, y, lastX, lastY) {
     ctx.stroke();
 }
 
-canvas.addEventListener('mousedown', (e) => {
+crayon.addEventListener('click', () => {
     isDrawing = true;
-    [lastX, lastY] = [e.clientX, e.clientY];
 });
 
 canvas.addEventListener('mousemove', (e) => {
