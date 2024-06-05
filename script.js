@@ -3,7 +3,7 @@ const ctx = canvas.getContext('2d');
 const hiddenText = document.querySelector('.hidden-text');
 const crayon = document.getElementById('crayon');
 
-let totalPixels, coloredPixels, drawing = false;
+let totalPixels, coloredPixels, drawing = false, isDrawing = false, lastX, lastY;
 
 function initializeCanvas() {
     canvas.width = window.innerWidth;
@@ -31,36 +31,49 @@ function updateColoredPixels(x, y, radius) {
     }
 }
 
-function drawLine(x, y, radius) {
+function drawLine(x, y, lastX, lastY) {
     ctx.globalCompositeOperation = 'source-over';
-    ctx.fillStyle = 'gray';
+    ctx.strokeStyle = 'gray';
+    ctx.lineWidth = 5;  // Thinner drawing line
+    ctx.lineCap = 'round';
+
     ctx.beginPath();
-    ctx.arc(x, y, radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.closePath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+    ctx.stroke();
 }
 
-canvas.addEventListener('click', (e) => {
+canvas.addEventListener('mousedown', (e) => {
     if (!drawing) {
         drawing = true;
         crayon.style.display = 'block';
         crayon.style.left = `${e.clientX - crayon.width / 2}px`;
         crayon.style.top = `${e.clientY - crayon.height / 2}px`;
     }
+    isDrawing = true;
+    [lastX, lastY] = [e.clientX, e.clientY];
 });
 
 canvas.addEventListener('mousemove', (e) => {
     if (drawing) {
+        crayon.style.left = `${e.clientX - crayon.width / 2}px`;
+        crayon.style.top = `${e.clientY - crayon.height / 2}px`;
+    }
+    if (isDrawing) {
         const x = e.clientX;
         const y = e.clientY;
-        const radius = 5;  // Thinner drawing line
-
-        crayon.style.left = `${x - crayon.width / 2}px`;
-        crayon.style.top = `${y - crayon.height / 2}px`;
-
-        drawLine(x, y, radius);
-        updateColoredPixels(x, y, radius);
+        drawLine(x, y, lastX, lastY);
+        updateColoredPixels(x, y, 5);
+        [lastX, lastY] = [x, y];
     }
+});
+
+canvas.addEventListener('mouseup', () => {
+    isDrawing = false;
+});
+
+canvas.addEventListener('mouseout', () => {
+    isDrawing = false;
 });
 
 window.addEventListener('resize', initializeCanvas);
