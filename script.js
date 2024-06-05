@@ -64,6 +64,8 @@ canvas.addEventListener('mouseout', () => {
     isDrawing = false;
 });
 
-window.addEventListener('resize', initializeCanvas);
+window.addEventListener('resize', () => {
+    initializeCanvas();
+});
 
 initializeCanvas();
