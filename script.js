@@ -25,9 +25,7 @@ function updateColoredPixels(x, y, radius) {
         }
     }
     const coloredPercentage = (coloredPixels.size / totalPixels) * 100;
-    if (coloredPercentage >= 7) {
-        hiddenText.style.opacity = Math.min((coloredPercentage - 7) / 7, 1); // Adjust opacity based on the percentage above 7%
-    }
+    hiddenText.style.opacity = Math.min(coloredPercentage / 7, 1); // Adjust opacity based on the percentage colored
 }
 
 function drawLine(x, y, lastX, lastY) {
