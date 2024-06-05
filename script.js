@@ -2,11 +2,14 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const hiddenText = document.querySelector('.hidden-text');
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    ctx.fillStyle = 'gray';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
 
-ctx.fillStyle = 'gray';
-ctx.fillRect(0, 0, canvas.width, canvas.height);
+resizeCanvas();
 
 canvas.addEventListener('mousemove', (e) => {
     const x = e.clientX;
@@ -21,9 +24,4 @@ canvas.addEventListener('mousemove', (e) => {
     ctx.globalCompositeOperation = 'source-over';
 });
 
-window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    ctx.fillStyle = 'gray';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-});
+window.addEventListener('resize', resizeCanvas);
