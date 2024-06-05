@@ -3,7 +3,7 @@ body, html {
     padding: 0;
     height: 100%;
     overflow: hidden;
-    background-color: white;
+    background-color: gray;
 }
 
 .container {
@@ -27,3 +27,4 @@ body, html {
     position: absolute;
     top: 0;
     left: 0;
+}
