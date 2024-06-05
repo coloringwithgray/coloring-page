@@ -24,6 +24,11 @@ body, html {
     font-family: 'Amatic SC', cursive;
     opacity: 0;
     transition: opacity 0.5s ease;
+    text-decoration: none;  /* Removes underline from link */
+}
+
+.hidden-text:hover {
+    text-decoration: underline; /* Underline on hover to indicate it's a link */
 }
 
 #canvas {
@@ -38,4 +43,3 @@ body, html {
     transform: scale(0.3); /* Shrink the crayon to 30% of its original size */
     pointer-events: none; /* Ensure the crayon doesn't interfere with mouse events */
 }
-
