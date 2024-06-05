@@ -13,7 +13,6 @@ function initializeCanvas() {
     totalPixels = canvas.width * canvas.height;
     coloredPixels = new Set();
     hiddenText.style.opacity = 0;
-    crayon.style.display = 'none';
 }
 
 function updateColoredPixels(x, y, radius) {
@@ -44,9 +43,6 @@ function drawLine(x, y, lastX, lastY) {
 
 canvas.addEventListener('mousedown', (e) => {
     isDrawing = true;
-    crayon.style.display = 'block';
-    crayon.style.left = `${e.clientX - crayon.width / 2}px`;
-    crayon.style.top = `${e.clientY - crayon.height / 2}px`;
     [lastX, lastY] = [e.clientX, e.clientY];
 });
 
