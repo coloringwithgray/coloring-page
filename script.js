@@ -46,15 +46,15 @@ canvas.addEventListener('mousedown', (e) => {
     if (!drawing) {
         drawing = true;
         crayon.style.display = 'block';
-        crayon.style.left = `${e.clientX - crayon.width / 2}px`;
-        crayon.style.top = `${e.clientY - crayon.height / 2}px`;
     }
     isDrawing = true;
+    crayon.style.left = `${e.clientX - crayon.width / 2}px`;
+    crayon.style.top = `${e.clientY - crayon.height / 2}px`;
     [lastX, lastY] = [e.clientX, e.clientY];
 });
 
 canvas.addEventListener('mousemove', (e) => {
-    if (drawing) {
+    if (drawing && isDrawing) {
         crayon.style.left = `${e.clientX - crayon.width / 2}px`;
         crayon.style.top = `${e.clientY - crayon.height / 2}px`;
     }
