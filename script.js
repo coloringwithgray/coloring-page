@@ -2,36 +2,33 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const hiddenText = document.querySelector('.hidden-text');
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+let totalPixels, coloredPixels;
 
-const coloredPixels = new Set();
-
-function trackColoredPixels(x, y, radius) {
-    const imageData = ctx.getImageData(x - radius, y - radius, radius * 2, radius * 2);
-    const data = imageData.data;
-    for (let i = 0; i < data.length; i += 4) {
-        if (data[i] === 128 && data[i + 1] === 128 && data[i + 2] === 128) {
-            const posX = x + (i / 4) % (radius * 2) - radius;
-            const posY = y + Math.floor((i / 4) / (radius * 2)) - radius;
-            coloredPixels.add(`${posX}-${posY}`);
-        }
-    }
-    if (coloredPixels.size >= (canvas.width * canvas.height) / 4) {
-        hiddenText.style.display = 'block';
-    }
-}
-
-function resizeCanvas() {
+function initializeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    coloredPixels.clear();
+    totalPixels = canvas.width * canvas.height;
+    coloredPixels = new Set();
     hiddenText.style.display = 'none';
 }
 
-resizeCanvas();
+function updateColoredPixels(x, y, radius) {
+    const imageData = ctx.getImageData(x - radius, y - radius, radius * 2, radius * 2).data;
+    for (let i = 0; i < imageData.length; i += 4) {
+        if (imageData[i] === 128 && imageData[i + 1] === 128 && imageData[i + 2] === 128) {
+            const pixelX = x + ((i / 4) % (radius * 2)) - radius;
+            const pixelY = y + Math.floor((i / 4) / (radius * 2)) - radius;
+            coloredPixels.add(`${pixelX}-${pixelY}`);
+        }
+    }
+    if (coloredPixels.size >= totalPixels / 4) {
+        hiddenText.style.display = 'block';
+    }
+}
+
+initializeCanvas();
 
 canvas.addEventListener('mousemove', (e) => {
     const x = e.clientX;
@@ -45,8 +42,7 @@ canvas.addEventListener('mousemove', (e) => {
     ctx.fill();
     ctx.closePath();
 
-    trackColoredPixels(x, y, radius);
+    updateColoredPixels(x, y, radius);
 });
 
-window.addEventListener('resize', resizeCanvas);
-hiddenText.style.display = 'none';
+window.addEventListener('resize', initializeCanvas);
