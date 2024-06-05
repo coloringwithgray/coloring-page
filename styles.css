@@ -31,3 +31,10 @@ body, html {
     top: 0;
     left: 0;
 }
+
+#crayon {
+    position: absolute;
+    display: none;
+    transform: scale(0.3); /* Shrink the crayon to 30% of its original size */
+    pointer-events: none; /* Ensure the crayon doesn't interfere with mouse events */
+}
