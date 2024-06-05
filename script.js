@@ -12,7 +12,7 @@ function initializeCanvas() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     totalPixels = canvas.width * canvas.height;
     coloredPixels = new Set();
-    hiddenText.style.display = 'none';
+    hiddenText.style.opacity = 0;
     crayon.style.display = 'none';
     drawing = false;
 }
@@ -26,8 +26,9 @@ function updateColoredPixels(x, y, radius) {
             coloredPixels.add(`${pixelX}-${pixelY}`);
         }
     }
-    if (coloredPixels.size >= totalPixels * 0.07) {  // 7% threshold
-        hiddenText.style.display = 'block';
+    const coloredPercentage = (coloredPixels.size / totalPixels) * 100;
+    if (coloredPercentage >= 7) {
+        hiddenText.style.opacity = (coloredPercentage - 7) / 93; // Adjust opacity based on the percentage above 7%
     }
 }
 
