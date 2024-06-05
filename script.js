@@ -26,7 +26,7 @@ function updateColoredPixels(x, y, radius) {
     }
     const coloredPercentage = (coloredPixels.size / totalPixels) * 100;
     if (coloredPercentage >= 7) {
-        hiddenText.style.opacity = (coloredPercentage - 7) / 93; // Adjust opacity based on the percentage above 7%
+        hiddenText.style.opacity = Math.min((coloredPercentage - 7) / 7, 1); // Adjust opacity based on the percentage above 7%
     }
 }
 
@@ -41,8 +41,12 @@ function drawLine(x, y, lastX, lastY) {
     ctx.stroke();
 }
 
-crayon.addEventListener('click', () => {
+canvas.addEventListener('mousedown', (e) => {
     isDrawing = true;
+    crayon.style.display = 'block';
+    [lastX, lastY] = [e.clientX, e.clientY];
+    crayon.style.left = `${e.clientX}px`;
+    crayon.style.top = `${e.clientY}px`;
 });
 
 canvas.addEventListener('mousemove', (e) => {
@@ -51,16 +55,20 @@ canvas.addEventListener('mousemove', (e) => {
         const y = e.clientY;
         drawLine(x, y, lastX, lastY);
         updateColoredPixels(x, y, 10); // Update colored pixels with thicker line
+        crayon.style.left = `${x}px`;
+        crayon.style.top = `${y}px`;
         [lastX, lastY] = [x, y];
     }
 });
 
 canvas.addEventListener('mouseup', () => {
     isDrawing = false;
+    crayon.style.display = 'none';
 });
 
 canvas.addEventListener('mouseout', () => {
     isDrawing = false;
+    crayon.style.display = 'none';
 });
 
 window.addEventListener('resize', () => {
