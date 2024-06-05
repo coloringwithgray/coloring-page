@@ -34,9 +34,8 @@ function updateColoredPixels(x, y, radius) {
 function drawLine(x, y, lastX, lastY) {
     ctx.globalCompositeOperation = 'source-over';
     ctx.strokeStyle = 'gray';
-    ctx.lineWidth = 5;  // Thinner drawing line
+    ctx.lineWidth = 10;  // Thicker drawing line
     ctx.lineCap = 'round';
-
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(x, y);
@@ -63,7 +62,7 @@ canvas.addEventListener('mousemove', (e) => {
         const x = e.clientX;
         const y = e.clientY;
         drawLine(x, y, lastX, lastY);
-        updateColoredPixels(x, y, 5);
+        updateColoredPixels(x, y, 10); // Update colored pixels with thicker line
         [lastX, lastY] = [x, y];
     }
 });
