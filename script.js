@@ -26,6 +26,7 @@ function updateColoredPixels(x, y, radius) {
     }
     const coloredPercentage = (coloredPixels.size / totalPixels) * 100;
     hiddenText.style.opacity = Math.min(coloredPercentage / 7, 1); // Adjust opacity based on the percentage colored
+    hiddenText.style.pointerEvents = coloredPercentage >= 7 ? 'auto' : 'none'; // Enable pointer events when fully visible
 }
 
 function drawLine(x, y, lastX, lastY) {
@@ -39,35 +40,48 @@ function drawLine(x, y, lastX, lastY) {
     ctx.stroke();
 }
 
-canvas.addEventListener('mousedown', (e) => {
+function handlePointerDown(e) {
     isDrawing = true;
     crayon.style.display = 'block';
-    [lastX, lastY] = [e.clientX, e.clientY];
-    crayon.style.left = `${e.clientX}px`;
-    crayon.style.top = `${e.clientY}px`;
-});
+    const [x, y] = getPointerPosition(e);
+    [lastX, lastY] = [x, y];
+    crayon.style.left = `${x}px`;
+    crayon.style.top = `${y}px`;
+}
 
-canvas.addEventListener('mousemove', (e) => {
+function handlePointerMove(e) {
     if (isDrawing) {
-        const x = e.clientX;
-        const y = e.clientY;
+        const [x, y] = getPointerPosition(e);
         drawLine(x, y, lastX, lastY);
         updateColoredPixels(x, y, 10); // Update colored pixels with thicker line
         crayon.style.left = `${x}px`;
         crayon.style.top = `${y}px`;
         [lastX, lastY] = [x, y];
     }
-});
+}
 
-canvas.addEventListener('mouseup', () => {
+function handlePointerUp() {
     isDrawing = false;
     crayon.style.display = 'none';
-});
+}
 
-canvas.addEventListener('mouseout', () => {
-    isDrawing = false;
-    crayon.style.display = 'none';
-});
+function getPointerPosition(e) {
+    if (e.touches) {
+        return [e.touches[0].clientX, e.touches[0].clientY];
+    } else {
+        return [e.clientX, e.clientY];
+    }
+}
+
+canvas.addEventListener('mousedown', handlePointerDown);
+canvas.addEventListener('mousemove', handlePointerMove);
+canvas.addEventListener('mouseup', handlePointerUp);
+canvas.addEventListener('mouseout', handlePointerUp);
+
+canvas.addEventListener('touchstart', handlePointerDown);
+canvas.addEventListener('touchmove', handlePointerMove);
+canvas.addEventListener('touchend', handlePointerUp);
+canvas.addEventListener('touchcancel', handlePointerUp);
 
 window.addEventListener('resize', () => {
     initializeCanvas();
