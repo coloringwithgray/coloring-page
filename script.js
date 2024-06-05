@@ -1,8 +1,9 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const hiddenText = document.querySelector('.hidden-text');
+const crayon = document.getElementById('crayon');
 
-let totalPixels, coloredPixels;
+let totalPixels, coloredPixels, drawing = false;
 
 function initializeCanvas() {
     canvas.width = window.innerWidth;
@@ -12,6 +13,8 @@ function initializeCanvas() {
     totalPixels = canvas.width * canvas.height;
     coloredPixels = new Set();
     hiddenText.style.display = 'none';
+    crayon.style.display = 'none';
+    drawing = false;
 }
 
 function updateColoredPixels(x, y, radius) {
@@ -23,26 +26,43 @@ function updateColoredPixels(x, y, radius) {
             coloredPixels.add(`${pixelX}-${pixelY}`);
         }
     }
-    if (coloredPixels.size >= totalPixels / 4) {
+    if (coloredPixels.size >= totalPixels * 0.07) {  // 7% threshold
         hiddenText.style.display = 'block';
     }
 }
 
-initializeCanvas();
-
-canvas.addEventListener('mousemove', (e) => {
-    const x = e.clientX;
-    const y = e.clientY;
-    const radius = 50;
-
+function drawLine(x, y, radius) {
     ctx.globalCompositeOperation = 'source-over';
     ctx.fillStyle = 'gray';
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
     ctx.closePath();
+}
 
-    updateColoredPixels(x, y, radius);
+canvas.addEventListener('click', (e) => {
+    if (!drawing) {
+        drawing = true;
+        crayon.style.display = 'block';
+        crayon.style.left = `${e.clientX - crayon.width / 2}px`;
+        crayon.style.top = `${e.clientY - crayon.height / 2}px`;
+    }
+});
+
+canvas.addEventListener('mousemove', (e) => {
+    if (drawing) {
+        const x = e.clientX;
+        const y = e.clientY;
+        const radius = 5;  // Thinner drawing line
+
+        crayon.style.left = `${x - crayon.width / 2}px`;
+        crayon.style.top = `${y - crayon.height / 2}px`;
+
+        drawLine(x, y, radius);
+        updateColoredPixels(x, y, radius);
+    }
 });
 
 window.addEventListener('resize', initializeCanvas);
+
+initializeCanvas();
