@@ -38,3 +38,4 @@ body, html {
     transform: scale(0.3); /* Shrink the crayon to 30% of its original size */
     pointer-events: none; /* Ensure the crayon doesn't interfere with mouse events */
 }
+
