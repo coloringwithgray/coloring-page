@@ -3,7 +3,7 @@ const ctx = canvas.getContext('2d');
 const hiddenText = document.querySelector('.hidden-text');
 const crayon = document.getElementById('crayon');
 
-let totalPixels, coloredPixels, drawing = false, isDrawing = false, lastX, lastY;
+let totalPixels, coloredPixels, isDrawing = false, lastX, lastY;
 
 function initializeCanvas() {
     canvas.width = window.innerWidth;
@@ -14,7 +14,6 @@ function initializeCanvas() {
     coloredPixels = new Set();
     hiddenText.style.opacity = 0;
     crayon.style.display = 'none';
-    drawing = false;
 }
 
 function updateColoredPixels(x, y, radius) {
@@ -44,21 +43,14 @@ function drawLine(x, y, lastX, lastY) {
 }
 
 canvas.addEventListener('mousedown', (e) => {
-    if (!drawing) {
-        drawing = true;
-        crayon.style.display = 'block';
-    }
     isDrawing = true;
+    crayon.style.display = 'block';
     crayon.style.left = `${e.clientX - crayon.width / 2}px`;
     crayon.style.top = `${e.clientY - crayon.height / 2}px`;
     [lastX, lastY] = [e.clientX, e.clientY];
 });
 
 canvas.addEventListener('mousemove', (e) => {
-    if (drawing && isDrawing) {
-        crayon.style.left = `${e.clientX - crayon.width / 2}px`;
-        crayon.style.top = `${e.clientY - crayon.height / 2}px`;
-    }
     if (isDrawing) {
         const x = e.clientX;
         const y = e.clientY;
