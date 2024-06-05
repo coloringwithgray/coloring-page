@@ -5,7 +5,7 @@ const hiddenText = document.querySelector('.hidden-text');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-ctx.fillStyle = 'white';
+ctx.fillStyle = 'gray';
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 canvas.addEventListener('mousemove', (e) => {
@@ -24,6 +24,6 @@ canvas.addEventListener('mousemove', (e) => {
 window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = 'gray';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 });
