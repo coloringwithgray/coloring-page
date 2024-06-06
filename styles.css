@@ -25,16 +25,20 @@ body, html {
 #crayon {
     position: absolute;
     display: none;
-    transform: scale(0.3); /* Shrink the crayon to 30% of its original size */
-    pointer-events: none; /* Ensure the crayon doesn't interfere with mouse events */
+    transform: scale(0.3);
+    pointer-events: none;
+}
+
+#mirror-link {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
 }
 
 #mirror {
-    position: absolute;
-    display: none;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scaleX(-1); /* Mirror effect */
     width: 100px;
     height: 100px;
+    transform: scaleX(-1);
 }
