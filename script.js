@@ -82,6 +82,13 @@ function moveCrayon(x, y) {
     crayon.style.top = `${y - 50}px`;
 }
 
+function jumpThroughPortal() {
+    mirrorLink.classList.add('portal-animation');
+    setTimeout(() => {
+        window.location.href = 'https://coloringwithgray.github.io/reflection/';
+    }, 1000); // Match the duration of the transition
+}
+
 canvas.addEventListener('mousedown', handlePointerDown);
 canvas.addEventListener('mousemove', handlePointerMove);
 canvas.addEventListener('mouseup', handlePointerUp);
