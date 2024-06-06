@@ -19,7 +19,7 @@ function initializeCanvas() {
 function drawLine(x, y, lastX, lastY) {
     ctx.globalCompositeOperation = 'source-over';
     ctx.strokeStyle = 'gray';
-    ctx.lineWidth = 15;  // Thicker drawing line
+    ctx.lineWidth = 15; // Thicker drawing line
     ctx.lineCap = 'round';
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
@@ -53,19 +53,17 @@ function handlePointerUp() {
 function checkCanvasColored() {
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
     let coloredPixels = 0;
+    const totalPixels = canvas.width * canvas.height;
     for (let i = 0; i < imageData.length; i += 4) {
         if (imageData[i] === 128 && imageData[i + 1] === 128 && imageData[i + 2] === 128) {
             coloredPixels++;
         }
     }
-    if (coloredPixels > 0) {
-        showHiddenText();
+    const coloredPercentage = (coloredPixels / totalPixels) * 100;
+    hiddenText.style.opacity = Math.min(coloredPercentage / 7, 1); // gradually show hidden text
+    if (coloredPercentage >= 7) {
+        hiddenText.style.pointerEvents = 'auto';
     }
-}
-
-function showHiddenText() {
-    hiddenText.style.opacity = 1;
-    hiddenText.style.pointerEvents = 'auto';
 }
 
 function getPointerPosition(e) {
