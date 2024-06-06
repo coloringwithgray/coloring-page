@@ -12,15 +12,16 @@ function initializeCanvas() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     hiddenText.style.opacity = 0;
     hiddenText.style.pointerEvents = 'none';
-    hiddenText.style.left = `${(canvas.width / 2) - (hiddenText.offsetWidth / 2)}px`;
-    hiddenText.style.top = `${(canvas.height / 2) - (hiddenText.offsetHeight / 2)}px`;
+    // Update positioning based on window size
+    hiddenText.style.left = `${(window.innerWidth / 2) - (hiddenText.offsetWidth / 2)}px`;
+    hiddenText.style.top = `${(window.innerHeight / 2) - (hiddenText.offsetHeight / 2)}px`;
     console.log("Canvas initialized. Hidden text position set.");
 }
 
 function drawLine(x, y, lastX, lastY) {
     ctx.globalCompositeOperation = 'source-over';
     ctx.strokeStyle = 'gray';
-    ctx.lineWidth = 15; // Thicker drawing line
+    ctx.lineWidth = 15;
     ctx.lineCap = 'round';
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
@@ -83,8 +84,8 @@ function getPointerPosition(e) {
 }
 
 function moveCrayon(x, y) {
-    crayon.style.left = `${x - 15}px`; // Adjusted to be closer to the cursor
-    crayon.style.top = `${y - 50}px`;  // Adjusted to be closer to the cursor
+    crayon.style.left = `${x - 15}px`;
+    crayon.style.top = `${y - 50}px`;
 }
 
 canvas.addEventListener('mousedown', handlePointerDown);
