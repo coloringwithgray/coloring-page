@@ -68,6 +68,8 @@ function checkCanvasColored() {
         hiddenText.style.opacity = 1;
         hiddenText.style.pointerEvents = 'auto';
         console.log("Hidden text displayed.");
+    } else {
+        console.log("No colored pixels detected.");
     }
 }
 
@@ -80,8 +82,8 @@ function getPointerPosition(e) {
 }
 
 function moveCrayon(x, y) {
-    crayon.style.left = `${x - 15}px`; // Adjusted to be closer to the cursor
-    crayon.style.top = `${y - 50}px`;  // Adjusted to be closer to the cursor
+    crayon.style.left = `${x - 15}px`;
+    crayon.style.top = `${y - 50}px`;
 }
 
 canvas.addEventListener('mousedown', handlePointerDown);
