@@ -50,14 +50,14 @@ function handlePointerDown(e) {
 }
 
 function handlePointerMove(e) {
+    const [x, y] = getPointerPosition(e);
     if (isDrawing) {
-        const [x, y] = getPointerPosition(e);
         drawLine(x, y, lastX, lastY);
         updateColoredPixels(x, y, 10); // Update colored pixels with thicker line
-        crayon.style.left = `${x}px`;
-        crayon.style.top = `${y}px`;
-        [lastX, lastY] = [x, y];
     }
+    crayon.style.left = `${x}px`;
+    crayon.style.top = `${y}px`;
+    [lastX, lastY] = [x, y];
 }
 
 function handlePointerUp() {
@@ -83,8 +83,6 @@ canvas.addEventListener('touchmove', handlePointerMove);
 canvas.addEventListener('touchend', handlePointerUp);
 canvas.addEventListener('touchcancel', handlePointerUp);
 
-window.addEventListener('resize', () => {
-    initializeCanvas();
-});
+window.addEventListener('resize', initializeCanvas);
 
 initializeCanvas();
