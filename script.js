@@ -19,7 +19,7 @@ function initializeCanvas() {
 function drawLine(x, y, lastX, lastY) {
     ctx.globalCompositeOperation = 'source-over';
     ctx.strokeStyle = 'gray';
-    ctx.lineWidth = 10;  // Thicker drawing line
+    ctx.lineWidth = 10;
     ctx.lineCap = 'round';
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
@@ -32,8 +32,7 @@ function handlePointerDown(e) {
     [lastX, lastY] = [x, y];
     isDrawing = true;
     crayon.style.display = 'block';
-    crayon.style.left = `${x}px`;
-    crayon.style.top = `${y}px`;
+    moveCrayon(x, y);
 }
 
 function handlePointerMove(e) {
@@ -42,8 +41,7 @@ function handlePointerMove(e) {
         drawLine(x, y, lastX, lastY);
         [lastX, lastY] = [x, y];
     }
-    crayon.style.left = `${x}px`;
-    crayon.style.top = `${y}px`;
+    moveCrayon(x, y);
 }
 
 function handlePointerUp() {
@@ -76,6 +74,11 @@ function getPointerPosition(e) {
     } else {
         return [e.clientX, e.clientY];
     }
+}
+
+function moveCrayon(x, y) {
+    crayon.style.left = `${x - 20}px`; // Adjusted to be closer to the cursor
+    crayon.style.top = `${y - 20}px`;  // Adjusted to be closer to the cursor
 }
 
 canvas.addEventListener('mousedown', handlePointerDown);
