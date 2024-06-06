@@ -32,12 +32,13 @@ function updateColoredPixels(x, y, radius) {
     const coloredPercentage = (coloredPixels.size / totalPixels) * 100;
     hiddenText.style.opacity = Math.min(coloredPercentage / 7, 1);
     hiddenText.style.pointerEvents = coloredPercentage >= 7 ? 'auto' : 'none';
+    console.log(`Colored percentage: ${coloredPercentage}%`); // Debugging line
 }
 
 function drawLine(x, y, lastX, lastY) {
     ctx.globalCompositeOperation = 'source-over';
     ctx.strokeStyle = 'gray';
-    ctx.lineWidth = 10;
+    ctx.lineWidth = 10;  // Thicker drawing line
     ctx.lineCap = 'round';
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
@@ -58,7 +59,7 @@ function handlePointerMove(e) {
     const [x, y] = getPointerPosition(e);
     if (isDrawing) {
         drawLine(x, y, lastX, lastY);
-        updateColoredPixels(x, y, 10);
+        updateColoredPixels(x, y, 10); // Update colored pixels with thicker line
         [lastX, lastY] = [x, y];
     }
     crayon.style.left = `${x}px`;
