@@ -1,7 +1,7 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const crayon = document.getElementById('crayon');
-const mirror = document.getElementById('mirror');
+const mirrorLink = document.getElementById('mirror-link');
 
 let isDrawing = false, lastX, lastY;
 
@@ -16,7 +16,7 @@ function initializeCanvas() {
 function drawLine(x, y, lastX, lastY) {
     ctx.globalCompositeOperation = 'source-over';
     ctx.strokeStyle = 'gray';
-    ctx.lineWidth = 15; // Thicker drawing line
+    ctx.lineWidth = 15;
     ctx.lineCap = 'round';
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
@@ -62,7 +62,7 @@ function checkCanvasColored() {
     const coloredPercentage = (coloredPixels / totalPixels) * 100;
     console.log(`Total pixels: ${totalPixels}, Colored pixels: ${coloredPixels}, Colored percentage: ${coloredPercentage}%`);
     if (coloredPercentage >= 7) {
-        mirror.style.display = 'block';
+        mirrorLink.style.display = 'block';
         console.log("Mirror displayed.");
     } else {
         console.log("No colored pixels detected or less than 7% colored.");
