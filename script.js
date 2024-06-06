@@ -12,6 +12,8 @@ function initializeCanvas() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     hiddenText.style.opacity = 0;
     hiddenText.style.pointerEvents = 'none';
+    hiddenText.style.left = `${(canvas.width / 2) - (hiddenText.offsetWidth / 2)}px`;
+    hiddenText.style.top = `${(canvas.height / 2) - (hiddenText.offsetHeight / 2)}px`;
 }
 
 function drawLine(x, y, lastX, lastY) {
@@ -29,6 +31,9 @@ function handlePointerDown(e) {
     const [x, y] = getPointerPosition(e);
     [lastX, lastY] = [x, y];
     isDrawing = true;
+    crayon.style.display = 'block';
+    crayon.style.left = `${x}px`;
+    crayon.style.top = `${y}px`;
 }
 
 function handlePointerMove(e) {
@@ -37,10 +42,13 @@ function handlePointerMove(e) {
         drawLine(x, y, lastX, lastY);
         [lastX, lastY] = [x, y];
     }
+    crayon.style.left = `${x}px`;
+    crayon.style.top = `${y}px`;
 }
 
 function handlePointerUp() {
     isDrawing = false;
+    crayon.style.display = 'none';
     checkCanvasColored();
 }
 
@@ -58,11 +66,8 @@ function checkCanvasColored() {
 }
 
 function showHiddenText() {
-    const canvasRect = canvas.getBoundingClientRect();
     hiddenText.style.opacity = 1;
     hiddenText.style.pointerEvents = 'auto';
-    hiddenText.style.left = `${canvasRect.left + canvasRect.width / 2}px`;
-    hiddenText.style.top = `${canvasRect.top + canvasRect.height / 2}px`;
 }
 
 function getPointerPosition(e) {
