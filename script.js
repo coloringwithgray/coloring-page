@@ -20,7 +20,7 @@ function initializeCanvas() {
 function drawLine(x, y, lastX, lastY) {
     ctx.globalCompositeOperation = 'source-over';
     ctx.strokeStyle = 'gray';
-    ctx.lineWidth = 15;
+    ctx.lineWidth = 15;  // Thicker drawing line
     ctx.lineCap = 'round';
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
@@ -63,10 +63,11 @@ function checkCanvasColored() {
         }
     }
     const coloredPercentage = (coloredPixels / totalPixels) * 100;
-    hiddenText.style.opacity = Math.min(coloredPercentage / 7, 1);
-    console.log(`Colored percentage: ${coloredPercentage}%.`);
-    if (coloredPercentage >= 7) {
+    console.log(`Total pixels: ${totalPixels}, Colored pixels: ${coloredPixels}, Colored percentage: ${coloredPercentage}%`);
+    if (coloredPercentage > 0) {
+        hiddenText.style.opacity = 1;
         hiddenText.style.pointerEvents = 'auto';
+        console.log("Hidden text displayed.");
     }
 }
 
@@ -79,8 +80,8 @@ function getPointerPosition(e) {
 }
 
 function moveCrayon(x, y) {
-    crayon.style.left = `${x - 15}px`;
-    crayon.style.top = `${y - 50}px`;
+    crayon.style.left = `${x - 15}px`; // Adjusted to be closer to the cursor
+    crayon.style.top = `${y - 50}px`;  // Adjusted to be closer to the cursor
 }
 
 canvas.addEventListener('mousedown', handlePointerDown);
