@@ -1,7 +1,7 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
-const hiddenText = document.querySelector('.hidden-text');
 const crayon = document.getElementById('crayon');
+const mirror = document.getElementById('mirror');
 
 let isDrawing = false, lastX, lastY;
 
@@ -10,18 +10,13 @@ function initializeCanvas() {
     canvas.height = window.innerHeight;
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    hiddenText.style.opacity = 0;
-    hiddenText.style.pointerEvents = 'none';
-    // Update positioning based on window size
-    hiddenText.style.left = `${(window.innerWidth / 2) - (hiddenText.offsetWidth / 2)}px`;
-    hiddenText.style.top = `${(window.innerHeight / 2) - (hiddenText.offsetHeight / 2)}px`;
-    console.log("Canvas initialized. Hidden text position set.");
+    console.log("Canvas initialized.");
 }
 
 function drawLine(x, y, lastX, lastY) {
     ctx.globalCompositeOperation = 'source-over';
     ctx.strokeStyle = 'gray';
-    ctx.lineWidth = 15;
+    ctx.lineWidth = 15; // Thicker drawing line
     ctx.lineCap = 'round';
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
@@ -67,9 +62,8 @@ function checkCanvasColored() {
     const coloredPercentage = (coloredPixels / totalPixels) * 100;
     console.log(`Total pixels: ${totalPixels}, Colored pixels: ${coloredPixels}, Colored percentage: ${coloredPercentage}%`);
     if (coloredPercentage >= 7) {
-        hiddenText.style.opacity = 1;
-        hiddenText.style.pointerEvents = 'auto';
-        console.log("Hidden text displayed.");
+        mirror.style.display = 'block';
+        console.log("Mirror displayed.");
     } else {
         console.log("No colored pixels detected or less than 7% colored.");
     }
