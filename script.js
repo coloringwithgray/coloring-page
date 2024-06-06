@@ -3,7 +3,8 @@ const ctx = canvas.getContext('2d');
 const hiddenText = document.querySelector('.hidden-text');
 const crayon = document.getElementById('crayon');
 
-let totalPixels, coloredPixels, isDrawing = false, lastX, lastY;
+let isDrawing = false, lastX, lastY;
+let totalPixels, coloredPixels;
 
 function initializeCanvas() {
     canvas.width = window.innerWidth;
@@ -13,26 +14,30 @@ function initializeCanvas() {
     totalPixels = canvas.width * canvas.height;
     coloredPixels = new Set();
     hiddenText.style.opacity = 0;
+    hiddenText.style.pointerEvents = 'none';
 }
 
 function updateColoredPixels(x, y, radius) {
     const imageData = ctx.getImageData(x - radius, y - radius, radius * 2, radius * 2).data;
     for (let i = 0; i < imageData.length; i += 4) {
-        if (imageData[i] === 128 && imageData[i + 1] === 128 && imageData[i + 2] === 128) {
+        const r = imageData[i];
+        const g = imageData[i + 1];
+        const b = imageData[i + 2];
+        if (r === 128 && g === 128 && b === 128) {
             const pixelX = x + ((i / 4) % (radius * 2)) - radius;
             const pixelY = y + Math.floor((i / 4) / (radius * 2)) - radius;
             coloredPixels.add(`${pixelX}-${pixelY}`);
         }
     }
     const coloredPercentage = (coloredPixels.size / totalPixels) * 100;
-    hiddenText.style.opacity = Math.min(coloredPercentage / 7, 1); // Adjust opacity based on the percentage colored
-    hiddenText.style.pointerEvents = coloredPercentage >= 7 ? 'auto' : 'none'; // Enable pointer events when fully visible
+    hiddenText.style.opacity = Math.min(coloredPercentage / 7, 1);
+    hiddenText.style.pointerEvents = coloredPercentage >= 7 ? 'auto' : 'none';
 }
 
 function drawLine(x, y, lastX, lastY) {
     ctx.globalCompositeOperation = 'source-over';
     ctx.strokeStyle = 'gray';
-    ctx.lineWidth = 10;  // Thicker drawing line
+    ctx.lineWidth = 10;
     ctx.lineCap = 'round';
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
@@ -53,7 +58,7 @@ function handlePointerMove(e) {
     const [x, y] = getPointerPosition(e);
     if (isDrawing) {
         drawLine(x, y, lastX, lastY);
-        updateColoredPixels(x, y, 10); // Update colored pixels with thicker line
+        updateColoredPixels(x, y, 10);
         [lastX, lastY] = [x, y];
     }
     crayon.style.left = `${x}px`;
