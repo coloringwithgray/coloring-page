@@ -14,17 +14,19 @@ function initializeCanvas() {
     hiddenText.style.pointerEvents = 'none';
     hiddenText.style.left = `${(canvas.width / 2) - (hiddenText.offsetWidth / 2)}px`;
     hiddenText.style.top = `${(canvas.height / 2) - (hiddenText.offsetHeight / 2)}px`;
+    console.log("Canvas initialized. Hidden text position set.");
 }
 
 function drawLine(x, y, lastX, lastY) {
     ctx.globalCompositeOperation = 'source-over';
     ctx.strokeStyle = 'gray';
-    ctx.lineWidth = 15;
+    ctx.lineWidth = 15;  // Thicker drawing line
     ctx.lineCap = 'round';
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(x, y);
     ctx.stroke();
+    console.log(`Drew line from (${lastX}, ${lastY}) to (${x}, ${y}).`);
 }
 
 function handlePointerDown(e) {
@@ -33,6 +35,7 @@ function handlePointerDown(e) {
     isDrawing = true;
     crayon.style.display = 'block';
     moveCrayon(x, y);
+    console.log("Pointer down event. Drawing started.");
 }
 
 function handlePointerMove(e) {
@@ -47,6 +50,7 @@ function handlePointerMove(e) {
 function handlePointerUp() {
     isDrawing = false;
     checkCanvasColored();
+    console.log("Pointer up event. Drawing stopped.");
 }
 
 function checkCanvasColored() {
@@ -60,6 +64,7 @@ function checkCanvasColored() {
     }
     const coloredPercentage = (coloredPixels / totalPixels) * 100;
     hiddenText.style.opacity = Math.min(coloredPercentage / 7, 1); // gradually show hidden text
+    console.log(`Colored percentage: ${coloredPercentage}%.`);
     if (coloredPercentage >= 7) {
         hiddenText.style.pointerEvents = 'auto';
     }
@@ -74,8 +79,8 @@ function getPointerPosition(e) {
 }
 
 function moveCrayon(x, y) {
-    crayon.style.left = `${x - 15}px`;
-    crayon.style.top = `${y - 50}px`;
+    crayon.style.left = `${x - 15}px`; // Adjusted to be closer to the cursor
+    crayon.style.top = `${y - 50}px`;  // Adjusted to be closer to the cursor
 }
 
 canvas.addEventListener('mousedown', handlePointerDown);
