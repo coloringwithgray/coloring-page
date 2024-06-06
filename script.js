@@ -12,8 +12,6 @@ function initializeCanvas() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     hiddenText.style.opacity = 0;
     hiddenText.style.pointerEvents = 'none';
-    hiddenText.style.left = `${canvas.width / 2}px`;
-    hiddenText.style.top = `${canvas.height / 2}px`;
 }
 
 function drawLine(x, y, lastX, lastY) {
@@ -60,8 +58,11 @@ function checkCanvasColored() {
 }
 
 function showHiddenText() {
+    const canvasRect = canvas.getBoundingClientRect();
     hiddenText.style.opacity = 1;
     hiddenText.style.pointerEvents = 'auto';
+    hiddenText.style.left = `${canvasRect.left + canvasRect.width / 2}px`;
+    hiddenText.style.top = `${canvasRect.top + canvasRect.height / 2}px`;
 }
 
 function getPointerPosition(e) {
@@ -84,4 +85,4 @@ canvas.addEventListener('touchcancel', handlePointerUp);
 
 window.addEventListener('resize', initializeCanvas);
 
-initializeCanvas()
+initializeCanvas();
