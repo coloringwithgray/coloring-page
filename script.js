@@ -41,10 +41,10 @@ function drawLine(x, y, lastX, lastY) {
 }
 
 function handlePointerDown(e) {
-    isDrawing = true;
-    crayon.style.display = 'block';
     const [x, y] = getPointerPosition(e);
     [lastX, lastY] = [x, y];
+    isDrawing = true;
+    crayon.style.display = 'block';
     crayon.style.left = `${x}px`;
     crayon.style.top = `${y}px`;
 }
@@ -54,10 +54,10 @@ function handlePointerMove(e) {
     if (isDrawing) {
         drawLine(x, y, lastX, lastY);
         updateColoredPixels(x, y, 10); // Update colored pixels with thicker line
+        [lastX, lastY] = [x, y];
     }
     crayon.style.left = `${x}px`;
     crayon.style.top = `${y}px`;
-    [lastX, lastY] = [x, y];
 }
 
 function handlePointerUp() {
