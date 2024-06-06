@@ -49,6 +49,7 @@ function handlePointerMove(e) {
 
 function handlePointerUp() {
     isDrawing = false;
+    crayon.style.display = 'none';
     checkCanvasColored();
     console.log("Pointer up event. Drawing stopped.");
 }
