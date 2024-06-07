@@ -65,8 +65,8 @@ body, html {
     transition: opacity 1s ease-in-out;
 }
 
-.portal-active #portal-animation {
-    opacity: 1;
+.portal-active {
+    opacity: 1 !important;
 }
 
 #dynamic-content {
