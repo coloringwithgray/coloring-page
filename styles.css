@@ -60,5 +60,17 @@ body, html {
 }
 
 .portal-animation {
-    transform: translate(-50%, -50%) scale(5); /* Scale up to create portal effect */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 70%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s ease-in-out;
+}
+
+.portal-active #portal-animation {
+    opacity: 1;
 }
