@@ -2,8 +2,7 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const crayon = document.getElementById('crayon');
 const mirrorLink = document.getElementById('mirror-link');
-const portalAnimation = document.getElementById('portal-animation');
-const mirrorIframe = document.getElementById('mirror-iframe');
+const mirror = document.getElementById('mirror');
 
 let isDrawing = false, lastX, lastY, crayonActive = false;
 
@@ -93,18 +92,7 @@ function moveCrayon(x, y) {
 
 function jumpThroughPortal(event) {
     event.preventDefault();
-    portalAnimation.classList.add('portal-active');
-
-    // Use a timeout to simulate the animation duration
-    setTimeout(() => {
-        // Change the src of the iframe to navigate to the new content
-        mirrorIframe.src = 'https://coloringwithgray.github.io/reflection/';
-        mirrorIframe.onload = () => {
-            // Remove the portal animation class once the new content is loaded
-            portalAnimation.classList.remove('portal-active');
-            console.log("Navigated to the new page within the iframe.");
-        };
-    }, 1000); // Match the duration of the transition
+    mirrorLink.classList.add('portal-expand');
 }
 
 canvas.addEventListener('mousedown', handlePointerDown);
