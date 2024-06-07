@@ -27,10 +27,8 @@ function drawLine(x, y, lastX, lastY) {
 
 function activateCrayon() {
     crayonActive = true;
-    crayon.style.cursor = 'none';
     document.body.style.cursor = 'none';
     crayon.style.pointerEvents = 'none';
-    crayon.style.display = 'none'; // Hide the crayon image after clicking
     console.log("Crayon activated.");
 }
 
@@ -39,6 +37,7 @@ function handlePointerDown(e) {
     const [x, y] = getPointerPosition(e);
     [lastX, lastY] = [x, y];
     isDrawing = true;
+    crayon.style.display = 'block';
     moveCrayon(x, y);
     console.log("Pointer down event. Drawing started.");
 }
@@ -107,6 +106,8 @@ canvas.addEventListener('touchstart', handlePointerDown);
 canvas.addEventListener('touchmove', handlePointerMove);
 canvas.addEventListener('touchend', handlePointerUp);
 canvas.addEventListener('touchcancel', handlePointerUp);
+
+crayon.addEventListener('click', activateCrayon);
 
 window.addEventListener('resize', initializeCanvas);
 
