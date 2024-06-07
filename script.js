@@ -89,7 +89,8 @@ function moveCrayon(x, y) {
     crayon.style.top = `${y - 50}px`;
 }
 
-function jumpThroughPortal() {
+function jumpThroughPortal(event) {
+    event.preventDefault(); // Prevent default action to avoid immediate navigation
     const portalAnimation = document.getElementById('portal-animation');
     portalAnimation.classList.add('portal-active');
     setTimeout(() => {
