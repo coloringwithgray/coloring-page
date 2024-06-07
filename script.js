@@ -30,6 +30,7 @@ function activateCrayon() {
     crayon.style.cursor = 'none';
     document.body.style.cursor = 'none';
     crayon.style.pointerEvents = 'none';
+    crayon.style.display = 'none'; // Hide the crayon image after clicking
     console.log("Crayon activated.");
 }
 
