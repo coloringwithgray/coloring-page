@@ -68,11 +68,11 @@ function checkCanvasColored() {
     }
     const coloredPercentage = (coloredPixels / totalPixels) * 100;
     console.log(`Total pixels: ${totalPixels}, Colored pixels: ${coloredPixels}, Colored percentage: ${coloredPercentage}%`);
-    if (coloredPercentage >= 2.47) {  // Adjusted percentage threshold
+    if (coloredPercentage >= 1.37) {  // Adjusted percentage threshold
         mirrorLink.style.display = 'block';
         console.log("Mirror displayed.");
     } else {
-        console.log("No colored pixels detected or less than 2.47% colored.");
+        console.log("No colored pixels detected or less than 1.37% colored.");
     }
 }
 
