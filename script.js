@@ -1,21 +1,16 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
+const crayon = document.getElementById('crayon');
+const mirrorLink = document.getElementById('mirror-link');
 
-let isDrawing = false, lastX, lastY;
-
-// Adjusted threshold for colored percentage check
-const COLOR_THRESHOLD = 2.47;
+let isDrawing = false, lastX, lastY, crayonActive = false;
 
 function initializeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    // Position the gray crayon initially at the center of the page
-    const centerX = canvas.width / 2 - crayon.width / 2;
-    const centerY = canvas.height / 2 - crayon.height / 2;
-    crayon.style.left = `${centerX}px`;
-    crayon.style.top = `${centerY}px`;
+    console.log("Canvas initialized.");
 }
 
 function drawLine(x, y, lastX, lastY) {
@@ -27,27 +22,39 @@ function drawLine(x, y, lastX, lastY) {
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(x, y);
     ctx.stroke();
+    console.log(`Drew line from (${lastX}, ${lastY}) to (${x}, ${y}).`);
+}
+
+function activateCrayon() {
+    crayonActive = true;
+    crayon.style.cursor = 'none';
+    console.log("Crayon activated.");
 }
 
 function handlePointerDown(e) {
-    if (!isDrawing) {
-        const [x, y] = getPointerPosition(e);
-        [lastX, lastY] = [x, y];
-        isDrawing = true;
-    }
+    if (!crayonActive) return;
+    const [x, y] = getPointerPosition(e);
+    [lastX, lastY] = [x, y];
+    isDrawing = true;
+    crayon.style.display = 'block';
+    moveCrayon(x, y);
+    console.log("Pointer down event. Drawing started.");
 }
 
 function handlePointerMove(e) {
+    const [x, y] = getPointerPosition(e);
     if (isDrawing) {
-        const [x, y] = getPointerPosition(e);
         drawLine(x, y, lastX, lastY);
         [lastX, lastY] = [x, y];
     }
+    if (crayonActive) moveCrayon(x, y);
 }
 
 function handlePointerUp() {
+    if (!crayonActive) return;
     isDrawing = false;
     checkCanvasColored();
+    console.log("Pointer up event. Drawing stopped.");
 }
 
 function checkCanvasColored() {
@@ -60,8 +67,12 @@ function checkCanvasColored() {
         }
     }
     const coloredPercentage = (coloredPixels / totalPixels) * 100;
-    if (coloredPercentage >= COLOR_THRESHOLD) {
+    console.log(`Total pixels: ${totalPixels}, Colored pixels: ${coloredPixels}, Colored percentage: ${coloredPercentage}%`);
+    if (coloredPercentage >= 2.47) {  // Adjusted percentage threshold
         mirrorLink.style.display = 'block';
+        console.log("Mirror displayed.");
+    } else {
+        console.log("No colored pixels detected or less than 2.47% colored.");
     }
 }
 
@@ -73,7 +84,12 @@ function getPointerPosition(e) {
     }
 }
 
-function triggerPortalEffect() {
+function moveCrayon(x, y) {
+    crayon.style.left = `${x - 15}px`;
+    crayon.style.top = `${y - 50}px`;
+}
+
+function jumpThroughPortal() {
     mirrorLink.classList.add('portal-animation');
     setTimeout(() => {
         window.location.href = 'https://coloringwithgray.github.io/reflection/';
