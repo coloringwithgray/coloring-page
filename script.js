@@ -28,6 +28,8 @@ function drawLine(x, y, lastX, lastY) {
 function activateCrayon() {
     crayonActive = true;
     crayon.style.cursor = 'none';
+    document.body.style.cursor = 'none';
+    crayon.style.pointerEvents = 'none';
     console.log("Crayon activated.");
 }
 
@@ -36,7 +38,6 @@ function handlePointerDown(e) {
     const [x, y] = getPointerPosition(e);
     [lastX, lastY] = [x, y];
     isDrawing = true;
-    crayon.style.display = 'block';
     moveCrayon(x, y);
     console.log("Pointer down event. Drawing started.");
 }
