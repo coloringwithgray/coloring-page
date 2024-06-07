@@ -19,7 +19,7 @@ body, html {
     position: absolute;
     top: 0;
     left: 0;
-    cursor: auto;
+    cursor: none; /* Hide the default cursor */
 }
 
 #crayon {
@@ -30,6 +30,7 @@ body, html {
     left: 50%;
     transform: translate(-50%, -50%) scale(0.3);
     cursor: pointer;
+    pointer-events: none; /* Make the image non-interactive */
 }
 
 #mirror-link {
