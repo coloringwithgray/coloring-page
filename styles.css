@@ -24,9 +24,9 @@ body, html {
 
 #crayon {
     position: absolute;
-    display: none;
     transform: scale(0.3);
     pointer-events: none;
+    transition: transform 0.3s ease-in-out; /* Add transition for smooth movement */
 }
 
 #mirror-link {
