@@ -91,7 +91,7 @@ function moveCrayon(x, y) {
 
 function jumpThroughPortal() {
     const portalAnimation = document.getElementById('portal-animation');
-    portalAnimation.style.opacity = '1';
+    portalAnimation.classList.add('portal-active');
     setTimeout(() => {
         window.location.href = 'https://coloringwithgray.github.io/reflection/';
     }, 1000); // Match the duration of the transition
