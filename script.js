@@ -2,6 +2,7 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const crayon = document.getElementById('crayon');
 const mirrorLink = document.getElementById('mirror-link');
+const portalAnimation = document.getElementById('portal-animation');
 const dynamicContent = document.getElementById('dynamic-content');
 
 let isDrawing = false, lastX, lastY, crayonActive = false;
@@ -92,7 +93,6 @@ function moveCrayon(x, y) {
 
 function jumpThroughPortal(event) {
     event.preventDefault();
-    const portalAnimation = document.getElementById('portal-animation');
     portalAnimation.classList.add('portal-active');
 
     // Fetch the content dynamically
