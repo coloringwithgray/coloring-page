@@ -2,6 +2,7 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const crayon = document.getElementById('crayon');
 const mirrorLink = document.getElementById('mirror-link');
+const dynamicContent = document.getElementById('dynamic-content');
 
 let isDrawing = false, lastX, lastY, crayonActive = false;
 
@@ -90,12 +91,23 @@ function moveCrayon(x, y) {
 }
 
 function jumpThroughPortal(event) {
-    event.preventDefault(); // Prevent default action to avoid immediate navigation
+    event.preventDefault();
     const portalAnimation = document.getElementById('portal-animation');
     portalAnimation.classList.add('portal-active');
-    setTimeout(() => {
-        window.location.href = 'https://coloringwithgray.github.io/reflection/';
-    }, 1000); // Match the duration of the transition
+
+    // Fetch the content dynamically
+    fetch('https://coloringwithgray.github.io/reflection/')
+        .then(response => response.text())
+        .then(html => {
+            setTimeout(() => {
+                dynamicContent.innerHTML = html;
+                dynamicContent.style.display = 'block';
+                portalAnimation.classList.remove('portal-active');
+                mirrorLink.style.display = 'none';
+                console.log("Content loaded dynamically.");
+            }, 1000); // Match the duration of the transition
+        })
+        .catch(error => console.error('Error loading content:', error));
 }
 
 canvas.addEventListener('mousedown', handlePointerDown);
