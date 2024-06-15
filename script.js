@@ -2,6 +2,7 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const crayon = document.getElementById('crayon');
 const mirrorLink = document.getElementById('mirror-link');
+const mirrorIframe = document.getElementById('mirror-iframe');
 
 let isDrawing = false;
 let lastX, lastY;
@@ -85,6 +86,7 @@ function getPointerPosition(e) {
 
 function jumpThroughPortal() {
     window.open('https://coloringwithgray.github.io/reflection/#section-preview', '_blank');
+    mirrorLink.classList.remove('portal-expand');
 }
 
 canvas.addEventListener('mousedown', handlePointerDown);
