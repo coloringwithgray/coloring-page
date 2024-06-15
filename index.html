@@ -6,17 +6,67 @@
     <title>Coloring with Gray</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap">
+
+    <style>
+        /* Additional style for mirrored page */
+        .mirror-page {
+            font-family: 'Amatic SC', cursive;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <canvas id="canvas"></canvas>
         <img id="crayon" src="Gray+Crayon.png" alt="Crayon" onclick="activateCrayon()">
-        <div id="mirror-link">
+        <div id="mirror-link" onclick="jumpThroughPortal()">
             <div id="mirror">
                 <iframe id="mirror-iframe" src="https://coloringwithgray.github.io/reflection/" frameborder="0"></iframe>
             </div>
         </div>
+        <button id="enter-portal" onclick="jumpThroughPortal()">Enter Portal</button>
     </div>
     <script src="script.js"></script>
-</body>
-</html>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const crayon = document.getElementById('crayon');
+        const mirrorLink = document.getElementById('mirror-link');
+        const mirror = document.getElementById('mirror');
+        const enterPortalButton = document.getElementById('enter-portal');
+
+        let isDrawing = false, lastX, lastY, crayonActive = false;
+
+        function initializeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            console.log("Canvas initialized.");
+        }
+
+        function drawLine(x, y, lastX, lastY) {
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.strokeStyle = 'gray';
+            ctx.lineWidth = 15;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            console.log(`Drew line from (${lastX}, ${lastY}) to (${x}, ${y}).`);
+        }
+
+        function activateCrayon() {
+            crayonActive = true;
+            crayon.style.cursor = 'none';
+            console.log("Crayon activated.");
+        }
+
+        function handlePointerDown(e) {
+            if (!crayonActive) return;
+            const [x, y] = getPointerPosition(e);
+            [lastX, lastY] = [x, y];
+            isDrawing = true;
+            crayon.style.display = 'block';
+            moveCrayon(x, y);
+            console.log("Pointer down event. Drawing sta
