@@ -91,8 +91,8 @@ function moveCrayon(x, y) {
 }
 
 function jumpThroughPortal(event) {
-    event.preventDefault(); // Prevent the default action of opening a new tab
-    mirrorLink.classList.add('portal-expand'); // Add the portal-expand class to trigger the animation
+    event.preventDefault();
+    mirrorLink.classList.add('portal-expand');
 }
 
 canvas.addEventListener('mousedown', handlePointerDown);
