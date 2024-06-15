@@ -3,7 +3,10 @@ const ctx = canvas.getContext('2d');
 const crayon = document.getElementById('crayon');
 const mirrorLink = document.getElementById('mirror-link');
 
-let isDrawing = false, lastX, lastY, crayonActive = false;
+let isDrawing = false;
+let lastX = 0;
+let lastY = 0;
+let crayonActive = false;
 
 function initializeCanvas() {
     canvas.width = window.innerWidth;
@@ -22,56 +25,30 @@ function drawLine(x, y, lastX, lastY) {
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(x, y);
     ctx.stroke();
-    console.log(`Drew line from (${lastX}, ${lastY}) to (${x}, ${y}).`);
 }
 
 function activateCrayon() {
     crayonActive = true;
-    crayon.style.cursor = 'none';
-    console.log("Crayon activated.");
+    crayon.style.display = 'block'; // Show crayon image
+    crayon.style.cursor = 'none'; // Hide default cursor
 }
 
 function handlePointerDown(e) {
     if (!crayonActive) return;
-    const [x, y] = getPointerPosition(e);
-    [lastX, lastY] = [x, y];
+    [lastX, lastY] = getPointerPosition(e);
     isDrawing = true;
-    console.log("Pointer down event. Drawing started.");
 }
 
 function handlePointerMove(e) {
+    if (!isDrawing || !crayonActive) return;
     const [x, y] = getPointerPosition(e);
-    if (isDrawing) {
-        drawLine(x, y, lastX, lastY);
-        [lastX, lastY] = [x, y];
-    }
+    drawLine(x, y, lastX, lastY);
+    [lastX, lastY] = [x, y];
 }
 
 function handlePointerUp() {
     if (!crayonActive) return;
     isDrawing = false;
-    checkCanvasColored();
-    console.log("Pointer up event. Drawing stopped.");
-}
-
-function checkCanvasColored() {
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-    let coloredPixels = 0;
-    const totalPixels = canvas.width * canvas.height;
-    for (let i = 0; i < imageData.length; i += 4) {
-        if (imageData[i] === 128 && imageData[i + 1] === 128 && imageData[i + 2] === 128) {
-            coloredPixels++;
-        }
-    }
-    const coloredPercentage = (coloredPixels / totalPixels) * 100;
-    console.log(`Total pixels: ${totalPixels}, Colored pixels: ${coloredPixels}, Colored percentage: ${coloredPercentage}%`);
-    if (coloredPercentage >= 1.37) {  // Adjusted percentage threshold
-        // Display the portal area
-        mirrorLink.style.display = 'block';
-        console.log("Portal area displayed.");
-    } else {
-        console.log("No colored pixels detected or less than 1.37% colored.");
-    }
 }
 
 function getPointerPosition(e) {
