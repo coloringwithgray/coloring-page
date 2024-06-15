@@ -66,9 +66,9 @@ function checkCanvasColored() {
     const coloredPercentage = (coloredPixels / totalPixels) * 100;
     console.log(`Total pixels: ${totalPixels}, Colored pixels: ${coloredPixels}, Colored percentage: ${coloredPercentage}%`);
     if (coloredPercentage >= 1.37) {  // Adjusted percentage threshold
-        // Trigger portal effect
-        jumpThroughPortal();
-        console.log("Portal triggered.");
+        // Display the portal area
+        mirrorLink.style.display = 'block';
+        console.log("Portal area displayed.");
     } else {
         console.log("No colored pixels detected or less than 1.37% colored.");
     }
@@ -86,7 +86,7 @@ function jumpThroughPortal() {
     // Optional: Add transition effect or animation here
     setTimeout(function() {
         // Redirect to the mirror URL
-        window.location.href = 'https://coloringwithgray.github.io/reflection/';
+        window.location.href = 'https://coloringwithgray.github.io/reflection/#section2';
     }, 1000); // Adjust delay as needed
 }
 
