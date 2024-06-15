@@ -20,27 +20,25 @@ body, html {
     top: 0;
     left: 0;
     cursor: auto;
-    border: 1px solid #ccc; /* Optional: Adds border for better visibility */
 }
 
 #crayon {
     position: absolute;
-    display: none; /* Initially hidden until activated */
-    transform: scale(0.3);
+    display: block;
+    transform: translate(-50%, -50%) scale(0.3);
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) scale(0.3);
     cursor: pointer;
 }
 
-#mirror-link {
-    position: absolute;
+#portal {
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 100px; /* Adjust the size as needed */
-    height: 100px; /* Adjust the size as needed */
-    background-color: rgba(0, 0, 0, 0.1); /* Semi-transparent to indicate clickable area */
+    width: 400px; /* Adjust width as needed */
+    height: 300px; /* Adjust height as needed */
+    background-color: rgba(0, 0, 0, 0.1);
     cursor: pointer;
-    border-radius: 50%; /* Makes it circular */
+    display: none;
 }
