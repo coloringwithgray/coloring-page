@@ -2,6 +2,7 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const crayon = document.getElementById('crayon');
 const mirrorLink = document.getElementById('mirror-link');
+const enterPortalButton = document.getElementById('enter-portal');
 
 let isDrawing = false;
 let lastX, lastY;
@@ -38,6 +39,8 @@ function handlePointerDown(e) {
     const [x, y] = getPointerPosition(e);
     [lastX, lastY] = [x, y];
     isDrawing = true;
+    crayon.style.display = 'block';
+    moveCrayon(x, y);
     console.log("Pointer down event. Drawing started.");
 }
 
@@ -47,6 +50,7 @@ function handlePointerMove(e) {
         drawLine(x, y, lastX, lastY);
         [lastX, lastY] = [x, y];
     }
+    if (crayonActive) moveCrayon(x, y);
 }
 
 function handlePointerUp() {
@@ -69,6 +73,7 @@ function checkCanvasColored() {
     console.log(`Total pixels: ${totalPixels}, Colored pixels: ${coloredPixels}, Colored percentage: ${coloredPercentage}%`);
     if (coloredPercentage >= 1.37) {
         mirrorLink.style.display = 'block';
+        enterPortalButton.style.display = 'block';
         console.log("Mirror displayed.");
     } else {
         console.log("No colored pixels detected or less than 1.37% colored.");
@@ -83,8 +88,14 @@ function getPointerPosition(e) {
     }
 }
 
-function jumpThroughPortal() {
-    window.open('https://coloringwithgray.github.io/reflection/#section-preview', '_blank');
+function moveCrayon(x, y) {
+    crayon.style.left = `${x - 15}px`;
+    crayon.style.top = `${y - 50}px`;
+}
+
+function jumpThroughPortal(event) {
+    event.preventDefault(); // Prevent the default action
+    window.location.href = 'https://coloringwithgray.github.io/reflection/';
 }
 
 canvas.addEventListener('mousedown', handlePointerDown);
