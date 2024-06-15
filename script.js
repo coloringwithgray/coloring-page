@@ -2,7 +2,6 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const crayon = document.getElementById('crayon');
 const mirrorLink = document.getElementById('mirror-link');
-const enterPortalButton = document.getElementById('enter-portal');
 
 let isDrawing = false, lastX, lastY, crayonActive = false;
 
@@ -37,8 +36,6 @@ function handlePointerDown(e) {
     const [x, y] = getPointerPosition(e);
     [lastX, lastY] = [x, y];
     isDrawing = true;
-    crayon.style.display = 'block';
-    moveCrayon(x, y);
     console.log("Pointer down event. Drawing started.");
 }
 
@@ -48,7 +45,6 @@ function handlePointerMove(e) {
         drawLine(x, y, lastX, lastY);
         [lastX, lastY] = [x, y];
     }
-    if (crayonActive) moveCrayon(x, y);
 }
 
 function handlePointerUp() {
@@ -70,9 +66,9 @@ function checkCanvasColored() {
     const coloredPercentage = (coloredPixels / totalPixels) * 100;
     console.log(`Total pixels: ${totalPixels}, Colored pixels: ${coloredPixels}, Colored percentage: ${coloredPercentage}%`);
     if (coloredPercentage >= 1.37) {  // Adjusted percentage threshold
-        mirrorLink.style.display = 'block';
-        enterPortalButton.style.display = 'block';
-        console.log("Mirror displayed.");
+        // Trigger portal effect
+        jumpThroughPortal();
+        console.log("Portal triggered.");
     } else {
         console.log("No colored pixels detected or less than 1.37% colored.");
     }
@@ -86,16 +82,8 @@ function getPointerPosition(e) {
     }
 }
 
-function moveCrayon(x, y) {
-    crayon.style.left = `${x - 15}px`;
-    crayon.style.top = `${y - 50}px`;
-}
-
 function jumpThroughPortal() {
-    // Zoom effect on the mirror link
-    mirrorLink.classList.add('portal-expand');
-
-    // Optionally, you can use a timeout to delay the redirect for better animation effect
+    // Optional: Add transition effect or animation here
     setTimeout(function() {
         // Redirect to the mirror URL
         window.location.href = 'https://coloringwithgray.github.io/reflection/';
