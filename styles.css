@@ -60,11 +60,11 @@ body, html {
     transform: scaleX(-1);
 }
 
-#enter-portal {
-    position: absolute;
-    top: 60%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: none;
-    z-index: 1000;
+.portal-expand {
+    width: 100vw;
+    height: 100vh;
+    transform: translate(-50%, -50%) scale(1);
+    border-radius: 0;
+    box-shadow: none;
+    z-index: 9999;
 }
