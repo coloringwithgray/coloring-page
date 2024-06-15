@@ -2,11 +2,9 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const crayon = document.getElementById('crayon');
 const mirrorLink = document.getElementById('mirror-link');
-const enterPortalButton = document.getElementById('enter-portal');
+const mirror = document.getElementById('mirror');
 
-let isDrawing = false;
-let lastX, lastY;
-let crayonActive = false;
+let isDrawing = false, lastX, lastY, crayonActive = false;
 
 function initializeCanvas() {
     canvas.width = window.innerWidth;
@@ -71,9 +69,8 @@ function checkCanvasColored() {
     }
     const coloredPercentage = (coloredPixels / totalPixels) * 100;
     console.log(`Total pixels: ${totalPixels}, Colored pixels: ${coloredPixels}, Colored percentage: ${coloredPercentage}%`);
-    if (coloredPercentage >= 1.37) {
+    if (coloredPercentage >= 1.37) {  // Adjusted percentage threshold
         mirrorLink.style.display = 'block';
-        enterPortalButton.style.display = 'block';
         console.log("Mirror displayed.");
     } else {
         console.log("No colored pixels detected or less than 1.37% colored.");
@@ -94,8 +91,8 @@ function moveCrayon(x, y) {
 }
 
 function jumpThroughPortal(event) {
-    event.preventDefault(); // Prevent the default action
-    window.location.href = 'https://coloringwithgray.github.io/reflection/';
+    event.preventDefault(); // Prevent the default action of opening a new tab
+    mirrorLink.classList.add('portal-expand'); // Add the portal-expand class to trigger the animation
 }
 
 canvas.addEventListener('mousedown', handlePointerDown);
