@@ -1,7 +1,6 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const crayon = document.getElementById('crayon');
-const mirrorLink = document.getElementById('mirror-link');
 const mirrorIframe = document.getElementById('mirror-iframe');
 
 let isDrawing = false;
@@ -69,7 +68,7 @@ function checkCanvasColored() {
     const coloredPercentage = (coloredPixels / totalPixels) * 100;
     console.log(`Total pixels: ${totalPixels}, Colored pixels: ${coloredPixels}, Colored percentage: ${coloredPercentage}%`);
     if (coloredPercentage >= 1.37) {
-        mirrorLink.style.display = 'block';
+        mirrorIframe.style.display = 'block';
         console.log("Mirror displayed.");
     } else {
         console.log("No colored pixels detected or less than 1.37% colored.");
@@ -84,10 +83,9 @@ function getPointerPosition(e) {
     }
 }
 
-function jumpThroughPortal() {
-    window.open('https://coloringwithgray.github.io/reflection/#section-preview', '_blank');
-    mirrorLink.classList.remove('portal-expand');
-}
+mirrorIframe.addEventListener('click', function() {
+    window.location.href = 'https://coloringwithgray.github.io/reflection/#section-preview';
+});
 
 canvas.addEventListener('mousedown', handlePointerDown);
 canvas.addEventListener('mousemove', handlePointerMove);
