@@ -90,10 +90,6 @@ function moveCrayon(x, y) {
     crayon.style.top = `${y - 50}px`;
 }
 
-function jumpThroughPortal(event) {
-    mirrorLink.classList.add('portal-expand'); // Add the portal-expand class to trigger the animation
-}
-
 canvas.addEventListener('mousedown', handlePointerDown);
 canvas.addEventListener('mousemove', handlePointerMove);
 canvas.addEventListener('mouseup', handlePointerUp);
