@@ -49,21 +49,22 @@ body, html {
     width: 100%;
     height: 100%;
     transform: scaleX(-1);
+    overflow: hidden;
+    border-radius: 50%; /* Portal effect */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Glow effect */
 }
 
 #mirror-iframe {
     width: 100%;
     height: 100%;
     border: none;
-    transform: scaleX(-1);
+    transform: scaleX(-1); /* Maintain mirror effect */
     transition: transform 1s ease-in-out, width 1s ease-in-out, height 1s ease-in-out;
 }
 
 .portal-expand {
-    width: 100vw;
-    height: 100vh;
-    transform: translate(-50%, -50%) scale(1);
-    border-radius: 0;
-    box-shadow: none;
+    transform: translate(-50%, -50%) scale(5); /* Scale up to create portal effect */
+    border-radius: 0; /* Remove border-radius for full screen effect */
+    box-shadow: none; /* Remove box-shadow */
     z-index: 9999;
 }
