@@ -92,7 +92,7 @@ function moveCrayon(x, y) {
 
 function jumpThroughPortal(event) {
     event.preventDefault();
-    mirrorLink.classList.add('portal-expand');
+    mirror.classList.add('portal-expand');
 }
 
 canvas.addEventListener('mousedown', handlePointerDown);
