@@ -1,7 +1,7 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const crayon = document.getElementById('crayon');
-const mirrorLink = document.getElementById('mirror-link');
+const portal = document.getElementById('portal');
 
 let isDrawing = false;
 let lastX = 0;
@@ -29,8 +29,7 @@ function drawLine(x, y, lastX, lastY) {
 
 function activateCrayon() {
     crayonActive = true;
-    crayon.style.display = 'block'; // Show crayon image
-    crayon.style.cursor = 'none'; // Hide default cursor
+    crayon.style.cursor = 'none';
 }
 
 function handlePointerDown(e) {
@@ -44,11 +43,33 @@ function handlePointerMove(e) {
     const [x, y] = getPointerPosition(e);
     drawLine(x, y, lastX, lastY);
     [lastX, lastY] = [x, y];
+    checkCanvasColored(); // Check colored percentage while drawing
 }
 
 function handlePointerUp() {
     if (!crayonActive) return;
     isDrawing = false;
+}
+
+function checkCanvasColored() {
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    let coloredPixels = 0;
+    const totalPixels = canvas.width * canvas.height;
+
+    for (let i = 0; i < imageData.length; i += 4) {
+        // Check for gray color (128, 128, 128)
+        if (imageData[i] === 128 && imageData[i + 1] === 128 && imageData[i + 2] === 128) {
+            coloredPixels++;
+        }
+    }
+
+    const coloredPercentage = (coloredPixels / totalPixels) * 100;
+
+    if (coloredPercentage >= 1.37) {
+        // Unlock portal when colored percentage meets threshold
+        portal.innerHTML = '<iframe src="https://coloringwithgray.github.io/reflection/" frameborder="0"></iframe>';
+        portal.style.display = 'block';
+    }
 }
 
 function getPointerPosition(e) {
@@ -61,10 +82,7 @@ function getPointerPosition(e) {
 
 function jumpThroughPortal() {
     // Optional: Add transition effect or animation here
-    setTimeout(function() {
-        // Redirect to the mirror URL
-        window.location.href = 'https://coloringwithgray.github.io/reflection/#section2';
-    }, 1000); // Adjust delay as needed
+    portal.style.display = 'none'; // Hide the portal after click (optional)
 }
 
 canvas.addEventListener('mousedown', handlePointerDown);
