@@ -11,13 +11,12 @@
     <div class="container">
         <canvas id="canvas"></canvas>
         <img id="crayon" src="Gray+Crayon.png" alt="Crayon" onclick="activateCrayon()">
-        <div id="mirror-link">
-            <div id="mirror" onclick="jumpThroughPortal(event)">
+        <div id="mirror-link" onclick="jumpThroughPortal()">
+            <div id="mirror">
                 <iframe id="mirror-iframe" src="https://coloringwithgray.github.io/reflection/" frameborder="0"></iframe>
             </div>
         </div>
     </div>
-    <div id="portal-animation"></div>
     <script src="script.js"></script>
 </body>
 </html>
