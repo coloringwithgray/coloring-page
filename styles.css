@@ -67,6 +67,7 @@ body, html {
     border-radius: 0;
     box-shadow: none;
     z-index: 9999;
+    transition: transform 1s ease-in-out, width 1s ease-in-out, height 1s ease-in-out;
 }
 
 #enter-portal {
