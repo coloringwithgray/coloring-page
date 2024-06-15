@@ -23,6 +23,7 @@ body, html {
     top: 0;
     left: 0;
     cursor: auto; /* Default cursor */
+    z-index: 1; /* Ensure canvas is below other elements */
 }
 
 /* Crayon positioning and styling */
@@ -33,6 +34,7 @@ body, html {
     top: 50%; /* Center vertically */
     left: 50%; /* Center horizontally */
     cursor: pointer;
+    z-index: 2; /* Ensure crayon is above canvas */
 }
 
 /* Mirror link positioning and styling */
@@ -47,6 +49,7 @@ body, html {
     cursor: pointer;
     pointer-events: auto; /* Enable pointer events */
     transition: transform 1s ease-in-out, width 1s ease-in-out, height 1s ease-in-out; /* Smooth transition */
+    z-index: 3; /* Ensure it is above canvas and crayon */
 }
 
 /* Mirror container styling */
@@ -71,6 +74,13 @@ body, html {
 /* Expanded state for the portal link */
 .portal-expand {
     width: 100vw; /* Full viewport width */
+    height: 100vh; /* Full viewport height */
+    transform: translate(-50%, -50%) scale(1); /* Center and scale */
+    border-radius: 0; /* Remove border radius */
+    box-shadow: none; /* Remove shadow */
+    z-index: 9999; /* Ensure it's above other content */
+}
+
     height: 100vh; /* Full viewport height */
     transform: translate(-50%, -50%) scale(1); /* Center and scale */
     border-radius: 0; /* Remove border radius */
