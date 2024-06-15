@@ -2,7 +2,6 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const crayon = document.getElementById('crayon');
 const mirrorLink = document.getElementById('mirror-link');
-const mirror = document.getElementById('mirror');
 const enterPortalButton = document.getElementById('enter-portal');
 
 let isDrawing = false, lastX, lastY, crayonActive = false;
@@ -92,9 +91,15 @@ function moveCrayon(x, y) {
     crayon.style.top = `${y - 50}px`;
 }
 
-function jumpThroughPortal(event) {
-    event.preventDefault(); // Prevent the default action
-    mirrorLink.classList.add('portal-expand'); // Add the portal-expand class to trigger the animation
+function jumpThroughPortal() {
+    // Zoom effect on the mirror link
+    mirrorLink.classList.add('portal-expand');
+
+    // Optionally, you can use a timeout to delay the redirect for better animation effect
+    setTimeout(function() {
+        // Redirect to the mirror URL
+        window.location.href = 'https://coloringwithgray.github.io/reflection/';
+    }, 1000); // Adjust delay as needed
 }
 
 canvas.addEventListener('mousedown', handlePointerDown);
