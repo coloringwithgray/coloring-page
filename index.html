@@ -6,18 +6,12 @@
     <title>Coloring with Gray</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap">
-    <style>
-        /* Additional style for mirrored page */
-        .mirror-page {
-            font-family: 'Amatic SC', cursive;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
         <canvas id="canvas"></canvas>
         <img id="crayon" src="Gray+Crayon.png" alt="Crayon" onclick="activateCrayon()">
-        <div id="mirror-link" onclick="jumpThroughPortal()"></div> <!-- Invisible portal area -->
+        <div id="portal" onclick="jumpThroughPortal()"></div>
     </div>
     <script src="script.js"></script>
 </body>
