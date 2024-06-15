@@ -91,7 +91,6 @@ function moveCrayon(x, y) {
 }
 
 function jumpThroughPortal(event) {
-    // No need for event.preventDefault() here
     mirrorLink.classList.add('portal-expand'); // Add the portal-expand class to trigger the animation
 }
 
