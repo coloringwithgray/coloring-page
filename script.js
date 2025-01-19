@@ -14,6 +14,7 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const crayon = document.getElementById("crayon");
 const mirrorLink = document.getElementById("mirror-link");
+const welcomeMessage = document.getElementById("welcome-message");
 
 /****************************
  *  State Variables
@@ -136,6 +137,10 @@ function checkCanvasColored() {
   if (coloredPercentage >= 1.37) {
     mirrorLink.style.display = "block";
     debugLog("Mirror displayed.");
+
+    // NEW: Reveal welcome message
+    welcomeMessage.classList.add("show");
+    debugLog("Welcome message revealed.");
   } else {
     debugLog("Not enough colored pixels yet.");
   }
