@@ -46,7 +46,7 @@ html, body {
   top: 50%;
   left: 50%;
   cursor: pointer;
-  z-index: 3; /* Ensure it's on top so it's clickable */
+  z-index: 3; /* Above canvas so it's clickable */
 }
 
 /************************************
@@ -58,15 +58,15 @@ html, body {
   left: 50%;
   transform: translate(-50%, -50%);
   
-  /* Hidden initially so it won't block clicks */
+  /* Hidden initially so it won't block crayon clicks */
   display: none;
-  
-  width: 300px; 
-  height: 200px;
+
+  /* Increase the portal size (perfect circle) */
+  width: 400px;
+  height: 400px;
+
   pointer-events: auto;
-  
-  /* We want it above the crayon once visible */
-  z-index: 4; 
+  z-index: 4; /* Above the crayon after threshold is met */
 }
 
 /* The actual circular mirror container */
@@ -77,8 +77,7 @@ html, body {
   border-radius: 50%;
   overflow: hidden;
   pointer-events: none; /* So clicks go to #mirror-link */
-  /* Removing any static box-shadow so we can see the glow clearly */
-  box-shadow: none;
+  box-shadow: none; /* We’ll rely on the glow animation */
 }
 
 /* The mirrored iframe content */
@@ -91,21 +90,21 @@ html, body {
 }
 
 /************************************
- *    GLOW ANIMATION
+ *    DARK GREY GLOW ANIMATION
  ************************************/
 @keyframes glow {
   0% {
-    box-shadow: 0 0 0 0 rgba(255, 0, 255, 0.6);
+    box-shadow: 0 0 0 0 rgba(50, 50, 50, 0.6);
   }
   50% {
-    box-shadow: 0 0 20px 10px rgba(255, 0, 255, 0.8);
+    box-shadow: 0 0 25px 10px rgba(50, 50, 50, 0.7);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(255, 0, 255, 0.6);
+    box-shadow: 0 0 0 0 rgba(50, 50, 50, 0.6);
   }
 }
 
 .mirror-glow {
   animation: glow 1.5s infinite;
-  border-radius: 50%;
+  border-radius: 50%; /* ensure the glow remains circular */
 }
