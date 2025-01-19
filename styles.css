@@ -1,3 +1,8 @@
+/* Hide default cursor if .hide-cursor is applied to body */
+.hide-cursor {
+  cursor: none !important;
+}
+
 /* Reset default styles for body and html */
 body,
 html {
@@ -23,7 +28,6 @@ html {
   position: absolute;
   top: 0;
   left: 0;
-  cursor: auto; /* Default cursor */
   z-index: 1; /* Ensure canvas is below other elements */
 }
 
@@ -77,8 +81,8 @@ html {
 .portal-expand {
   width: 100vw; /* Full viewport width */
   height: 100vh; /* Full viewport height */
-  transform: translate(-50%, -50%) scale(1); /* Center and scale */
-  border-radius: 0; /* Remove border radius */
-  box-shadow: none; /* Remove shadow */
+  transform: translate(-50%, -50%) scale(1);
+  border-radius: 0;
+  box-shadow: none;
   z-index: 9999; /* Ensure it's above other content */
 }
