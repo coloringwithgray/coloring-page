@@ -45,12 +45,15 @@ html {
 /* Mirror link positioning and styling */
 #mirror-link {
   position: absolute;
-  top: 50%; /* Center vertically */
-  left: 50%; /* Center horizontally */
+  top: 50%;
+  left: 50%;
   transform: translate(-50%, -50%);
   display: none; /* Initially hidden */
-  width: 300px; /* Adjust width as needed */
-  height: 200px; /* Adjust height as needed */
+  
+  /* Increase the portal size here */
+  width: 600px;  /* <-- Increased from 300px */
+  height: 400px; /* <-- Increased from 200px */
+  
   cursor: pointer;
   pointer-events: auto; /* Enable pointer events */
   transition: transform 1s ease-in-out, width 1s ease-in-out, height 1s ease-in-out;
@@ -77,29 +80,7 @@ html {
   pointer-events: none;
 }
 
-/* Welcome message (hidden by default) */
-.welcome-message {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: rgba(128, 128, 128, 0.7); /* translucent gray */
-  font-size: 2rem;
-  text-align: center;
-  font-family: 'Amatic SC', cursive;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.8s ease;
-  z-index: 4; /* Above the mirror link */
-}
-
-/* Show the welcome message when .show is added */
-.welcome-message.show {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* Animate the mirror link with a glowing pulse */
+/* Animate the mirror link with a glowing pulse (optional) */
 @keyframes glow {
   0% {
     box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.3);
@@ -114,5 +95,5 @@ html {
 
 .mirror-glow {
   animation: glow 2s infinite;
-  border-radius: 50%;
+  border-radius: 50%; /* Keep the glow circle shape */
 }
