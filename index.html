@@ -4,30 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Coloring with Gray</title>
-  <!-- Link to external CSS -->
   <link rel="stylesheet" href="styles.css" />
-  <!-- Defer the JS so it doesn't block HTML parsing -->
   <script src="script.js" defer></script>
-  <!-- Google font (if needed) -->
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap"
-  />
 </head>
 <body>
   <div class="container">
-    <!-- The canvas for drawing -->
     <canvas id="canvas"></canvas>
-
-    <!-- The crayon image (click to activate drawing) -->
     <img
       id="crayon"
       src="Gray+Crayon.png"
       alt="Crayon"
       onclick="activateCrayon()"
     />
-
-    <!-- Mirror link (initially hidden, grows when threshold is met) -->
     <a
       id="mirror-link"
       href="https://coloringwithgray.github.io/reflection/"
