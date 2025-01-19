@@ -14,7 +14,6 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const crayon = document.getElementById("crayon");
 const mirrorLink = document.getElementById("mirror-link");
-const welcomeMessage = document.getElementById("welcome-message");
 
 /****************************
  *  State Variables
@@ -129,19 +128,16 @@ function checkCanvasColored() {
     `Colored approx: ${approxColored} of ${totalPixels} => ${coloredPercentage.toFixed(2)}%`
   );
 
-  // 1.37% threshold (adjust as you wish)
+  // 1.37% threshold (adjust if you wish)
   if (coloredPercentage >= 1.37) {
     mirrorLink.style.display = "block";
-    // Add glowing pulse
+    // Add a glowing pulse
     mirrorLink.classList.add("mirror-glow");
-    // Reveal welcome message
-    welcomeMessage.classList.add("show");
-    debugLog("Mirror displayed and welcome message revealed.");
+    debugLog("Mirror displayed with glow effect.");
   } else {
-    // If you want to remove the glow again if user hasn't colored enough:
-    // mirrorLink.classList.remove("mirror-glow");
+    // If you want to hide the mirror again below threshold:
     // mirrorLink.style.display = "none";
-    // welcomeMessage.classList.remove("show");
+    // mirrorLink.classList.remove("mirror-glow");
     debugLog("Not enough colored pixels yet.");
   }
 }
