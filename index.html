@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="styles.css" />
   <!-- Defer the JS so it doesn't block HTML parsing -->
   <script src="script.js" defer></script>
-  <!-- Google font (if desired) -->
+  <!-- Google font (if needed) -->
   <link
     rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap"
@@ -27,7 +27,7 @@
       onclick="activateCrayon()"
     />
 
-    <!-- Mirror link (hidden until threshold is met) -->
+    <!-- Mirror link (initially hidden, grows when threshold is met) -->
     <a
       id="mirror-link"
       href="https://coloringwithgray.github.io/reflection/"
@@ -41,12 +41,6 @@
         ></iframe>
       </div>
     </a>
-
-    <!-- Welcome/unlock message (hidden by default) -->
-    <div id="welcome-message" class="welcome-message">
-      <p>Congratulations! You’ve unlocked the reflection.</p>
-      <p>Click the mirror to continue.</p>
-    </div>
   </div>
 </body>
 </html>
