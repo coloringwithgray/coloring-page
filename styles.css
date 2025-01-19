@@ -1,15 +1,20 @@
-/* Hide default cursor if .hide-cursor is applied to body */
+/************************************
+ *    HIDE DEFAULT CURSOR ON BODY
+ ************************************/
 .hide-cursor {
   cursor: none !important;
 }
 
-/* Basic resets */
-body, html {
+/************************************
+ *    BASIC PAGE & CONTAINER STYLE
+ ************************************/
+html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow: hidden;
+  overflow: hidden; /* Prevent scrolling */
   background-color: white;
+  font-family: 'Amatic SC', sans-serif; /* Optional */
 }
 
 .container {
@@ -21,15 +26,19 @@ body, html {
   justify-content: center;
 }
 
-/* Canvas full-screen */
+/************************************
+ *    CANVAS
+ ************************************/
 #canvas {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 1;
+  z-index: 1; /* Canvas behind other elements */
 }
 
-/* Crayon in the middle */
+/************************************
+ *    CRAYON
+ ************************************/
 #crayon {
   position: absolute;
   display: block;
@@ -37,58 +46,65 @@ body, html {
   top: 50%;
   left: 50%;
   cursor: pointer;
-  z-index: 2;
+  z-index: 3; /* Ensure it's on top so it's clickable */
 }
 
-/* Mirror link hidden initially */
+/************************************
+ *    MIRROR LINK (PORTAL)
+ ************************************/
 #mirror-link {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  
+  /* Hidden initially so it won't block clicks */
   display: none;
+  
   width: 300px; 
   height: 200px;
-  cursor: pointer;
-  z-index: 3;
+  pointer-events: auto;
+  
+  /* We want it above the crayon once visible */
+  z-index: 4; 
 }
 
-/* The round mirror container */
+/* The actual circular mirror container */
 #mirror {
   width: 100%;
   height: 100%;
-  transform: scaleX(-1);
-  overflow: hidden;
+  transform: scaleX(-1); /* Flip horizontally */
   border-radius: 50%;
-
-  /* Remove the existing static shadow 
-     so we can clearly see our glow animation: */
+  overflow: hidden;
+  pointer-events: none; /* So clicks go to #mirror-link */
+  /* Removing any static box-shadow so we can see the glow clearly */
   box-shadow: none;
-  pointer-events: none;
 }
 
+/* The mirrored iframe content */
 #mirror iframe {
   width: 100%;
   height: 100%;
   border: none;
-  transform: scaleX(-1);
+  transform: scaleX(-1); /* Flip back the content */
   pointer-events: none;
 }
 
-/* HOT-PINK GLOW ANIMATION for clarity */
+/************************************
+ *    GLOW ANIMATION
+ ************************************/
 @keyframes glow {
   0% {
-    box-shadow: 0 0 0 0 rgba(255, 0, 255, 0.7);
+    box-shadow: 0 0 0 0 rgba(255, 0, 255, 0.6);
   }
   50% {
-    box-shadow: 0 0 20px 10px rgba(255, 0, 255, 0.7);
+    box-shadow: 0 0 20px 10px rgba(255, 0, 255, 0.8);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(255, 0, 255, 0.7);
+    box-shadow: 0 0 0 0 rgba(255, 0, 255, 0.6);
   }
 }
 
-/* Apply glow animation to the #mirror, not #mirror-link */
 .mirror-glow {
   animation: glow 1.5s infinite;
   border-radius: 50%;
