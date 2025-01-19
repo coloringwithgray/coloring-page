@@ -114,34 +114,34 @@ function checkCanvasColored() {
   // Skip pixels (check every 10th) for performance
   const skipFactor = 10;
   for (let i = 0; i < imageData.length; i += 4 * skipFactor) {
-    // Check R, G, B => imageData[i], imageData[i+1], imageData[i+2]
     if (
-      imageData[i] === 128 &&
-      imageData[i + 1] === 128 &&
-      imageData[i + 2] === 128
+      imageData[i] === 128 &&    // R
+      imageData[i + 1] === 128 &&// G
+      imageData[i + 2] === 128   // B
     ) {
       coloredPixels++;
     }
   }
 
-  // Multiply back because we skipped
   const approxColored = coloredPixels * skipFactor;
   const coloredPercentage = (approxColored / totalPixels) * 100;
   debugLog(
-    `Colored approx: ${approxColored} of ${totalPixels} => ${coloredPercentage.toFixed(
-      2
-    )}%`
+    `Colored approx: ${approxColored} of ${totalPixels} => ${coloredPercentage.toFixed(2)}%`
   );
 
-  // 1.37% threshold from original code
+  // 1.37% threshold (adjust as you wish)
   if (coloredPercentage >= 1.37) {
     mirrorLink.style.display = "block";
-    debugLog("Mirror displayed.");
-
-    // NEW: Reveal welcome message
+    // Add glowing pulse
+    mirrorLink.classList.add("mirror-glow");
+    // Reveal welcome message
     welcomeMessage.classList.add("show");
-    debugLog("Welcome message revealed.");
+    debugLog("Mirror displayed and welcome message revealed.");
   } else {
+    // If you want to remove the glow again if user hasn't colored enough:
+    // mirrorLink.classList.remove("mirror-glow");
+    // mirrorLink.style.display = "none";
+    // welcomeMessage.classList.remove("show");
     debugLog("Not enough colored pixels yet.");
   }
 }
