@@ -60,7 +60,7 @@ function drawLine(x, y, fromX, fromY) {
 let lastMoveTime = 0;
 function throttledPointerMove(e) {
   const now = Date.now();
-  if (now - lastMoveTime < 33) return; // 33ms => ~30fps
+  if (now - lastMoveTime < 33) return;
   lastMoveTime = now;
   handlePointerMove(e);
 }
@@ -101,7 +101,7 @@ function checkCanvasColored() {
   let coloredPixels = 0;
   const totalPixels = canvas.width * canvas.height;
 
-  // Skip some pixels to improve performance
+  // Skip some pixels for performance
   const skipFactor = 10;
   for (let i = 0; i < imageData.length; i += 4 * skipFactor) {
     // Check if pixel is "gray" (128,128,128)
@@ -118,13 +118,13 @@ function checkCanvasColored() {
   const coloredPercentage = (approxColored / totalPixels) * 100;
   console.log(`Colored: ${coloredPercentage.toFixed(2)}%`);
 
-  // 1.37% threshold from your original code. Adjust as needed.
+  // 1.37% threshold from your original code
   if (coloredPercentage >= 1.37) {
     // Show mirror link
     mirrorLink.style.display = 'block';
-    // Add glow to the circular mirror div
+    // Add glow to the #mirror div
     mirrorDiv.classList.add('mirror-glow');
-    console.log('Mirror displayed with glow.');
+    console.log('Mirror displayed with dark grey glow.');
   }
 }
 
