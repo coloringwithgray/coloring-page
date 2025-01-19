@@ -1,26 +1,30 @@
 /****************************
- *  Global Variables & Flags
+ *  Debug Logging (Optional)
  ****************************/
-const DEBUG_MODE = false; // Set to true if you want console logs
+const DEBUG_MODE = false; // Set to true to see console logs
 
 function debugLog(...args) {
   if (DEBUG_MODE) console.log(...args);
 }
 
-// Get DOM references
+/****************************
+ *  DOM Elements
+ ****************************/
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const crayon = document.getElementById("crayon");
 const mirrorLink = document.getElementById("mirror-link");
 
-// State variables
+/****************************
+ *  State Variables
+ ****************************/
 let isDrawing = false;
 let lastX = 0;
 let lastY = 0;
 let crayonActive = false;
 
 /****************************
- *  Canvas Initialization
+ *  Initialize Canvas
  ****************************/
 function initializeCanvas() {
   canvas.width = window.innerWidth;
@@ -34,17 +38,17 @@ window.addEventListener("resize", initializeCanvas);
 initializeCanvas();
 
 /****************************
- *  Crayon Activation
+ *  Activate Crayon
  ****************************/
 function activateCrayon() {
   crayonActive = true;
-  // Hide default mouse cursor, but we show the crayon
-  crayon.style.cursor = "none";
+  // Hide the default cursor on the entire page
+  document.body.classList.add("hide-cursor");
   debugLog("Crayon activated.");
 }
 
 /****************************
- *  Drawing Logic
+ *  Draw Function
  ****************************/
 function drawLine(x, y, lastX, lastY) {
   ctx.globalCompositeOperation = "source-over";
@@ -60,12 +64,11 @@ function drawLine(x, y, lastX, lastY) {
 /****************************
  *  Pointer Event Handlers
  ****************************/
-// Throttle pointer moves (e.g., ~30 fps)
+// Throttle pointer moves (~30 fps)
 let lastMoveTime = 0;
 function throttledPointerMove(e) {
   const now = Date.now();
-  // ~33 ms interval => ~30 fps
-  if (now - lastMoveTime < 33) return;
+  if (now - lastMoveTime < 33) return; // ~33ms => 30 fps
   lastMoveTime = now;
   handlePointerMove(e);
 }
@@ -73,27 +76,20 @@ function throttledPointerMove(e) {
 function handlePointerDown(e) {
   if (!crayonActive) return;
   isDrawing = true;
-
-  // Record starting position
   lastX = e.clientX;
   lastY = e.clientY;
-
-  // Show crayon
+  // Show the crayon image
   crayon.style.display = "block";
   moveCrayon(e.clientX, e.clientY);
-
-  debugLog("Pointer down. Drawing started.");
+  debugLog("Pointer down: drawing started.");
 }
 
 function handlePointerMove(e) {
   if (isDrawing) {
-    // Draw
     drawLine(e.clientX, e.clientY, lastX, lastY);
     lastX = e.clientX;
     lastY = e.clientY;
   }
-
-  // Move crayon if active
   if (crayonActive) {
     moveCrayon(e.clientX, e.clientY);
   }
@@ -103,34 +99,40 @@ function handlePointerUp() {
   if (!crayonActive) return;
   isDrawing = false;
   checkCanvasColored();
-  debugLog("Pointer up. Drawing stopped.");
+  debugLog("Pointer up: drawing stopped.");
 }
 
 /****************************
- *  Pixel Check Optimization
+ *  Check Canvas Colored
  ****************************/
 function checkCanvasColored() {
-  // Get pixel data
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
   let coloredPixels = 0;
   const totalPixels = canvas.width * canvas.height;
 
-  // Skip some pixels to reduce overhead (check every 10th pixel)
-  for (let i = 0; i < imageData.length; i += 4 * 10) {
-    // We only check the R, G, B in [i, i+1, i+2]
-    if (imageData[i] === 128 && imageData[i + 1] === 128 && imageData[i + 2] === 128) {
+  // Skip pixels (check every 10th) for performance
+  const skipFactor = 10;
+  for (let i = 0; i < imageData.length; i += 4 * skipFactor) {
+    // Check R, G, B => imageData[i], imageData[i+1], imageData[i+2]
+    if (
+      imageData[i] === 128 &&
+      imageData[i + 1] === 128 &&
+      imageData[i + 2] === 128
+    ) {
       coloredPixels++;
     }
   }
 
-  const skipFactor = 10; // We checked every 10th pixel
-  // Adjust the count accordingly
-  const approxColored = coloredPixels * skipFactor; 
+  // Multiply back because we skipped
+  const approxColored = coloredPixels * skipFactor;
   const coloredPercentage = (approxColored / totalPixels) * 100;
+  debugLog(
+    `Colored approx: ${approxColored} of ${totalPixels} => ${coloredPercentage.toFixed(
+      2
+    )}%`
+  );
 
-  debugLog(`Colored approx: ${approxColored} of ${totalPixels} => ${coloredPercentage.toFixed(2)}%`);
-
-  // 1.37% threshold from your original code
+  // 1.37% threshold from original code
   if (coloredPercentage >= 1.37) {
     mirrorLink.style.display = "block";
     debugLog("Mirror displayed.");
@@ -140,7 +142,7 @@ function checkCanvasColored() {
 }
 
 /****************************
- *  Crayon Movement
+ *  Move Crayon
  ****************************/
 function moveCrayon(x, y) {
   crayon.style.left = `${x - 15}px`;
@@ -155,4 +157,4 @@ canvas.addEventListener("pointermove", throttledPointerMove);
 canvas.addEventListener("pointerup", handlePointerUp);
 canvas.addEventListener("pointercancel", handlePointerUp);
 
-debugLog("Script loaded successfully.");
+debugLog("Script loaded.");
