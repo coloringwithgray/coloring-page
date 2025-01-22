@@ -1,66 +1,74 @@
-/*******************************
- *  DOM References
- *******************************/
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const crayon = document.getElementById('crayon');
-const mirrorLink = document.getElementById('mirror-link');
-const mirrorDiv = document.getElementById('mirror');
+/****************************
+ *  Debug Logging (Optional)
+ ****************************/
+const DEBUG_MODE = false; // Set to true to see console logs
 
-/*******************************
+function debugLog(...args) {
+  if (DEBUG_MODE) console.log(...args);
+}
+
+/****************************
+ *  DOM Elements
+ ****************************/
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const crayon = document.getElementById("crayon");
+const mirrorLink = document.getElementById("mirror-link");
+
+/****************************
  *  State Variables
- *******************************/
+ ****************************/
 let isDrawing = false;
 let lastX = 0;
 let lastY = 0;
 let crayonActive = false;
 
-/*******************************
+/****************************
  *  Initialize Canvas
- *******************************/
+ ****************************/
 function initializeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  ctx.fillStyle = 'white';
+  ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  console.log('Canvas initialized.');
+  debugLog("Canvas initialized.");
 }
 
-window.addEventListener('resize', initializeCanvas);
+window.addEventListener("resize", initializeCanvas);
 initializeCanvas();
 
-/*******************************
+/****************************
  *  Activate Crayon
- *******************************/
+ ****************************/
 function activateCrayon() {
   crayonActive = true;
   // Hide the default cursor on the entire page
-  document.body.classList.add('hide-cursor');
-  console.log('Crayon activated.');
+  document.body.classList.add("hide-cursor");
+  debugLog("Crayon activated.");
 }
 
-/*******************************
- *  Draw Helper
- *******************************/
-function drawLine(x, y, fromX, fromY) {
-  ctx.globalCompositeOperation = 'source-over';
-  ctx.strokeStyle = 'gray';
+/****************************
+ *  Draw Function
+ ****************************/
+function drawLine(x, y, lastX, lastY) {
+  ctx.globalCompositeOperation = "source-over";
+  ctx.strokeStyle = "gray";
   ctx.lineWidth = 15;
-  ctx.lineCap = 'round';
+  ctx.lineCap = "round";
   ctx.beginPath();
-  ctx.moveTo(fromX, fromY);
+  ctx.moveTo(lastX, lastY);
   ctx.lineTo(x, y);
   ctx.stroke();
 }
 
-/*******************************
- *  Pointer Handlers
- *******************************/
-// Throttle pointer move events (~30 FPS)
+/****************************
+ *  Pointer Event Handlers
+ ****************************/
+// Throttle pointer moves (~30 fps)
 let lastMoveTime = 0;
 function throttledPointerMove(e) {
   const now = Date.now();
-  if (now - lastMoveTime < 33) return;
+  if (now - lastMoveTime < 33) return; // ~33ms => 30 fps
   lastMoveTime = now;
   handlePointerMove(e);
 }
@@ -70,9 +78,10 @@ function handlePointerDown(e) {
   isDrawing = true;
   lastX = e.clientX;
   lastY = e.clientY;
-  crayon.style.display = 'block';
+  // Show the crayon image
+  crayon.style.display = "block";
   moveCrayon(e.clientX, e.clientY);
-  console.log('Pointer down: drawing started.');
+  debugLog("Pointer down: drawing started.");
 }
 
 function handlePointerMove(e) {
@@ -90,21 +99,21 @@ function handlePointerUp() {
   if (!crayonActive) return;
   isDrawing = false;
   checkCanvasColored();
-  console.log('Pointer up: drawing stopped.');
+  debugLog("Pointer up: drawing stopped.");
 }
 
-/*******************************
- *  Check How Much is Colored
- *******************************/
+/****************************
+ *  Check Canvas Colored
+ ****************************/
 function checkCanvasColored() {
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
   let coloredPixels = 0;
   const totalPixels = canvas.width * canvas.height;
 
-  // Skip some pixels for performance
+  // Skip pixels (check every 10th) for performance
   const skipFactor = 10;
   for (let i = 0; i < imageData.length; i += 4 * skipFactor) {
-    // Check if pixel is "gray" (128,128,128)
+    // Check R, G, B => imageData[i], imageData[i+1], imageData[i+2]
     if (
       imageData[i] === 128 &&
       imageData[i + 1] === 128 &&
@@ -114,34 +123,38 @@ function checkCanvasColored() {
     }
   }
 
+  // Multiply back because we skipped
   const approxColored = coloredPixels * skipFactor;
   const coloredPercentage = (approxColored / totalPixels) * 100;
-  console.log(`Colored: ${coloredPercentage.toFixed(2)}%`);
+  debugLog(
+    `Colored approx: ${approxColored} of ${totalPixels} => ${coloredPercentage.toFixed(
+      2
+    )}%`
+  );
 
-  // 1.37% threshold from your original code
+  // 1.37% threshold from original code
   if (coloredPercentage >= 1.37) {
-    // Show mirror link
-    mirrorLink.style.display = 'block';
-    // Add glow to the #mirror div
-    mirrorDiv.classList.add('mirror-glow');
-    console.log('Mirror displayed with dark grey glow.');
+    mirrorLink.style.display = "block";
+    debugLog("Mirror displayed.");
+  } else {
+    debugLog("Not enough colored pixels yet.");
   }
 }
 
-/*******************************
- *  Move Crayon (Cursor)
- *******************************/
+/****************************
+ *  Move Crayon
+ ****************************/
 function moveCrayon(x, y) {
   crayon.style.left = `${x - 15}px`;
   crayon.style.top = `${y - 50}px`;
 }
 
-/*******************************
+/****************************
  *  Register Pointer Events
- *******************************/
-canvas.addEventListener('pointerdown', handlePointerDown);
-canvas.addEventListener('pointermove', throttledPointerMove);
-canvas.addEventListener('pointerup', handlePointerUp);
-canvas.addEventListener('pointercancel', handlePointerUp);
+ ****************************/
+canvas.addEventListener("pointerdown", handlePointerDown);
+canvas.addEventListener("pointermove", throttledPointerMove);
+canvas.addEventListener("pointerup", handlePointerUp);
+canvas.addEventListener("pointercancel", handlePointerUp);
 
-console.log('Script loaded.');
+debugLog("Script loaded.");
