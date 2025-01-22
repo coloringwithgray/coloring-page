@@ -13,18 +13,13 @@
 </head>
 <body>
   <div class="container">
-    <!-- The canvas for drawing -->
     <canvas id="canvas"></canvas>
-
-    <!-- The crayon image (click to activate drawing) -->
     <img
       id="crayon"
       src="Gray+Crayon.png"
       alt="Crayon"
       onclick="activateCrayon()"
     />
-
-    <!-- Mirror link (hidden until threshold is met) -->
     <a
       id="mirror-link"
       href="https://coloringwithgray.github.io/reflection/"
@@ -38,6 +33,12 @@
         ></iframe>
       </div>
     </a>
+
+    <!-- NEW: Hidden welcome/unlock message -->
+    <div id="welcome-message" class="welcome-message">
+      <p>Congratulations! You’ve unlocked the reflection.</p>
+      <p>Click the mirror to continue.</p>
+    </div>
   </div>
 </body>
 </html>
