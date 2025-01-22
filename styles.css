@@ -71,6 +71,7 @@ html, body {
 
 /* The actual circular mirror container */
 #mirror {
+  position: relative; /* Added for pseudo-element positioning */
   width: 100%;
   height: 100%;
   transform: scaleX(-1); /* Flip horizontally */
@@ -78,6 +79,20 @@ html, body {
   overflow: hidden;
   pointer-events: none; /* So clicks go to #mirror-link */
   box-shadow: none; /* We’ll rely on the glow animation */
+}
+
+/* Optional: Gradient Overlay */
+#mirror::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1), rgba(70, 130, 180, 0.3));
+  border-radius: 50%;
+  pointer-events: none;
+  mix-blend-mode: overlay;
 }
 
 /* The mirrored iframe content */
@@ -90,21 +105,64 @@ html, body {
 }
 
 /************************************
- *    DARK GREY GLOW ANIMATION
+ *    LOADING OVERLAY
  ************************************/
-@keyframes glow {
+#loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: gray;
+  z-index: 5; /* Above the iframe */
+}
+
+#mirror.loaded #loading-overlay {
+  display: none;
+}
+
+/************************************
+ *    WAVY FUTURISTIC GLOW ANIMATION
+ ************************************/
+@keyframes wavy-glow {
   0% {
-    box-shadow: 0 0 0 0 rgba(50, 50, 50, 0.6);
+    box-shadow: 0 0 20px 5px rgba(70, 130, 180, 0.4),
+                0 0 40px 10px rgba(70, 130, 180, 0.3),
+                0 0 60px 15px rgba(70, 130, 180, 0.2);
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    box-shadow: 0 0 30px 10px rgba(70, 130, 180, 0.5),
+                0 0 50px 15px rgba(70, 130, 180, 0.35),
+                0 0 70px 20px rgba(70, 130, 180, 0.25);
+    transform: rotate(10deg) scale(1.05);
   }
   50% {
-    box-shadow: 0 0 25px 10px rgba(50, 50, 50, 0.7);
+    box-shadow: 0 0 20px 5px rgba(70, 130, 180, 0.4),
+                0 0 40px 10px rgba(70, 130, 180, 0.3),
+                0 0 60px 15px rgba(70, 130, 180, 0.2);
+    transform: rotate(0deg) scale(1);
+  }
+  75% {
+    box-shadow: 0 0 30px 10px rgba(70, 130, 180, 0.5),
+                0 0 50px 15px rgba(70, 130, 180, 0.35),
+                0 0 70px 20px rgba(70, 130, 180, 0.25);
+    transform: rotate(-10deg) scale(0.95);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(50, 50, 50, 0.6);
+    box-shadow: 0 0 20px 5px rgba(70, 130, 180, 0.4),
+                0 0 40px 10px rgba(70, 130, 180, 0.3),
+                0 0 60px 15px rgba(70, 130, 180, 0.2);
+    transform: rotate(0deg) scale(1);
   }
 }
 
 .mirror-glow {
-  animation: glow 1.5s infinite;
+  animation: wavy-glow 3s infinite ease-in-out;
   border-radius: 50%; /* ensure the glow remains circular */
 }
