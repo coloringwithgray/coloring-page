@@ -1,19 +1,22 @@
-/* Hide default cursor if .hide-cursor is applied to body */
+/************************************
+ *    HIDE DEFAULT CURSOR ON BODY
+ ************************************/
 .hide-cursor {
   cursor: none !important;
 }
 
-/* Reset default styles for body and html */
-body,
-html {
+/************************************
+ *    BASIC PAGE & CONTAINER STYLE
+ ************************************/
+html, body {
   margin: 0;
   padding: 0;
   height: 100%;
   overflow: hidden; /* Prevent scrolling */
-  background-color: white; /* Set a default background color */
+  background-color: white;
+  font-family: 'Amatic SC', sans-serif; /* Optional */
 }
 
-/* Ensure the container fills the entire viewport */
 .container {
   position: relative;
   width: 100%;
@@ -23,77 +26,85 @@ html {
   justify-content: center;
 }
 
-/* Canvas should cover the entire container */
+/************************************
+ *    CANVAS
+ ************************************/
 #canvas {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 1; /* Ensure canvas is below other elements */
+  z-index: 1; /* Canvas behind other elements */
 }
 
-/* Crayon positioning and styling */
+/************************************
+ *    CRAYON
+ ************************************/
 #crayon {
   position: absolute;
   display: block;
-  transform: translate(-50%, -50%) scale(0.3); /* Center and scale down */
-  top: 50%; /* Center vertically */
-  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%) scale(0.3);
+  top: 50%;
+  left: 50%;
   cursor: pointer;
-  z-index: 2; /* Above canvas */
+  z-index: 3; /* Above canvas so it's clickable */
 }
 
-/* Mirror link positioning and styling */
+/************************************
+ *    MIRROR LINK (PORTAL)
+ ************************************/
 #mirror-link {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  display: none; /* Initially hidden */
   
-  /* Increase the portal size here */
-  width: 600px;  /* <-- Increased from 300px */
-  height: 400px; /* <-- Increased from 200px */
-  
-  cursor: pointer;
-  pointer-events: auto; /* Enable pointer events */
-  transition: transform 1s ease-in-out, width 1s ease-in-out, height 1s ease-in-out;
-  z-index: 3; /* Ensure it is above canvas and crayon */
+  /* Hidden initially so it won't block crayon clicks */
+  display: none;
+
+  /* Increase the portal size (perfect circle) */
+  width: 400px;
+  height: 400px;
+
+  pointer-events: auto;
+  z-index: 4; /* Above the crayon after threshold is met */
 }
 
-/* Mirror container styling */
+/* The actual circular mirror container */
 #mirror {
   width: 100%;
   height: 100%;
   transform: scaleX(-1); /* Flip horizontally */
+  border-radius: 50%;
   overflow: hidden;
-  border-radius: 50%; /* Circular shape */
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-  pointer-events: none; /* So clicks pass through to #mirror-link */
+  pointer-events: none; /* So clicks go to #mirror-link */
+  box-shadow: none; /* We’ll rely on the glow animation */
 }
 
-/* Mirror iframe styling */
+/* The mirrored iframe content */
 #mirror iframe {
   width: 100%;
   height: 100%;
-  border: none; /* Remove border */
-  transform: scaleX(-1); /* Flip iframe content */
+  border: none;
+  transform: scaleX(-1); /* Flip back the content */
   pointer-events: none;
 }
 
-/* Animate the mirror link with a glowing pulse (optional) */
+/************************************
+ *    DARK GREY GLOW ANIMATION
+ ************************************/
 @keyframes glow {
   0% {
-    box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 0 0 rgba(50, 50, 50, 0.6);
   }
   50% {
-    box-shadow: 0 0 25px 8px rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 25px 10px rgba(50, 50, 50, 0.7);
   }
   100% {
-    box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 0 0 rgba(50, 50, 50, 0.6);
   }
 }
 
 .mirror-glow {
-  animation: glow 2s infinite;
-  border-radius: 50%; /* Keep the glow circle shape */
+  animation: glow 1.5s infinite;
+  border-radius: 50%; /* ensure the glow remains circular */
 }
