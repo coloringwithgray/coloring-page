@@ -113,30 +113,31 @@ function checkCanvasColored() {
   // Skip pixels (check every 10th) for performance
   const skipFactor = 10;
   for (let i = 0; i < imageData.length; i += 4 * skipFactor) {
-    // Check R, G, B => imageData[i], imageData[i+1], imageData[i+2]
     if (
-      imageData[i] === 128 &&
-      imageData[i + 1] === 128 &&
-      imageData[i + 2] === 128
+      imageData[i] === 128 &&    // R
+      imageData[i + 1] === 128 &&// G
+      imageData[i + 2] === 128   // B
     ) {
       coloredPixels++;
     }
   }
 
-  // Multiply back because we skipped
   const approxColored = coloredPixels * skipFactor;
   const coloredPercentage = (approxColored / totalPixels) * 100;
   debugLog(
-    `Colored approx: ${approxColored} of ${totalPixels} => ${coloredPercentage.toFixed(
-      2
-    )}%`
+    `Colored approx: ${approxColored} of ${totalPixels} => ${coloredPercentage.toFixed(2)}%`
   );
 
-  // 1.37% threshold from original code
+  // 1.37% threshold (adjust if you wish)
   if (coloredPercentage >= 1.37) {
     mirrorLink.style.display = "block";
-    debugLog("Mirror displayed.");
+    // Add a glowing pulse
+    mirrorLink.classList.add("mirror-glow");
+    debugLog("Mirror displayed with glow effect.");
   } else {
+    // If you want to hide the mirror again below threshold:
+    // mirrorLink.style.display = "none";
+    // mirrorLink.classList.remove("mirror-glow");
     debugLog("Not enough colored pixels yet.");
   }
 }
