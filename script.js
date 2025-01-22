@@ -137,27 +137,11 @@ function moveCrayon(x, y) {
 }
 
 /*******************************
- *  Hide Loading Overlay When Iframe Loads
- *******************************/
-function hideLoadingOverlay() {
-  mirrorDiv.classList.add('loaded');
-}
-
-// Ensure the loading overlay is visible initially
-mirrorLink.classList.remove('loaded');
-
-/*******************************
  *  Register Pointer Events
  *******************************/
 canvas.addEventListener('pointerdown', handlePointerDown);
 canvas.addEventListener('pointermove', throttledPointerMove);
 canvas.addEventListener('pointerup', handlePointerUp);
 canvas.addEventListener('pointercancel', handlePointerUp);
-
-/*******************************
- *  Register Iframe Load Event
- *******************************/
-const iframe = document.getElementById('mirror-iframe');
-iframe.addEventListener('load', hideLoadingOverlay);
 
 console.log('Script loaded.');
