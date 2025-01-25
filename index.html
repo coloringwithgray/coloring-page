@@ -4,10 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Coloring with Gray</title>
-  <!-- Link to optimized CSS -->
   <link rel="stylesheet" href="styles.css" />
-  <!-- Deferred JavaScript to ensure DOM is parsed first -->
   <script src="script.js" defer></script>
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap"
+  />
 </head>
 <body>
   <div class="container">
@@ -19,14 +21,11 @@
       id="crayon"
       src="Gray+Crayon.png"
       alt="Crayon"
-      role="button"
-      aria-label="Activate crayon for drawing"
-      tabindex="0"
-      class="crayon"
+      onclick="activateCrayon()"
     />
 
     <!-- Portal effect container -->
-    <div id="portal-container" class="hidden" aria-hidden="true">
+    <div id="portal-container" class="hidden">
       <div id="portal-glow"></div>
       <canvas id="portal-canvas"></canvas>
     </div>
