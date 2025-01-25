@@ -1,159 +1,110 @@
-/*******************************
- *  DOM References
- *******************************/
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-const crayon = document.getElementById("crayon");
-const portalContainer = document.getElementById("portal-container");
-const portalCanvas = document.getElementById("portal-canvas");
-const portalCtx = portalCanvas.getContext("2d");
-
-/*******************************
- *  State Variables
- *******************************/
-let isDrawing = false;
-let lastX = 0;
-let lastY = 0;
-let crayonActive = false;
-let portalActive = false;
-
-/*******************************
- *  Initialize Canvas
- *******************************/
-function initializeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  ctx.fillStyle = "white";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  // Initialize portal canvas size
-  portalCanvas.width = 400;
-  portalCanvas.height = 400;
+/************************************
+ *    HIDE DEFAULT CURSOR ON BODY
+ ************************************/
+.hide-cursor {
+  cursor: none !important;
 }
 
-window.addEventListener("resize", initializeCanvas);
-initializeCanvas();
-
-/*******************************
- *  Activate Crayon
- *******************************/
-function activateCrayon() {
-  crayonActive = true;
-  document.body.classList.add("hide-cursor");
+/************************************
+ *    BASIC PAGE & CONTAINER STYLE
+ ************************************/
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden; /* Prevent scrolling */
+  background-color: white;
+  font-family: 'Amatic SC', sans-serif; /* Optional */
 }
 
-/*******************************
- *  Draw Helper
- *******************************/
-function drawLine(x, y, fromX, fromY) {
-  ctx.globalCompositeOperation = "source-over";
-  ctx.strokeStyle = "gray";
-  ctx.lineWidth = 15;
-  ctx.lineCap = "round";
-  ctx.beginPath();
-  ctx.moveTo(fromX, fromY);
-  ctx.lineTo(x, y);
-  ctx.stroke();
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/*******************************
- *  Pointer Handlers
- *******************************/
-function handlePointerDown(e) {
-  if (!crayonActive) return;
-  isDrawing = true;
-  lastX = e.clientX;
-  lastY = e.clientY;
-  moveCrayon(e.clientX, e.clientY);
+/************************************
+ *    CANVAS
+ ************************************/
+#canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1; /* Canvas behind other elements */
 }
 
-function handlePointerMove(e) {
-  if (!isDrawing && !crayonActive) return;
-  moveCrayon(e.clientX, e.clientY);
-  if (isDrawing) {
-    drawLine(e.clientX, e.clientY, lastX, lastY);
-    lastX = e.clientX;
-    lastY = e.clientY;
+/************************************
+ *    CRAYON
+ ************************************/
+#crayon {
+  position: absolute;
+  display: block;
+  transform: translate(-50%, -50%) scale(0.3);
+  top: 50%;
+  left: 50%;
+  cursor: pointer;
+  z-index: 3; /* Above canvas so it's clickable */
+}
+
+/************************************
+ *    MIRROR LINK (PORTAL)
+ ************************************/
+#mirror-link {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+  /* Hidden initially so it won't block crayon clicks */
+  display: none;
+
+  /* Increase the portal size (perfect circle) */
+  width: 400px;
+  height: 400px;
+
+  pointer-events: auto;
+  z-index: 4; /* Above the crayon after threshold is met */
+}
+
+/* The actual circular mirror container */
+#mirror {
+  width: 100%;
+  height: 100%;
+  transform: scaleX(-1); /* Flip horizontally */
+  border-radius: 50%;
+  overflow: hidden;
+  pointer-events: none; /* So clicks go to #mirror-link */
+  box-shadow: none; /* We’ll rely on the glow animation */
+}
+
+/* The mirrored iframe content */
+#mirror iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  transform: scaleX(-1); /* Flip back the content */
+  pointer-events: none;
+}
+
+/************************************
+ *    DARK GREY GLOW ANIMATION
+ ************************************/
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(50, 50, 50, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 25px 10px rgba(50, 50, 50, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(50, 50, 50, 0.6);
   }
 }
 
-function handlePointerUp() {
-  if (!crayonActive) return;
-  isDrawing = false;
-  checkCanvasColored();
+.mirror-glow {
+  animation: glow 1.5s infinite;
+  border-radius: 50%; /* ensure the glow remains circular */
 }
-
-/*******************************
- *  Check How Much is Colored
- *******************************/
-function checkCanvasColored() {
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-  let coloredPixels = 0;
-  const totalPixels = canvas.width * canvas.height;
-
-  // Skip some pixels for performance
-  const skipFactor = 10;
-  for (let i = 0; i < imageData.length; i += 4 * skipFactor) {
-    if (imageData[i] === 128 && imageData[i + 1] === 128 && imageData[i + 2] === 128) {
-      coloredPixels++;
-    }
-  }
-
-  const coloredPercentage = ((coloredPixels * skipFactor) / totalPixels) * 100;
-
-  if (coloredPercentage >= 1.37 && !portalActive) {
-    portalActive = true;
-    showPortal();
-  }
-}
-
-/*******************************
- *  Show Portal
- *******************************/
-function showPortal() {
-  portalContainer.classList.remove("hidden");
-
-  // Start the swirling animation
-  const particles = [];
-  for (let i = 0; i < 100; i++) {
-    particles.push({
-      angle: Math.random() * Math.PI * 2,
-      distance: Math.random() * 150,
-      speed: Math.random() * 0.05 + 0.01,
-      size: Math.random() * 3 + 1,
-      color: `rgba(0, 150, 255, ${Math.random() * 0.8 + 0.2})`,
-    });
-  }
-
-  function drawSwirl() {
-    portalCtx.clearRect(0, 0, portalCanvas.width, portalCanvas.height);
-    particles.forEach((p) => {
-      p.angle += p.speed;
-      const x = portalCanvas.width / 2 + Math.cos(p.angle) * p.distance;
-      const y = portalCanvas.height / 2 + Math.sin(p.angle) * p.distance;
-      portalCtx.beginPath();
-      portalCtx.arc(x, y, p.size, 0, Math.PI * 2);
-      portalCtx.fillStyle = p.color;
-      portalCtx.fill();
-    });
-    requestAnimationFrame(drawSwirl);
-  }
-
-  drawSwirl();
-}
-
-/*******************************
- *  Move Crayon (Cursor)
- *******************************/
-function moveCrayon(x, y) {
-  crayon.style.left = `${x - canvas.offsetLeft - 15}px`;
-  crayon.style.top = `${y - canvas.offsetTop - 25}px`;
-}
-
-/*******************************
- *  Register Pointer Events
- *******************************/
-canvas.addEventListener("pointerdown", handlePointerDown);
-canvas.addEventListener("pointermove", handlePointerMove);
-canvas.addEventListener("pointerup", handlePointerUp);
-canvas.addEventListener("pointercancel", handlePointerUp);
