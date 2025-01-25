@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Coloring with Gray</title>
   <link rel="stylesheet" href="styles.css" />
   <script src="script.js" defer></script>
@@ -24,11 +24,20 @@
       onclick="activateCrayon()"
     />
 
-    <!-- Portal effect container -->
-    <div id="portal-container" class="hidden">
-      <div id="portal-glow"></div>
-      <canvas id="portal-canvas"></canvas>
-    </div>
+    <!-- Mirror link (hidden until threshold is met) -->
+    <a
+      id="mirror-link"
+      href="https://coloringwithgray.github.io/reflection/"
+      target="_blank"
+    >
+      <div id="mirror">
+        <iframe
+          id="mirror-iframe"
+          src="https://coloringwithgray.github.io/reflection/"
+          frameborder="0"
+        ></iframe>
+      </div>
+    </a>
   </div>
 </body>
 </html>
