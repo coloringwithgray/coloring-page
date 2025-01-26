@@ -1,147 +1,150 @@
 /*******************************
- *  DOM References
+ *    INITIALIZATION
  *******************************/
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const crayon = document.getElementById('crayon');
 const mirrorLink = document.getElementById('mirror-link');
-const mirrorDiv = document.getElementById('mirror');
 
-/*******************************
- *  State Variables
- *******************************/
+// State management
 let isDrawing = false;
-let lastX = 0;
-let lastY = 0;
 let crayonActive = false;
+let lastPos = { x: 0, y: 0 };
+
+// Performance variables
+const PIXEL_CHECK_INTERVAL = 1000; // Check every 1 second
+let lastCheckTime = 0;
 
 /*******************************
- *  Initialize Canvas
+ *    CANVAS SETUP
  *******************************/
-function initializeCanvas() {
+function initCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   ctx.fillStyle = 'white';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  console.log('Canvas initialized.');
 }
 
-window.addEventListener('resize', initializeCanvas);
-initializeCanvas();
+function handleResize() {
+  initCanvas();
+  if (crayonActive) {
+    crayon.style.display = 'block';
+  }
+}
+
+window.addEventListener('resize', handleResize);
+initCanvas();
 
 /*******************************
- *  Activate Crayon
+ *    CRAYON CONTROLS
  *******************************/
 function activateCrayon() {
   crayonActive = true;
-  // Hide the default cursor on the entire page
   document.body.classList.add('hide-cursor');
-  console.log('Crayon activated.');
+  crayon.style.display = 'block';
+  canvas.style.cursor = 'none';
+}
+
+function moveCrayon(x, y) {
+  crayon.style.transform = `translate(${x}px, ${y}px) scale(0.3)`;
 }
 
 /*******************************
- *  Draw Helper
+ *    DRAWING MECHANICS
  *******************************/
-function drawLine(x, y, fromX, fromY) {
-  ctx.globalCompositeOperation = 'source-over';
-  ctx.strokeStyle = 'gray';
+function startDrawing(x, y) {
+  isDrawing = true;
+  lastPos = { x, y };
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+}
+
+function draw(x, y) {
+  if (!isDrawing) return;
+  
   ctx.lineWidth = 15;
   ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(fromX, fromY);
+  ctx.strokeStyle = '#808080';
   ctx.lineTo(x, y);
   ctx.stroke();
+  lastPos = { x, y };
 }
 
 /*******************************
- *  Pointer Handlers
+ *    INPUT HANDLERS
  *******************************/
-// Throttle pointer move events (~30 FPS)
-let lastMoveTime = 0;
-function throttledPointerMove(e) {
-  const now = Date.now();
-  if (now - lastMoveTime < 33) return;
-  lastMoveTime = now;
-  handlePointerMove(e);
-}
-
-function handlePointerDown(e) {
+function handlePointerStart(e) {
   if (!crayonActive) return;
-  isDrawing = true;
-  lastX = e.clientX;
-  lastY = e.clientY;
-  crayon.style.display = 'block';
-  moveCrayon(e.clientX, e.clientY);
-  console.log('Pointer down: drawing started.');
+  const x = e.clientX || e.touches[0].clientX;
+  const y = e.clientY || e.touches[0].clientY;
+  startDrawing(x, y);
 }
 
 function handlePointerMove(e) {
-  if (isDrawing) {
-    drawLine(e.clientX, e.clientY, lastX, lastY);
-    lastX = e.clientX;
-    lastY = e.clientY;
-  }
-  if (crayonActive) {
-    moveCrayon(e.clientX, e.clientY);
+  if (!crayonActive) return;
+  const x = e.clientX || e.touches[0].clientX;
+  const y = e.clientY || e.touches[0].clientY;
+  
+  moveCrayon(x, y);
+  draw(x, y);
+  
+  // Throttled pixel check
+  const now = Date.now();
+  if (now - lastCheckTime > PIXEL_CHECK_INTERVAL) {
+    checkColoringProgress();
+    lastCheckTime = now;
   }
 }
 
-function handlePointerUp() {
-  if (!crayonActive) return;
+function handlePointerEnd() {
   isDrawing = false;
-  checkCanvasColored();
-  console.log('Pointer up: drawing stopped.');
+  ctx.closePath();
 }
 
 /*******************************
- *  Check How Much is Colored
+ *    PORTAL ACTIVATION
  *******************************/
-function checkCanvasColored() {
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-  let coloredPixels = 0;
-  const totalPixels = canvas.width * canvas.height;
+function checkColoringProgress() {
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imageData.data;
+  let grayCount = 0;
+  const sampleStep = 10; // Check every 10th pixel
 
-  // Skip some pixels for performance
-  const skipFactor = 10;
-  for (let i = 0; i < imageData.length; i += 4 * skipFactor) {
-    // Check if pixel is "gray" (128,128,128)
-    if (
-      imageData[i] === 128 &&
-      imageData[i + 1] === 128 &&
-      imageData[i + 2] === 128
-    ) {
-      coloredPixels++;
+  for (let i = 0; i < data.length; i += 4 * sampleStep) {
+    if (data[i] === 128 && data[i+1] === 128 && data[i+2] === 128) {
+      grayCount++;
     }
   }
 
-  const approxColored = coloredPixels * skipFactor;
-  const coloredPercentage = (approxColored / totalPixels) * 100;
-  console.log(`Colored: ${coloredPercentage.toFixed(2)}%`);
-
-  // 1.37% threshold from your original code
-  if (coloredPercentage >= 1.37) {
-    // Show mirror link
-    mirrorLink.style.display = 'block';
-    // Add glow to the #mirror div
-    mirrorDiv.classList.add('mirror-glow');
-    console.log('Mirror displayed with dark grey glow.');
+  const coverage = (grayCount * sampleStep * 100) / (canvas.width * canvas.height);
+  if (coverage >= 1.37 && !mirrorLink.classList.contains('visible')) {
+    revealPortal();
   }
 }
 
-/*******************************
- *  Move Crayon (Cursor)
- *******************************/
-function moveCrayon(x, y) {
-  crayon.style.left = `${x - 15}px`;
-  crayon.style.top = `${y - 50}px`;
+function revealPortal() {
+  mirrorLink.style.display = 'block';
+  setTimeout(() => mirrorLink.classList.add('visible'), 10);
+  mirrorLink.classList.add('mirror-glow');
 }
 
 /*******************************
- *  Register Pointer Events
+ *    EVENT LISTENERS
  *******************************/
-canvas.addEventListener('pointerdown', handlePointerDown);
-canvas.addEventListener('pointermove', throttledPointerMove);
-canvas.addEventListener('pointerup', handlePointerUp);
-canvas.addEventListener('pointercancel', handlePointerUp);
+canvas.addEventListener('pointerdown', handlePointerStart);
+canvas.addEventListener('pointermove', handlePointerMove);
+canvas.addEventListener('pointerup', handlePointerEnd);
+canvas.addEventListener('pointerleave', handlePointerEnd);
 
-console.log('Script loaded.');
+// Touch event fallbacks
+canvas.addEventListener('touchstart', handlePointerStart);
+canvas.addEventListener('touchmove', handlePointerMove);
+canvas.addEventListener('touchend', handlePointerEnd);
+
+// Keyboard accessibility
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && crayonActive) {
+    crayonActive = false;
+    document.body.classList.remove('hide-cursor');
+  }
+});
