@@ -1,201 +1,60 @@
-/************************************
- *    HIDE DEFAULT CURSOR ON BODY
- ************************************/
-.hide-cursor {
-  cursor: none !important;
-}
-
-/************************************
- *    BASIC PAGE & CONTAINER STYLE
- ************************************/
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow: hidden; /* Prevent scrolling */
-  background-color: white;
-  font-family: 'Amatic SC', sans-serif; /* Optional */
-}
-
+/* General container styling (optional) */
 .container {
   position: relative;
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
 }
 
-/************************************
- *    CANVAS
- ************************************/
+/* Hide the default cursor when the crayon is active */
+.hide-cursor {
+  cursor: none;
+}
+
+/* Canvas should fill the screen (optional) */
 #canvas {
+  display: block;
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 1; /* Canvas behind other elements */
 }
 
-/************************************
- *    CRAYON
- ************************************/
+/* Crayon image (cursor) - starts hidden */
 #crayon {
   position: absolute;
-  display: block;
-  transform: translate(-50%, -50%) scale(0.3);
-  top: 50%;
-  left: 50%;
-  cursor: pointer;
-  z-index: 3; /* Above canvas so it's clickable */
+  width: 50px; /* Adjust as desired */
+  display: none; /* becomes block on click */
+  pointer-events: none; /* so clicks pass through to canvas */
 }
 
-/************************************
- *    MIRROR LINK (PORTAL)
- ************************************/
+/* Mirror link hidden until threshold is met */
 #mirror-link {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  
-  /* Hidden initially so it won't block crayon clicks */
-  display: none;
-
-  /* Increase the portal size (perfect circle) */
-  width: 400px;
-  height: 400px;
-
-  pointer-events: auto;
-  z-index: 4; /* Above the crayon after threshold is met */
+  display: none; /* revealed by JS */
+  text-decoration: none;
+  color: inherit;
 }
 
-/* The actual circular mirror container */
+/* The containing div for the reflection iframe */
 #mirror {
-  width: 100%;
-  height: 100%;
-  transform: scaleX(-1); /* Flip horizontally */
-  border-radius: 50%;
-  overflow: hidden;
-  pointer-events: none; /* So clicks go to #mirror-link */
-  box-shadow: none; /* We'll rely on the glow animation */
+  position: fixed;
+  top: 50px;    /* Adjust to place the reflection at a good spot */
+  right: 50px;  /* You can change to left, etc. */
+  width: 300px; /* Adjust to your preference */
+  height: 200px;
+  border: 2px solid #999;
+  background-color: #fff;
 }
 
-/* The mirrored iframe content */
-#mirror iframe {
+/* The iframe that shows your reflection page */
+#mirror-iframe {
   width: 100%;
   height: 100%;
   border: none;
-  transform: scaleX(-1); /* Flip back the content */
-  pointer-events: none;
 }
 
-/************************************
- *    DARK GREY GLOW ANIMATION
- ************************************/
-@keyframes glow {
-  0% {
-    box-shadow: 0 0 0 0 rgba(50, 50, 50, 0.6);
-  }
-  50% {
-    box-shadow: 0 0 25px 10px rgba(50, 50, 50, 0.7);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(50, 50, 50, 0.6);
-  }
-}
-
+/* Glow effect for the mirror once revealed */
 .mirror-glow {
-  animation: glow 1.5s infinite;
-  border-radius: 50%;
-}
-
-/************************************
- *   SHATTER EFFECT (NEW)
- ************************************/
-#shatter-layer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none; 
-  z-index: 9999; /* On top of everything initially */
-}
-
-/* Each shard covers the screen but is clipped with a unique polygon.
-   Feel free to tweak the polygons or add more shards. */
-.shard {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: white; /* Could also be a glass texture or PNG */
-  opacity: 1;
-}
-
-/* Example polygons (rough approximation) */
-.shard-1 {
-  clip-path: polygon(0 0, 50% 0, 40% 100%, 0 100%);
-}
-.shard-2 {
-  clip-path: polygon(50% 0, 100% 0, 100% 30%, 60% 100%, 40% 100%);
-}
-.shard-3 {
-  clip-path: polygon(100% 30%, 100% 100%, 60% 100%);
-}
-.shard-4 {
-  clip-path: polygon(40% 0, 50% 0, 60% 100%, 40% 100%);
-}
-.shard-5 {
-  clip-path: polygon(0 0, 40% 0, 40% 100%, 0 100%);
-}
-
-/* When we add .shatter-animate to #shatter-layer, each shard
-   gets an animation that flings it offscreen */
-.shatter-animate .shard-1 {
-  animation: shard1 1s forwards;
-}
-.shatter-animate .shard-2 {
-  animation: shard2 1s forwards;
-}
-.shatter-animate .shard-3 {
-  animation: shard3 1s forwards;
-}
-.shatter-animate .shard-4 {
-  animation: shard4 1s forwards;
-}
-.shatter-animate .shard-5 {
-  animation: shard5 1s forwards;
-}
-
-@keyframes shard1 {
-  to {
-    transform: translate(-100%, -100%) rotate(-45deg);
-    opacity: 0;
-  }
-}
-@keyframes shard2 {
-  to {
-    transform: translate(100%, -100%) rotate(45deg);
-    opacity: 0;
-  }
-}
-@keyframes shard3 {
-  to {
-    transform: translate(100%, 100%) rotate(30deg);
-    opacity: 0;
-  }
-}
-@keyframes shard4 {
-  to {
-    transform: translate(-100%, 0%) rotate(-15deg);
-    opacity: 0;
-  }
-}
-@keyframes shard5 {
-  to {
-    transform: translate(0%, 100%) rotate(15deg);
-    opacity: 0;
-  }
+  box-shadow: 0 0 20px 5px #888; /* A grayish glow */
 }
