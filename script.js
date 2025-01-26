@@ -125,9 +125,6 @@ function checkCanvasColored() {
     // Add glow to the #mirror div
     mirrorDiv.classList.add('mirror-glow');
     console.log('Mirror displayed with dark grey glow.');
-
-    // NEW: trigger the shatter effect to reveal the mirror
-    triggerShatterEffect();
   }
 }
 
@@ -137,20 +134,6 @@ function checkCanvasColored() {
 function moveCrayon(x, y) {
   crayon.style.left = `${x - 15}px`;
   crayon.style.top = `${y - 50}px`;
-}
-
-/*******************************
- *  Shatter Effect (NEW)
- *******************************/
-function triggerShatterEffect() {
-  const shatterLayer = document.getElementById('shatter-layer');
-  // Add a class that triggers the shard animations
-  shatterLayer.classList.add('shatter-animate');
-
-  // After the animation finishes (1s), hide the shatter layer
-  setTimeout(() => {
-    shatterLayer.style.display = 'none';
-  }, 1000);
 }
 
 /*******************************
