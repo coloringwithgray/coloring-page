@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Coloring with Gray + Shatter Effect</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Coloring with Gray</title>
   
-  <!-- Existing CSS file -->
+  <!-- Local stylesheet (make sure styles.css exists in the same folder) -->
   <link rel="stylesheet" href="styles.css" />
-  
-  <!-- Existing JS file -->
+
+  <!-- Your script file, loaded with "defer" so it runs after the HTML is parsed -->
   <script src="script.js" defer></script>
-  
-  <!-- Optional Google Font -->
+
+  <!-- Google Font -->
   <link
     rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap"
@@ -20,10 +20,10 @@
 
 <body>
   <div class="container">
-    <!-- The canvas for drawing -->
+    <!-- Canvas for drawing -->
     <canvas id="canvas"></canvas>
 
-    <!-- The crayon image (click to activate drawing) -->
+    <!-- Crayon image (click to activate drawing) -->
     <img
       id="crayon"
       src="Gray+Crayon.png"
@@ -31,7 +31,7 @@
       onclick="activateCrayon()"
     />
 
-    <!-- Mirror link (hidden until threshold is met) -->
+    <!-- Mirror link (initially hidden; revealed after threshold is met) -->
     <a
       id="mirror-link"
       href="https://coloringwithgray.github.io/reflection/"
@@ -45,16 +45,6 @@
         ></iframe>
       </div>
     </a>
-  </div>
-
-  <!-- NEW: Shatter layer covers everything until triggered -->
-  <div id="shatter-layer">
-    <!-- Each shard is a clipped portion of the screen -->
-    <div class="shard shard-1"></div>
-    <div class="shard shard-2"></div>
-    <div class="shard shard-3"></div>
-    <div class="shard shard-4"></div>
-    <div class="shard shard-5"></div>
   </div>
 </body>
 </html>
