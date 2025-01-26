@@ -118,7 +118,7 @@ function checkCanvasColored() {
   const coloredPercentage = (approxColored / totalPixels) * 100;
   console.log(`Colored: ${coloredPercentage.toFixed(2)}%`);
 
-  // 1.37% threshold from your original code
+  // 1.37% threshold
   if (coloredPercentage >= 1.37) {
     // Show mirror link
     mirrorLink.style.display = 'block';
