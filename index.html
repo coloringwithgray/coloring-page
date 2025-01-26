@@ -6,31 +6,36 @@
   <title>Coloring with Gray</title>
   <link rel="stylesheet" href="styles.css" />
   <script src="script.js" defer></script>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap" />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap"
+  />
 </head>
 <body>
   <div class="container">
+    <!-- The canvas for drawing -->
     <canvas id="canvas"></canvas>
 
-    <img id="crayon" 
-         src="Gray+Crayon.png" 
-         alt="Gray Crayon - Click to start drawing" 
-         role="button"
-         tabindex="0"
-         onclick="activateCrayon()"
-         onkeydown="if (event.key === 'Enter') activateCrayon()" />
+    <!-- The crayon image (click to activate drawing) -->
+    <img
+      id="crayon"
+      src="Gray+Crayon.png"
+      alt="Crayon"
+      onclick="activateCrayon()"
+    />
 
-    <a id="mirror-link" 
-       href="https://coloringwithgray.github.io/reflection/"
-       target="_blank"
-       aria-label="Mysterious portal to another dimension">
+    <!-- Mirror link (hidden until threshold is met) -->
+    <a
+      id="mirror-link"
+      href="https://coloringwithgray.github.io/reflection/"
+      target="_blank"
+    >
       <div id="mirror">
-        <div class="portal-glow"></div>
-        <div class="portal-smoke"></div>
-        <iframe id="mirror-iframe" 
-                src="https://coloringwithgray.github.io/reflection/"
-                sandbox="allow-scripts allow-same-origin"
-                title="Mirror Dimension"></iframe>
+        <iframe
+          id="mirror-iframe"
+          src="https://coloringwithgray.github.io/reflection/"
+          frameborder="0"
+        ></iframe>
       </div>
     </a>
   </div>
