@@ -69,13 +69,22 @@ html, body {
   z-index: 4; /* Above the crayon after threshold is met */
 }
 
+/* New Wrapper for Vortex Effect */
+#mirror-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: visible; /* Allow pseudo-element to be visible */
+}
+
+/* The mirror itself */
 #mirror {
   width: 100%;
   height: 100%;
-  /* Remove horizontal flip for clarity of the vortex (optional) */
-  overflow: hidden;
+  overflow: hidden; /* Keep iframe content clipped */
   border-radius: 50%;
-  position: relative; /* for pseudo-element positioning */
+  position: relative; /* For iframe positioning */
   pointer-events: none; 
 }
 
@@ -112,37 +121,39 @@ html, body {
  *    VORTEX PORTAL EFFECT
  ************************************/
 .vortex-portal {
-  position: relative; /* So the ::before can go behind mirror content */
+  /* This class will be added to #mirror-wrapper */
+  position: relative; /* Ensure pseudo-element is positioned correctly */
 }
 
-/* 
-   The swirling vortex is created by a conic gradient that rotates indefinitely.
-   We wrap it with a pseudo-element so it appears behind the main content.
-*/
 .vortex-portal::before {
   content: '';
   position: absolute;
-  top: -20px; 
-  left: -20px;
-  width: calc(100% + 40px);
-  height: calc(100% + 40px);
+  top: -40px; 
+  left: -40px;
+  width: calc(100% + 80px);
+  height: calc(100% + 80px);
   border-radius: 50%;
   pointer-events: none;
   z-index: -1;
 
-  /* Conic gradient for a spiral-like look. Feel free to tweak colors! */
+  /* Enhanced Conic Gradient for Better Visibility */
   background: conic-gradient(
-    rgba(128, 128, 128, 0.2) 0deg,
-    rgba(128, 128, 128, 0.6) 90deg,
-    rgba(128, 128, 128, 0.2) 180deg,
-    rgba(128, 128, 128, 0.6) 270deg,
-    rgba(128, 128, 128, 0.2) 360deg
+    rgba(128, 128, 128, 0.4) 0deg,
+    rgba(128, 128, 128, 0.6) 45deg,
+    rgba(128, 128, 128, 0.4) 90deg,
+    rgba(128, 128, 128, 0.6) 135deg,
+    rgba(128, 128, 128, 0.4) 180deg,
+    rgba(128, 128, 128, 0.6) 225deg,
+    rgba(128, 128, 128, 0.4) 270deg,
+    rgba(128, 128, 128, 0.6) 315deg,
+    rgba(128, 128, 128, 0.4) 360deg
   );
 
-  animation: vortex 4s linear infinite;
+  /* Increased Opacity and Rotation Speed for Better Effect */
+  animation: vortex 3s linear infinite;
 }
 
-/* Slowly rotate the entire pseudo-element to create a swirling funnel. */
+/* Vortex Animation */
 @keyframes vortex {
   from {
     transform: rotate(0deg);
