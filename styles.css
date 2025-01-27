@@ -1,46 +1,105 @@
-/* Add this new rule for particle container */
+/* Core Styles */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: white;
+  font-family: 'Amatic SC', cursive;
+}
+
+.hide-cursor {
+  cursor: none !important;
+}
+
+/* Canvas Setup */
+#canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+/* Crayon Styling */
+#crayon {
+  position: absolute;
+  transform: translate(-50%, -50%) scale(0.3);
+  cursor: pointer;
+  z-index: 3;
+  transition: transform 0.2s ease;
+}
+
+#crayon:hover {
+  transform: translate(-50%, -50%) scale(0.35);
+}
+
+/* Portal Container */
+#mirror-link {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  width: 400px;
+  height: 400px;
+  z-index: 4;
+}
+
+/* Portal Visuals */
+#mirror {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  transform: scaleX(-1);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Particle System */
 #particle-container {
   position: absolute;
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 2;
 }
 
-/* Update portal effects */
-#mirror::before {
-  content: '';
-  position: absolute;
-  top: -50px;
-  left: -50px;
-  right: -50px;
-  bottom: -50px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 50% 50%, 
-    rgba(80, 80, 80, 0.4) 0%,
-    rgba(50, 50, 50, 0.8) 50%,
-    rgba(30, 30, 30, 0.9) 100%);
-  filter: blur(50px);
-  z-index: 0;
-  animation: vortex 20s linear infinite;
-}
-
-/* Enhanced particle styling */
 .particle {
   position: absolute;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 50%;
-  pointer-events: none;
   animation: float 3s infinite ease-in-out;
-  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.4));
 }
 
-/* Add depth effect to portal */
-#mirror {
-  perspective: 1000px;
-  transform-style: preserve-3d;
+/* Portal Animations */
+@keyframes portal-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(128, 128, 128, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(128, 128, 128, 0.6);
+  }
 }
 
-#mirror-iframe {
-  transform: scaleX(-1) translateZ(50px);
+@keyframes vortex {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  100% {
+    transform: rotate(360deg) scale(1.2);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* Active Portal Effects */
+.mirror-glow {
+  animation: portal-glow 2s infinite, vortex 20s linear infinite;
 }
