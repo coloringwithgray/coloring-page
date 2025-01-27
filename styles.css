@@ -61,7 +61,7 @@ html, body {
   /* Hidden initially so it won't block crayon clicks */
   display: none;
 
-  /* Increase the portal size (perfect circle) */
+  /* Adjust the size to your preference */
   width: 400px;
   height: 400px;
 
@@ -69,15 +69,14 @@ html, body {
   z-index: 4; /* Above the crayon after threshold is met */
 }
 
-/* The actual circular mirror container */
 #mirror {
   width: 100%;
   height: 100%;
-  transform: scaleX(-1); /* Flip horizontally */
-  border-radius: 50%;
+  /* Remove horizontal flip for clarity of the vortex (optional) */
   overflow: hidden;
-  pointer-events: none; /* So clicks go to #mirror-link */
-  box-shadow: none; 
+  border-radius: 50%;
+  position: relative; /* for pseudo-element positioning */
+  pointer-events: none; 
 }
 
 /* The mirrored iframe content */
@@ -85,8 +84,8 @@ html, body {
   width: 100%;
   height: 100%;
   border: none;
-  transform: scaleX(-1); /* Flip back the content */
   pointer-events: none;
+  /* If you'd like to keep the reflection look, re-add transform: scaleX(-1); here */
 }
 
 /************************************
@@ -106,49 +105,51 @@ html, body {
 
 .mirror-glow {
   animation: glow 1.5s infinite;
-  border-radius: 50%; /* ensure the glow remains circular */
+  border-radius: 50%;
 }
 
 /************************************
- *    SWIRLING PORTAL EFFECT
+ *    VORTEX PORTAL EFFECT
  ************************************/
-/* 
-   This class adds a swirling ring around the mirror using a pseudo-element 
-   and a conic-gradient that slowly rotates.
-*/
-.portal-swirl {
-  position: relative; /* So we can position the ::before absolutely */
+.vortex-portal {
+  position: relative; /* So the ::before can go behind mirror content */
 }
 
-.portal-swirl::before {
+/* 
+   The swirling vortex is created by a conic gradient that rotates indefinitely.
+   We wrap it with a pseudo-element so it appears behind the main content.
+*/
+.vortex-portal::before {
   content: '';
   position: absolute;
-  top: -10px;
-  left: -10px;
-  width: calc(100% + 20px);
-  height: calc(100% + 20px);
+  top: -20px; 
+  left: -20px;
+  width: calc(100% + 40px);
+  height: calc(100% + 40px);
   border-radius: 50%;
   pointer-events: none;
   z-index: -1;
 
-  /* Slightly transparent conic gradient for a subtle swirl */
+  /* Conic gradient for a spiral-like look. Feel free to tweak colors! */
   background: conic-gradient(
     rgba(128, 128, 128, 0.2) 0%,
-    rgba(128, 128, 128, 0.6) 25%,
-    rgba(128, 128, 128, 0.2) 50%,
-    rgba(128, 128, 128, 0.4) 75%,
-    rgba(128, 128, 128, 0.2) 100%
+    rgba(128, 128, 128, 0.6) 33%,
+    rgba(128, 128, 128, 0.2) 67%,
+    rgba(128, 128, 128, 0.6) 100%
   );
 
-  animation: swirl 3s linear infinite;
+  animation: vortex 4s linear infinite;
 }
 
-/* Rotate 360 degrees in 3 seconds */
-@keyframes swirl {
+/* Slowly rotate the entire pseudo-element to create a swirling funnel. */
+@keyframes vortex {
   0% {
-    transform: rotate(0deg);
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.03);
   }
   100% {
-    transform: rotate(360deg);
+    transform: rotate(360deg) scale(1);
   }
 }
