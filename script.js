@@ -5,6 +5,7 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const crayon = document.getElementById('crayon');
 const mirrorLink = document.getElementById('mirror-link');
+const mirrorWrapper = document.getElementById('mirror-wrapper');
 const mirrorDiv = document.getElementById('mirror');
 
 /*******************************
@@ -122,8 +123,8 @@ function checkCanvasColored() {
   if (coloredPercentage >= 1.37) {
     // Show mirror link
     mirrorLink.style.display = 'block';
-    // Add the vortex and glow classes
-    mirrorDiv.classList.add('mirror-glow', 'vortex-portal');
+    // Add the vortex and glow classes to the wrapper
+    mirrorWrapper.classList.add('mirror-glow', 'vortex-portal');
     console.log('Mirror displayed with vortex portal effect.');
   }
 }
