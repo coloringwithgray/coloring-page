@@ -1,6 +1,6 @@
-/************************************
+/*******************************
  *    HIDE DEFAULT CURSOR ON BODY
- ************************************/
+ *******************************/
 .hide-cursor {
   cursor: none !important;
 }
@@ -13,7 +13,7 @@ html, body {
   padding: 0;
   height: 100%;
   overflow: hidden; /* Prevent scrolling */
-  background-color: black; /* Fallback background */
+  background-color: white;
   font-family: 'Amatic SC', sans-serif; /* Optional */
 }
 
@@ -24,22 +24,6 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-/************************************
- *    BACKGROUND VIDEO
- ************************************/
-#background-video {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  min-width: 100%;
-  min-height: 100%;
-  width: auto;
-  height: auto;
-  z-index: -2; /* Behind all other elements */
-  transform: translate(-50%, -50%);
-  background-size: cover;
 }
 
 /************************************
@@ -72,50 +56,28 @@ html, body {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(0.5); /* Start scaled down */
+  transform: translate(-50%, -50%);
   
   /* Hidden initially so it won't block crayon clicks */
-  opacity: 0; /* Start hidden for fade-in */
-  visibility: hidden;
-  
-  /* Adjust the size to your preference */
-  width: 30vw;
-  height: 30vw;
-  max-width: 400px;
-  max-height: 400px;
-  
+  display: none;
+
+  /* Increase the portal size (perfect circle) */
+  width: 400px;
+  height: 400px;
+
   pointer-events: auto;
   z-index: 4; /* Above the crayon after threshold is met */
-  
-  /* Transition for fade-in and scale-up effect */
-  transition: opacity 3s ease-out, visibility 3s ease-out, transform 3s ease-out;
 }
 
-/* When active, make the portal visible and scale up */
-#mirror-link.active {
-  opacity: 1;
-  visibility: visible;
-  transform: translate(-50%, -50%) scale(1); /* Scale up to full size */
-}
-
-/************************************
- *    MIRROR WRAPPER WITH ETHEREAL LINES
- ************************************/
-#mirror-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  overflow: visible; /* Allow pseudo-element to be visible */
-}
-
+/* The actual circular mirror container */
 #mirror {
   width: 100%;
   height: 100%;
-  overflow: hidden; /* Keep iframe content clipped */
+  transform: scaleX(-1); /* Flip horizontally */
   border-radius: 50%;
-  position: relative; /* For iframe positioning */
-  pointer-events: none; 
+  overflow: hidden;
+  pointer-events: none; /* So clicks go to #mirror-link */
+  box-shadow: none; /* We’ll rely on the glow animation */
 }
 
 /* The mirrored iframe content */
@@ -123,8 +85,8 @@ html, body {
   width: 100%;
   height: 100%;
   border: none;
+  transform: scaleX(-1); /* Flip back the content */
   pointer-events: none;
-  /* If you'd like to keep the reflection look, re-add transform: scaleX(-1); here */
 }
 
 /************************************
@@ -132,72 +94,58 @@ html, body {
  ************************************/
 @keyframes glow {
   0% {
-    box-shadow: 0 0 0 0 rgba(128, 128, 128, 0.6);
+    box-shadow: 0 0 0 0 rgba(50, 50, 50, 0.6);
   }
   50% {
-    box-shadow: 0 0 25px 10px rgba(128, 128, 128, 0.7);
+    box-shadow: 0 0 25px 10px rgba(50, 50, 50, 0.7);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(128, 128, 128, 0.6);
+    box-shadow: 0 0 0 0 rgba(50, 50, 50, 0.6);
   }
 }
 
 .mirror-glow {
   animation: glow 1.5s infinite;
-  border-radius: 50%;
+  border-radius: 50%; /* ensure the glow remains circular */
 }
 
 /************************************
- *    ETHEREAL LINES ON MIRROR FRAME
+ *    ENHANCED COOL PORTAL
  ************************************/
-#mirror-wrapper::before {
-  content: '';
+/* New styles for the enhanced portal */
+#cool-portal {
   position: absolute;
-  top: -5%;
-  left: -5%;
-  width: 110%;
-  height: 110%;
-  border: 2px solid rgba(255, 255, 255, 0.5);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: 400px;
   border-radius: 50%;
+  overflow: hidden;
+  display: none; /* Hidden initially */
+  z-index: 5; /* Above all other elements */
+  box-shadow: 0 0 20px 10px rgba(0, 150, 255, 0.5);
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+#cool-portal.active {
+  display: block;
+  animation: portal-spin 4s linear infinite;
+}
+
+@keyframes portal-spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+#cool-portal iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  transform: scaleX(-1); /* Flip back the content */
   pointer-events: none;
-  z-index: 1;
-
-  /* Ethereal Glow Effect */
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.4),
-              0 0 30px rgba(255, 255, 255, 0.3);
-  
-  /* Animation for subtle movement */
-  animation: etherealMove 10s ease-in-out infinite;
 }
-
-/* Keyframes for ethereal lines subtle movement */
-@keyframes etherealMove {
-  0% {
-    transform: rotate(0deg);
-  }
-  50% {
-    transform: rotate(10deg);
-  }
-  100% {
-    transform: rotate(0deg);
-  }
-}
-
-/************************************
- *    REMOVE VORTEX RELATED STYLES
- ************************************/
-
-/* Since the vortex is removed, ensure no leftover styles interfere */
-
-/* Remove any pseudo-elements or classes related to vortex */
-/* Ensure no .vortex-portal styles are applied */
-
-/* If previously present, make sure to remove or comment out
-.vortex-portal {
-  ...
-}
-
-.vortex-portal::before, .vortex-portal::after {
-  ...
-}
-*/
