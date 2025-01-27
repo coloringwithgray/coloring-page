@@ -6,7 +6,6 @@ const ctx = canvas.getContext('2d');
 const crayon = document.getElementById('crayon');
 const mirrorLink = document.getElementById('mirror-link');
 const mirrorWrapper = document.getElementById('mirror-wrapper');
-const mirrorDiv = document.getElementById('mirror');
 
 /*******************************
  *  State Variables
