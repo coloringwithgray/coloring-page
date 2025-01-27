@@ -132,10 +132,11 @@ html, body {
 
   /* Conic gradient for a spiral-like look. Feel free to tweak colors! */
   background: conic-gradient(
-    rgba(128, 128, 128, 0.2) 0%,
-    rgba(128, 128, 128, 0.6) 33%,
-    rgba(128, 128, 128, 0.2) 67%,
-    rgba(128, 128, 128, 0.6) 100%
+    rgba(128, 128, 128, 0.2) 0deg,
+    rgba(128, 128, 128, 0.6) 90deg,
+    rgba(128, 128, 128, 0.2) 180deg,
+    rgba(128, 128, 128, 0.6) 270deg,
+    rgba(128, 128, 128, 0.2) 360deg
   );
 
   animation: vortex 4s linear infinite;
@@ -143,13 +144,10 @@ html, body {
 
 /* Slowly rotate the entire pseudo-element to create a swirling funnel. */
 @keyframes vortex {
-  0% {
-    transform: rotate(0deg) scale(1);
+  from {
+    transform: rotate(0deg);
   }
-  50% {
-    transform: rotate(180deg) scale(1.03);
-  }
-  100% {
-    transform: rotate(360deg) scale(1);
+  to {
+    transform: rotate(360deg);
   }
 }
