@@ -116,7 +116,9 @@ html, body {
   transform: translate(-50%, -50%) scale(1); /* Scale up to full size */
 }
 
-/* Light Beams */
+/************************************
+ *    LIGHT BEAMS
+ ************************************/
 .light-beams {
   position: absolute;
   top: 50%;
