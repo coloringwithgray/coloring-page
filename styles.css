@@ -56,17 +56,28 @@ html, body {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(0);
   
   /* Hidden initially so it won't block crayon clicks */
-  display: none;
-
+  display: block; /* Changed to block for scaling */
+  
   /* Increase the portal size (perfect circle) */
   width: 400px;
   height: 400px;
 
-  pointer-events: auto;
+  pointer-events: none; /* Initially none to allow crayon clicks */
   z-index: 4; /* Above the crayon after threshold is met */
+  
+  /* Transition for scaling effect */
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  opacity: 0; /* Initially invisible */
+}
+
+/* When active, scale up and make visible */
+#mirror-link.active {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  pointer-events: auto; /* Enable pointer events when active */
 }
 
 /* The actual circular mirror container */
@@ -107,45 +118,4 @@ html, body {
 .mirror-glow {
   animation: glow 1.5s infinite;
   border-radius: 50%; /* ensure the glow remains circular */
-}
-
-/************************************
- *    ENHANCED COOL PORTAL
- ************************************/
-/* New styles for the enhanced portal */
-#cool-portal {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 400px;
-  height: 400px;
-  border-radius: 50%;
-  overflow: hidden;
-  display: none; /* Hidden initially */
-  z-index: 5; /* Above all other elements */
-  box-shadow: 0 0 20px 10px rgba(0, 150, 255, 0.5);
-  transition: transform 0.5s ease, box-shadow 0.5s ease;
-}
-
-#cool-portal.active {
-  display: block;
-  animation: portal-spin 4s linear infinite;
-}
-
-@keyframes portal-spin {
-  from {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
-}
-
-#cool-portal iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  transform: scaleX(-1); /* Flip back the content */
-  pointer-events: none;
 }
