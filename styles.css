@@ -13,7 +13,7 @@ html, body {
   padding: 0;
   height: 100%;
   overflow: hidden; /* Prevent scrolling */
-  background-color: black; /* Dark background to highlight effects */
+  background-color: black; /* Fallback background */
   font-family: 'Amatic SC', sans-serif; /* Optional */
 }
 
@@ -27,37 +27,19 @@ html, body {
 }
 
 /************************************
- *    ANIMATED BACKGROUND
+ *    BACKGROUND VIDEO
  ************************************/
-.animated-background {
+#background-video {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(270deg, #1a2a6c, #b21f1f, #fdbb2d);
-  background-size: 600% 600%;
-  animation: gradientShift 15s ease infinite;
-  z-index: 0; /* Behind all other elements */
-}
-
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/************************************
- *    PARTICLES OVERLAY (Optional)
- ************************************/
-.particles-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 2; /* Between background and other elements */
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  z-index: -2; /* Behind all other elements */
+  transform: translate(-50%, -50%);
+  background-size: cover;
 }
 
 /************************************
@@ -106,7 +88,7 @@ html, body {
   z-index: 4; /* Above the crayon after threshold is met */
   
   /* Transition for fade-in and scale-up effect */
-  transition: opacity 2s ease, visibility 2s ease, transform 2s ease;
+  transition: opacity 3s ease-out, visibility 3s ease-out, transform 3s ease-out;
 }
 
 /* When active, make the portal visible and scale up */
@@ -117,96 +99,7 @@ html, body {
 }
 
 /************************************
- *    LIGHT BEAMS
- ************************************/
-.light-beams {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 30vw;
-  height: 30vw;
-  max-width: 400px;
-  max-height: 400px;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  z-index: 5;
-}
-
-.light-beam {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0.2vw;
-  height: 15vw;
-  max-height: 200px;
-  background: rgba(255, 255, 255, 0.6);
-  transform-origin: bottom center;
-  animation: sweep 8s linear infinite;
-}
-
-.light-beam:nth-child(1) { transform: rotate(0deg); animation-delay: 0s; }
-.light-beam:nth-child(2) { transform: rotate(72deg); animation-delay: 2s; }
-.light-beam:nth-child(3) { transform: rotate(144deg); animation-delay: 4s; }
-.light-beam:nth-child(4) { transform: rotate(216deg); animation-delay: 6s; }
-.light-beam:nth-child(5) { transform: rotate(288deg); animation-delay: 8s; }
-
-@keyframes sweep {
-  0% {
-    opacity: 0;
-    height: 0;
-  }
-  50% {
-    opacity: 1;
-    height: 15vw;
-    max-height: 200px;
-  }
-  100% {
-    opacity: 0;
-    height: 0;
-  }
-}
-
-/************************************
- *    PARTICLE CONTAINER (Pure CSS)
- ************************************/
-.particle-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 30vw;
-  height: 30vw;
-  max-width: 400px;
-  max-height: 400px;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  z-index: 5;
-}
-
-.particle {
-  position: absolute;
-  width: 0.6vw;
-  height: 0.6vw;
-  max-width: 6px;
-  max-height: 6px;
-  background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 50%;
-  animation: float 5s infinite;
-}
-
-.particle:nth-child(1) { top: 10%; left: 20%; animation-delay: 0s; }
-.particle:nth-child(2) { top: 30%; left: 70%; animation-delay: 1s; }
-.particle:nth-child(3) { top: 60%; left: 40%; animation-delay: 2s; }
-.particle:nth-child(4) { top: 80%; left: 80%; animation-delay: 3s; }
-.particle:nth-child(5) { top: 50%; left: 50%; animation-delay: 4s; }
-
-@keyframes float {
-  0% { transform: translateY(0px); opacity: 0.8; }
-  50% { transform: translateY(-20px); opacity: 1; }
-  100% { transform: translateY(0px); opacity: 0.8; }
-}
-
-/************************************
- *    MIRROR WRAPPER WITH VORTEX
+ *    MIRROR WRAPPER WITH ETHEREAL LINES
  ************************************/
 #mirror-wrapper {
   position: relative;
@@ -239,13 +132,13 @@ html, body {
  ************************************/
 @keyframes glow {
   0% {
-    box-shadow: 0 0 0 0 rgba(50, 50, 50, 0.6);
+    box-shadow: 0 0 0 0 rgba(128, 128, 128, 0.6);
   }
   50% {
-    box-shadow: 0 0 25px 10px rgba(50, 50, 50, 0.7);
+    box-shadow: 0 0 25px 10px rgba(128, 128, 128, 0.7);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(50, 50, 50, 0.6);
+    box-shadow: 0 0 0 0 rgba(128, 128, 128, 0.6);
   }
 }
 
@@ -255,84 +148,56 @@ html, body {
 }
 
 /************************************
- *    VORTEX PORTAL EFFECT WITH LOOSE LINES
+ *    ETHEREAL LINES ON MIRROR FRAME
  ************************************/
-.vortex-portal {
-  /* This class will be added to #mirror-wrapper */
-  position: relative; /* Ensure pseudo-element is positioned correctly */
-}
-
-.vortex-portal::before {
+#mirror-wrapper::before {
   content: '';
   position: absolute;
-  top: -40px; 
-  left: -40px;
-  width: calc(100% + 80px);
-  height: calc(100% + 80px);
+  top: -5%;
+  left: -5%;
+  width: 110%;
+  height: 110%;
+  border: 2px solid rgba(255, 255, 255, 0.5);
   border-radius: 50%;
   pointer-events: none;
-  z-index: -1;
+  z-index: 1;
 
-  /* Dynamic Multi-Color Conic Gradient */
-  background: conic-gradient(
-    from 0deg,
-    #ff4b1f, /* Red-Orange */
-    #ff9068, /* Light Orange */
-    #f9f047, /* Yellow */
-    #68ffb9, /* Light Green */
-    #1fc8db, /* Blue */
-    #2c3e50, /* Dark Blue */
-    #ff4b1f  /* Red-Orange */
-  );
-
-  /* Apply Animation */
-  animation: vortex 5s linear infinite;
-
-  /* Soft Blur for Organic Feel */
-  filter: blur(2px);
+  /* Ethereal Glow Effect */
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.4),
+              0 0 30px rgba(255, 255, 255, 0.3);
+  
+  /* Animation for subtle movement */
+  animation: etherealMove 10s ease-in-out infinite;
 }
 
-.vortex-portal::after {
-  content: '';
-  position: absolute;
-  top: -30px;
-  left: -30px;
-  width: calc(100% + 60px);
-  height: calc(100% + 60px);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: -2;
-
-  /* Semi-transparent, wavy gradient for loose lines */
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(255, 255, 255, 0.1) 0%,
-    rgba(255, 255, 255, 0) 70%
-  );
-
-  /* Wavy effect with scaling and rotation */
-  animation: wave 6s ease-in-out infinite;
-
-  /* Soft Blur */
-  filter: blur(3px);
-}
-
-/* Keyframes for Vortex Rotation */
-@keyframes vortex {
-  from {
+/* Keyframes for ethereal lines subtle movement */
+@keyframes etherealMove {
+  0% {
     transform: rotate(0deg);
   }
-  to {
-    transform: rotate(360deg);
+  50% {
+    transform: rotate(10deg);
+  }
+  100% {
+    transform: rotate(0deg);
   }
 }
 
-/* Keyframes for Loose Lines Wavy Effect */
-@keyframes wave {
-  0%, 100% {
-    transform: scale(1) rotate(0deg);
-  }
-  50% {
-    transform: scale(1.05) rotate(10deg);
-  }
+/************************************
+ *    REMOVE VORTEX RELATED STYLES
+ ************************************/
+
+/* Since the vortex is removed, ensure no leftover styles interfere */
+
+/* Remove any pseudo-elements or classes related to vortex */
+/* Ensure no .vortex-portal styles are applied */
+
+/* If previously present, make sure to remove or comment out
+.vortex-portal {
+  ...
 }
+
+.vortex-portal::before, .vortex-portal::after {
+  ...
+}
+*/
