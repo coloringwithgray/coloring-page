@@ -122,9 +122,9 @@ function checkCanvasColored() {
   if (coloredPercentage >= 1.37) {
     // Show mirror link with fade-in and scale-up
     mirrorLink.classList.add('active');
-    // Add the vortex and glow classes to the wrapper
-    mirrorWrapper.classList.add('mirror-glow', 'vortex-portal');
-    console.log('Mirror displayed with vortex portal effect.');
+    // Add the glow class to the wrapper
+    mirrorWrapper.classList.add('mirror-glow');
+    console.log('Mirror displayed with cinematic scale-up.');
   }
 }
 
@@ -152,12 +152,5 @@ canvas.addEventListener('pointerdown', handlePointerDown);
 canvas.addEventListener('pointermove', throttledPointerMove);
 canvas.addEventListener('pointerup', handlePointerUp);
 canvas.addEventListener('pointercancel', handlePointerUp);
-
-/*******************************
- *  Initialize Particles.js (Optional)
- *******************************/
-particlesJS.load('particles-js', 'particles.json', function() {
-  console.log('Particles.js loaded - callback');
-});
 
 console.log('Script loaded.');
