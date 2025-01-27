@@ -5,7 +5,7 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const crayon = document.getElementById('crayon');
 const mirrorLink = document.getElementById('mirror-link');
-const mirrorWrapper = document.getElementById('mirror-wrapper');
+const mirrorDiv = document.getElementById('mirror');
 
 /*******************************
  *  State Variables
@@ -120,11 +120,14 @@ function checkCanvasColored() {
 
   // 1.37% threshold
   if (coloredPercentage >= 1.37) {
-    // Show mirror link with fade-in and scale-up
-    mirrorLink.classList.add('active');
-    // Add the glow class to the wrapper
-    mirrorWrapper.classList.add('mirror-glow');
-    console.log('Mirror displayed with cinematic scale-up.');
+    // Show mirror link
+    mirrorLink.style.display = 'block';
+    // Add glow to the #mirror div
+    mirrorDiv.classList.add('mirror-glow');
+    console.log('Mirror displayed with dark grey glow.');
+
+    // Activate the cool portal
+    activateCoolPortal();
   }
 }
 
@@ -137,15 +140,6 @@ function moveCrayon(x, y) {
 }
 
 /*******************************
- *  Play Sound on Portal Click (Optional)
- *******************************/
-function playSound() {
-  const sound = document.getElementById('portal-sound');
-  sound.currentTime = 0;
-  sound.play();
-}
-
-/*******************************
  *  Register Pointer Events
  *******************************/
 canvas.addEventListener('pointerdown', handlePointerDown);
@@ -154,3 +148,28 @@ canvas.addEventListener('pointerup', handlePointerUp);
 canvas.addEventListener('pointercancel', handlePointerUp);
 
 console.log('Script loaded.');
+
+/*******************************
+ *  Cool Portal Activation
+ *******************************/
+function activateCoolPortal() {
+  // Check if the cool portal already exists
+  if (!document.getElementById('cool-portal')) {
+    // Create the portal element
+    const portal = document.createElement('div');
+    portal.id = 'cool-portal';
+
+    // Create iframe inside the portal
+    const iframe = document.createElement('iframe');
+    iframe.src = 'https://coloringwithgray.github.io/reflection/';
+    portal.appendChild(iframe);
+
+    // Append the portal to the container
+    document.querySelector('.container').appendChild(portal);
+
+    // Trigger the portal animation
+    setTimeout(() => {
+      portal.classList.add('active');
+    }, 100); // Slight delay for transition effect
+  }
+}
