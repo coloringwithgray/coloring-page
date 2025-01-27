@@ -3,28 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Coloring with Gray - Cinematic Portal</title>
-
-  <!-- Local stylesheet -->
-  <link rel="stylesheet" href="styles.css" />
-
-  <!-- Google Font (Optional) -->
+  <title>Coloring with Gray</title>
+  
+  <!-- Google Font -->
   <link
     rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap"
   />
+  
+  <!-- Local stylesheet -->
+  <link rel="stylesheet" href="styles.css" />
 
-  <!-- Your script file, loaded with "defer" -->
+  <!-- Your script file, loaded with "defer" so it runs after the HTML is parsed -->
   <script src="script.js" defer></script>
 </head>
+
 <body>
   <div class="container">
-    <!-- Background Video -->
-    <video autoplay muted loop id="background-video">
-      <source src="background.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-
     <!-- Canvas for drawing -->
     <canvas id="canvas"></canvas>
 
@@ -36,27 +31,20 @@
       onclick="activateCrayon()"
     />
 
-    <!-- Mirror link (hidden initially, revealed after threshold) -->
+    <!-- Mirror link (initially hidden; revealed after threshold is met) -->
     <a
       id="mirror-link"
       href="https://coloringwithgray.github.io/reflection/"
       target="_blank"
-      onclick="playSound()"
     >
-      <!-- Mirror Wrapper with Ethereal Lines -->
-      <div id="mirror-wrapper">
-        <div id="mirror">
-          <iframe
-            id="mirror-iframe"
-            src="https://coloringwithgray.github.io/reflection/"
-            frameborder="0"
-          ></iframe>
-        </div>
+      <div id="mirror">
+        <iframe
+          id="mirror-iframe"
+          src="https://coloringwithgray.github.io/reflection/"
+          frameborder="0"
+        ></iframe>
       </div>
     </a>
-
-    <!-- Optional: Sound Effect -->
-    <audio id="portal-sound" src="portal-sound.mp3" preload="auto"></audio>
   </div>
 </body>
 </html>
