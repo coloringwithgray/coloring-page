@@ -2,31 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Coloring with Gray - Enhanced Vortex Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coloring with Gray - Cinematic Portal</title>
 
   <!-- Local stylesheet -->
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Google Font -->
+  <!-- Google Font (Optional) -->
   <link
     rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap"
   />
-
-  <!-- Particles.js Library (Optional) -->
-  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 
   <!-- Your script file, loaded with "defer" -->
   <script src="script.js" defer></script>
 </head>
 <body>
   <div class="container">
-    <!-- Animated Background -->
-    <div class="animated-background"></div>
-
-    <!-- Particles Overlay (Optional) -->
-    <div id="particles-js" class="particles-overlay"></div>
+    <!-- Background Video -->
+    <video autoplay muted loop id="background-video">
+      <source src="background.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
 
     <!-- Canvas for drawing -->
     <canvas id="canvas"></canvas>
@@ -46,25 +43,7 @@
       target="_blank"
       onclick="playSound()"
     >
-      <!-- Light Beams -->
-      <div class="light-beams">
-        <div class="light-beam"></div>
-        <div class="light-beam"></div>
-        <div class="light-beam"></div>
-        <div class="light-beam"></div>
-        <div class="light-beam"></div>
-      </div>
-
-      <!-- Particle Container (Pure CSS) -->
-      <div class="particle-container">
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-      </div>
-
-      <!-- Vortex and Mirror Wrapper -->
+      <!-- Mirror Wrapper with Ethereal Lines -->
       <div id="mirror-wrapper">
         <div id="mirror">
           <iframe
@@ -74,10 +53,10 @@
           ></iframe>
         </div>
       </div>
-
-      <!-- Optional: Sound Effect -->
-      <audio id="portal-sound" src="portal-sound.mp3" preload="auto"></audio>
     </a>
+
+    <!-- Optional: Sound Effect -->
+    <audio id="portal-sound" src="portal-sound.mp3" preload="auto"></audio>
   </div>
 </body>
 </html>
