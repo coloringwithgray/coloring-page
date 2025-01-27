@@ -122,10 +122,9 @@ function checkCanvasColored() {
   if (coloredPercentage >= 1.37) {
     // Show mirror link
     mirrorLink.style.display = 'block';
-    
-    // Add both the glow and the swirling portal effect!
-    mirrorDiv.classList.add('mirror-glow', 'portal-swirl');
-    console.log('Mirror displayed with swirling dark grey glow.');
+    // Add the vortex and glow classes
+    mirrorDiv.classList.add('mirror-glow', 'vortex-portal');
+    console.log('Mirror displayed with vortex portal effect.');
   }
 }
 
