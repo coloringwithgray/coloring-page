@@ -120,15 +120,24 @@ function checkCanvasColored() {
 
   // 1.37% threshold
   if (coloredPercentage >= 1.37) {
-    // Show mirror link
-    mirrorLink.style.display = 'block';
-    // Add glow to the #mirror div
-    mirrorDiv.classList.add('mirror-glow');
+    // Show mirror link with scaling effect
+    showMirrorLink();
     console.log('Mirror displayed with dark grey glow.');
-
-    // Activate the cool portal
-    activateCoolPortal();
   }
+}
+
+/*******************************
+ *  Show Mirror Link with Scaling
+ *******************************/
+function showMirrorLink() {
+  // Add the 'active' class to trigger the scale-up animation
+  mirrorLink.classList.add('active');
+  
+  // Add glow to the #mirror div
+  mirrorDiv.classList.add('mirror-glow');
+
+  // Enable pointer events after animation
+  mirrorLink.style.pointerEvents = 'auto';
 }
 
 /*******************************
@@ -148,28 +157,3 @@ canvas.addEventListener('pointerup', handlePointerUp);
 canvas.addEventListener('pointercancel', handlePointerUp);
 
 console.log('Script loaded.');
-
-/*******************************
- *  Cool Portal Activation
- *******************************/
-function activateCoolPortal() {
-  // Check if the cool portal already exists
-  if (!document.getElementById('cool-portal')) {
-    // Create the portal element
-    const portal = document.createElement('div');
-    portal.id = 'cool-portal';
-
-    // Create iframe inside the portal
-    const iframe = document.createElement('iframe');
-    iframe.src = 'https://coloringwithgray.github.io/reflection/';
-    portal.appendChild(iframe);
-
-    // Append the portal to the container
-    document.querySelector('.container').appendChild(portal);
-
-    // Trigger the portal animation
-    setTimeout(() => {
-      portal.classList.add('active');
-    }, 100); // Slight delay for transition effect
-  }
-}
