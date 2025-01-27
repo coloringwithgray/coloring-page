@@ -1,105 +1,154 @@
-/* Core Styles */
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow: hidden;
-  background: white;
-  font-family: 'Amatic SC', cursive;
-}
-
+/************************************
+ *    HIDE DEFAULT CURSOR ON BODY
+ ************************************/
 .hide-cursor {
   cursor: none !important;
 }
 
-/* Canvas Setup */
+/************************************
+ *    BASIC PAGE & CONTAINER STYLE
+ ************************************/
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden; /* Prevent scrolling */
+  background-color: white;
+  font-family: 'Amatic SC', sans-serif; /* Optional */
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/************************************
+ *    CANVAS
+ ************************************/
 #canvas {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 1;
+  z-index: 1; /* Canvas behind other elements */
 }
 
-/* Crayon Styling */
+/************************************
+ *    CRAYON
+ ************************************/
 #crayon {
   position: absolute;
+  display: block;
   transform: translate(-50%, -50%) scale(0.3);
+  top: 50%;
+  left: 50%;
   cursor: pointer;
-  z-index: 3;
-  transition: transform 0.2s ease;
+  z-index: 3; /* Above canvas so it's clickable */
 }
 
-#crayon:hover {
-  transform: translate(-50%, -50%) scale(0.35);
-}
-
-/* Portal Container */
+/************************************
+ *    MIRROR LINK (PORTAL)
+ ************************************/
 #mirror-link {
-  position: fixed;
+  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  
+  /* Hidden initially so it won't block crayon clicks */
   display: none;
+
+  /* Increase the portal size (perfect circle) */
   width: 400px;
   height: 400px;
-  z-index: 4;
+
+  pointer-events: auto;
+  z-index: 4; /* Above the crayon after threshold is met */
 }
 
-/* Portal Visuals */
+/* The actual circular mirror container */
 #mirror {
   width: 100%;
   height: 100%;
+  transform: scaleX(-1); /* Flip horizontally */
   border-radius: 50%;
   overflow: hidden;
-  position: relative;
-  transform: scaleX(-1);
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  pointer-events: none; /* So clicks go to #mirror-link */
+  box-shadow: none; 
 }
 
-/* Particle System */
-#particle-container {
-  position: absolute;
+/* The mirrored iframe content */
+#mirror iframe {
   width: 100%;
   height: 100%;
+  border: none;
+  transform: scaleX(-1); /* Flip back the content */
   pointer-events: none;
 }
 
-.particle {
-  position: absolute;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  animation: float 3s infinite ease-in-out;
-}
-
-/* Portal Animations */
-@keyframes portal-glow {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(128, 128, 128, 0.4);
+/************************************
+ *    DARK GREY GLOW ANIMATION
+ ************************************/
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(50, 50, 50, 0.6);
   }
   50% {
-    box-shadow: 0 0 40px rgba(128, 128, 128, 0.6);
-  }
-}
-
-@keyframes vortex {
-  0% {
-    transform: rotate(0deg) scale(1);
+    box-shadow: 0 0 25px 10px rgba(50, 50, 50, 0.7);
   }
   100% {
-    transform: rotate(360deg) scale(1.2);
+    box-shadow: 0 0 0 0 rgba(50, 50, 50, 0.6);
   }
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-/* Active Portal Effects */
 .mirror-glow {
-  animation: portal-glow 2s infinite, vortex 20s linear infinite;
+  animation: glow 1.5s infinite;
+  border-radius: 50%; /* ensure the glow remains circular */
+}
+
+/************************************
+ *    SWIRLING PORTAL EFFECT
+ ************************************/
+/* 
+   This class adds a swirling ring around the mirror using a pseudo-element 
+   and a conic-gradient that slowly rotates.
+*/
+.portal-swirl {
+  position: relative; /* So we can position the ::before absolutely */
+}
+
+.portal-swirl::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: calc(100% + 20px);
+  height: calc(100% + 20px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+
+  /* Slightly transparent conic gradient for a subtle swirl */
+  background: conic-gradient(
+    rgba(128, 128, 128, 0.2) 0%,
+    rgba(128, 128, 128, 0.6) 25%,
+    rgba(128, 128, 128, 0.2) 50%,
+    rgba(128, 128, 128, 0.4) 75%,
+    rgba(128, 128, 128, 0.2) 100%
+  );
+
+  animation: swirl 3s linear infinite;
+}
+
+/* Rotate 360 degrees in 3 seconds */
+@keyframes swirl {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
