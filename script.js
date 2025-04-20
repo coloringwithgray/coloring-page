@@ -18,7 +18,7 @@ let portalShown = false; // Track if portal has popped up this activation
 
 // --- Palais de Tokyo: Fine Crayon Pattern ---
 let texturedPattern = null;
-function createFineCrayonPattern() {
+function createAuthenticCrayonPattern() {
   const size = 32;
   const offCanvas = document.createElement('canvas');
   offCanvas.width = size;
@@ -26,25 +26,29 @@ function createFineCrayonPattern() {
   const offCtx = offCanvas.getContext('2d');
   offCtx.clearRect(0, 0, size, size);
 
-  // Sparse, fine, waxy dots
-  for (let i = 0; i < 20; i++) {
+  // Pigment dots: varied gray, size, and opacity
+  for (let i = 0; i < 65; i++) {
     const x = Math.random() * size;
     const y = Math.random() * size;
-    const radius = 0.4 + Math.random() * 0.5;
-    const alpha = 0.07 + Math.random() * 0.07;
+    const radius = 0.9 + Math.random() * 1.8;
+    // Use a range of grays for more depth
+    const gray = 95 + Math.floor(Math.random() * 70); // 95–165
+    const alpha = 0.22 + Math.random() * 0.18;
     offCtx.beginPath();
     offCtx.arc(x, y, radius, 0, 2 * Math.PI);
-    offCtx.fillStyle = `rgba(128,128,128,${alpha})`;
+    offCtx.fillStyle = `rgba(${gray},${gray},${gray},${alpha})`;
     offCtx.fill();
   }
-  // Rare, fine streaks
-  for (let i = 0; i < 2; i++) {
+  // Irregular, expressive streaks
+  for (let i = 0; i < 7; i++) {
     const x1 = Math.random() * size;
     const y1 = Math.random() * size;
-    const x2 = x1 + (Math.random() - 0.5) * 4;
-    const y2 = y1 + (Math.random() - 0.5) * 4;
-    offCtx.strokeStyle = `rgba(120,120,120,${0.05 + Math.random() * 0.05})`;
-    offCtx.lineWidth = 0.4 + Math.random() * 0.5;
+    const x2 = x1 + (Math.random() - 0.5) * 12;
+    const y2 = y1 + (Math.random() - 0.5) * 12;
+    const gray = 85 + Math.floor(Math.random() * 90); // 85–175
+    const alpha = 0.17 + Math.random() * 0.13;
+    offCtx.strokeStyle = `rgba(${gray},${gray},${gray},${alpha})`;
+    offCtx.lineWidth = 1.2 + Math.random() * 2.8;
     offCtx.beginPath();
     offCtx.moveTo(x1, y1);
     offCtx.lineTo(x2, y2);
@@ -53,9 +57,22 @@ function createFineCrayonPattern() {
   return ctx.createPattern(offCanvas, 'repeat');
 }
 
-window.addEventListener('load', () => {
-  texturedPattern = createFineCrayonPattern();
-});
+function ensureCrayonPattern() {
+  if (!texturedPattern) texturedPattern = createAuthenticCrayonPattern();
+}
+window.addEventListener('load', ensureCrayonPattern);
+// Also ensure pattern is ready on crayon activation
+function activateCrayon() {
+  crayonActive = true;
+  portalShown = false; // Reset portal state
+  ensureCrayonPattern();
+  // Hide the default cursor on the entire page
+  document.body.classList.add('hide-cursor');
+  // Hide the crayon element when activated
+  crayon.style.display = 'none';
+  console.log('Crayon activated.');
+}
+
 
 
 
@@ -114,7 +131,7 @@ function drawLine(x, y, fromX, fromY) {
   ctx.globalCompositeOperation = 'source-over';
     // Use a subtle, waxy gray crayon pattern for stroke
   ctx.strokeStyle = texturedPattern || 'gray'; 
-  ctx.lineWidth = 7; // Fine crayon width
+  ctx.lineWidth = 16; // Authentic crayon width, expressive
   ctx.lineCap = 'round';
   ctx.beginPath();
   ctx.moveTo(fromX, fromY);
