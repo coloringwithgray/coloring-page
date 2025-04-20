@@ -3,7 +3,7 @@
  *******************************/
 .hide-cursor {
   /* Use optimized crayon-cursor.png for cursor with precise hotspot */
-  cursor: url('crayon-cursor.png') 32 90, auto !important;
+  cursor: url('crayon-cursor-optimized.png') 32 90, auto !important;
   /* Ensure cursor properties apply to all elements */
   * {
     cursor: inherit !important;
