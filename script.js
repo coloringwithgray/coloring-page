@@ -218,19 +218,38 @@ function checkCanvasColored() {
 function showMirrorLink() {
   if (portalShown) return; // Only show once per activation
   portalShown = true;
-  
-  // Simple positioning at rule of thirds
+
+  // --- Cannes Grand Prix Level: Portal Placement ---
+  // Rule of thirds intersection points (as percentages)
   const thirds = [33.33, 66.66];
-  const positions = [
+  const intersections = [
     { left: thirds[0], top: thirds[0] }, // (1/3, 1/3)
     { left: thirds[0], top: thirds[1] }, // (1/3, 2/3)
     { left: thirds[1], top: thirds[0] }, // (2/3, 1/3)
     { left: thirds[1], top: thirds[1] }  // (2/3, 2/3)
   ];
-  
-  const chosen = positions[Math.floor(Math.random() * positions.length)];
-  mirrorLink.style.left = `${chosen.left}%`;
-  mirrorLink.style.top = `${chosen.top}%`;
+
+  // For each intersection, define an elliptical "zone of possibility" (±13% in x/y)
+  function randomInEllipse(center, rx, ry) {
+    // Polar coordinates for uniform ellipse distribution
+    const t = 2 * Math.PI * Math.random();
+    const r = Math.sqrt(Math.random()); // denser near center
+    const dx = rx * r * Math.cos(t);
+    const dy = ry * r * Math.sin(t);
+    return {
+      left: center.left + dx,
+      top: center.top + dy
+    };
+  }
+
+  // Pick a random intersection and random point in its ellipse
+  const intersection = intersections[Math.floor(Math.random() * intersections.length)];
+  const ellipseRadiusX = 13; // percent
+  const ellipseRadiusY = 13; // percent
+  const pos = randomInEllipse(intersection, ellipseRadiusX, ellipseRadiusY);
+
+  mirrorLink.style.left = `${pos.left}%`;
+  mirrorLink.style.top = `${pos.top}%`;
 
   // Add the 'active' class to trigger the scale-up animation
   mirrorLink.classList.add('active');
@@ -241,6 +260,7 @@ function showMirrorLink() {
   // Enable pointer events after animation
   mirrorLink.style.pointerEvents = 'auto';
 }
+
 
 // Function removed - now using CSS cursor instead
 
