@@ -21,25 +21,24 @@
 <body>
   <div class="container">
     <!-- Canvas for drawing -->
-    <canvas id="canvas"></canvas>
+    <canvas id="canvas" aria-label="Drawing canvas"></canvas>
 
     <!-- Crayon image (click to activate drawing) -->
     <img
       id="crayon"
-      src="crayon-cursor.png"
-      alt="Gray crayon"
+      src="crayon.png"
+      alt="Gray crayon, click to activate drawing"
       tabindex="0"
       aria-label="Activate crayon"
-      onclick="activateCrayon()"
     />
     <!-- Mirror link (initially hidden; revealed after threshold is met) -->
     <div id="portal" tabindex="0" aria-label="Portal" class="hidden"></div>
     <div id="portal-preview" aria-hidden="true" class="hidden">
-      <iframe id="portal-iframe" src="https://coloringwithgray.github.io/reflection/" frameborder="0" tabindex="-1"></iframe>
+      <iframe id="portal-iframe" src="https://coloringwithgray.github.io/reflection/" frameborder="0" tabindex="-1" title="Portal Content Preview"></iframe>
     </div>
     <div id="portal-fullscreen" aria-hidden="true" class="hidden">
       <button id="portal-close" aria-label="Close preview">×</button>
-      <iframe id="portal-full-iframe" src="https://coloringwithgray.github.io/reflection/" frameborder="0" tabindex="-1"></iframe>
+      <iframe id="portal-full-iframe" src="https://coloringwithgray.github.io/reflection/" frameborder="0" tabindex="-1" title="Portal Content Fullscreen"></iframe>
     </div>
     <script src="liquid-portal.js"></script>
     <script>
@@ -53,18 +52,6 @@
       });
     </script>
 </div>
-<script src="liquid-portal.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    new LiquidPortal({
-      portalSelector: '#portal',
-      previewSelector: '#portal-preview',
-      fullscreenSelector: '#portal-fullscreen',
-      closeSelector: '#portal-close'
-    });
-  });
-</script>
-    </a>
-  </div>
+</div>
 </body>
 </html>
