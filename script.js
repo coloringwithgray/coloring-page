@@ -56,6 +56,8 @@ function activateCrayon() {
   crayonActive = true;
   // Hide the default cursor on the entire page
   document.body.classList.add('hide-cursor');
+  // Hide the crayon element when activated
+  crayon.style.display = 'none';
   console.log('Crayon activated.');
 }
 
@@ -90,8 +92,7 @@ function handlePointerDown(e) {
   isDrawing = true;
   lastX = e.clientX;
   lastY = e.clientY;
-  crayon.style.display = 'block';
-  moveCrayon(e.clientX, e.clientY);
+  // Don't show crayon element - use cursor instead
   playCrayonSound();
   console.log('Pointer down: drawing started.');
 }
@@ -102,9 +103,7 @@ function handlePointerMove(e) {
     lastX = e.clientX;
     lastY = e.clientY;
   }
-  if (crayonActive) {
-    moveCrayon(e.clientX, e.clientY);
-  }
+  // Let CSS cursor handle the crayon movement
 }
 
 function handlePointerUp() {
@@ -174,13 +173,7 @@ function showMirrorLink() {
   mirrorLink.style.pointerEvents = 'auto';
 }
 
-/*******************************
- *  Move Crayon (Cursor)
- *******************************/
-function moveCrayon(x, y) {
-  crayon.style.left = `${x - 15}px`;
-  crayon.style.top = `${y - 50}px`;
-}
+// Function removed - now using CSS cursor instead
 
 /*******************************
  *  Register Pointer Events
