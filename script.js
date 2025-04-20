@@ -7,6 +7,79 @@ const crayon = document.getElementById('crayon');
 const mirrorLink = document.getElementById('mirror-link');
 const mirrorDiv = document.getElementById('mirror');
 
+// --- Grand Prix: Dust/Ash Particle Canvas ---
+let dustCanvas, dustCtx, dustParticles = [];
+function createDustCanvas() {
+  if (dustCanvas) return;
+  dustCanvas = document.createElement('canvas');
+  dustCanvas.className = 'dust-canvas';
+  mirrorDiv.appendChild(dustCanvas);
+  dustCtx = dustCanvas.getContext('2d');
+  resizeDustCanvas();
+  for (let i = 0; i < 38; i++) {
+    dustParticles.push({
+      x: Math.random(),
+      y: Math.random(),
+      r: 0.7 + Math.random() * 1.6,
+      alpha: 0.11 + Math.random() * 0.16,
+      dx: (Math.random() - 0.5) * 0.0007,
+      dy: (Math.random() - 0.5) * 0.0007
+    });
+  }
+  requestAnimationFrame(animateDust);
+}
+function resizeDustCanvas() {
+  if (!dustCanvas) return;
+  dustCanvas.width = mirrorDiv.offsetWidth;
+  dustCanvas.height = mirrorDiv.offsetHeight;
+}
+function animateDust() {
+  if (!dustCtx || !dustCanvas) return;
+  dustCtx.clearRect(0, 0, dustCanvas.width, dustCanvas.height);
+  for (const p of dustParticles) {
+    p.x += p.dx + (Math.random() - 0.5) * 0.0002;
+    p.y += p.dy + (Math.random() - 0.5) * 0.0002;
+    if (p.x < 0) p.x = 1; if (p.x > 1) p.x = 0;
+    if (p.y < 0) p.y = 1; if (p.y > 1) p.y = 0;
+    const cx = dustCanvas.width * p.x;
+    const cy = dustCanvas.height * p.y;
+    dustCtx.beginPath();
+    dustCtx.arc(cx, cy, p.r, 0, 2 * Math.PI);
+    dustCtx.fillStyle = `rgba(60,60,60,${p.alpha})`;
+    dustCtx.fill();
+  }
+  requestAnimationFrame(animateDust);
+}
+window.addEventListener('resize', resizeDustCanvas);
+createDustCanvas();
+
+// --- Grand Prix: Animate SVG turbulence for living edge ---
+function animatePortalMask() {
+  const svg = document.querySelector('object.portal-mask-obj');
+  if (!svg || !svg.contentDocument) return;
+  const turb = svg.contentDocument.getElementById('turbwave');
+  if (!turb) return;
+  let t = 0;
+  function step() {
+    t += 0.012;
+    const freq = 0.021 + 0.012 * Math.sin(t * 0.6);
+    turb.setAttribute('baseFrequency', freq + ' 0.09');
+    requestAnimationFrame(step);
+  }
+  step();
+}
+window.addEventListener('DOMContentLoaded', () => {
+  // Insert SVG as <object> for DOM access
+  const obj = document.createElement('object');
+  obj.data = 'portal-mask.svg';
+  obj.type = 'image/svg+xml';
+  obj.className = 'portal-mask-obj';
+  obj.style.display = 'none';
+  document.body.appendChild(obj);
+  obj.addEventListener('load', animatePortalMask);
+});
+
+
 /*******************************
  *  State Variables
  *******************************/

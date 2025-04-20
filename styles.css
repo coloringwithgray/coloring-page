@@ -99,15 +99,48 @@ html, body {
   background: none;
   position: relative;
   transition: transform 1.6s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 1.3s cubic-bezier(0.22, 0.61, 0.36, 1), filter 1.4s cubic-bezier(0.22, 0.61, 0.36, 1);
-  /* Analog irregular edge using SVG mask */
-  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg"><ellipse cx="200" cy="200" rx="185" ry="185" fill="white"/><path d="M200,15 Q220,30 235,60 Q250,90 260,120 Q270,150 280,200 Q290,250 260,280 Q230,310 200,385 Q170,310 140,280 Q110,250 120,200 Q130,150 140,120 Q150,90 165,60 Q180,30 200,15 Z" fill="black" opacity="0.18"/></svg>');
-  mask-image: url('data:image/svg+xml;utf8,<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg"><ellipse cx="200" cy="200" rx="185" ry="185" fill="white"/><path d="M200,15 Q220,30 235,60 Q250,90 260,120 Q270,150 280,200 Q290,250 260,280 Q230,310 200,385 Q170,310 140,280 Q110,250 120,200 Q130,150 140,120 Q150,90 165,60 Q180,30 200,15 Z" fill="black" opacity="0.18"/></svg>');
+  /* Hyper-analog animated edge using SVG turbulence mask */
+  -webkit-mask-image: url('portal-mask.svg');
+  mask-image: url('portal-mask.svg');
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
   transform: scale(0.18);
   opacity: 0.09;
   filter: blur(2.5px);
+  animation: portal-quiver 3.2s cubic-bezier(0.22,0.61,0.36,1) infinite alternate;
 }
+
+#mirror::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 82%;
+  height: 82%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  /* Multi-layered analog shadow */
+  box-shadow: 0 22px 64px 0 rgba(40,30,20,0.17), 0 0 0 2.5px rgba(60,60,60,0.10) inset, 0 0 44px 0 rgba(0,0,0,0.07);
+  opacity: 0.44;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.dust-canvas {
+  position: absolute;
+  left: 0; top: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+@keyframes portal-quiver {
+  0% { transform: scale(0.98) rotate(-1deg); }
+  25% { transform: scale(1.01) rotate(0.4deg); }
+  50% { transform: scale(1.01) rotate(-0.7deg); }
+  75% { transform: scale(0.99) rotate(0.8deg); }
+  100% { transform: scale(1) rotate(-0.3deg); }
+}
+
 
 #mirror-link.active {
   opacity: 1;
