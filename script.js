@@ -182,33 +182,44 @@ function handlePointerUp() {
  *  Check How Much is Colored
  *******************************/
 function checkCanvasColored() {
+  // --- Cannes Grand Prix Level: Portal Emergence Threshold ---
+  // 1. Pixel threshold: at least 0.5% of canvas colored
+  // 2. Spread threshold: marks in at least 3 distinct regions of a 3x3 grid
+
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
   let coloredPixels = 0;
-  const totalPixels = canvas.width * canvas.height;
 
-  // Skip some pixels for performance
-  const skipFactor = 10;
-  for (let i = 0; i < imageData.length; i += 4 * skipFactor) {
-    // Check if pixel is not white
-    const r = imageData[i];
-    const g = imageData[i + 1];
-    const b = imageData[i + 2];
-    
-    // If any pixel differs from white by more than 20, consider it colored
-    if (r < 235 || g < 235 || b < 235) {
-      coloredPixels++;
+  // Track which grid cells have been marked
+  const gridRows = 3;
+  const gridCols = 3;
+  const gridTouched = Array.from({ length: gridRows * gridCols }, () => false);
+  const cellWidth = Math.floor(canvas.width / gridCols);
+  const cellHeight = Math.floor(canvas.height / gridRows);
+
+  for (let y = 0; y < canvas.height; y++) {
+    for (let x = 0; x < canvas.width; x++) {
+      const idx = (y * canvas.width + x) * 4;
+      const r = imageData[idx];
+      const g = imageData[idx + 1];
+      const b = imageData[idx + 2];
+      if (r < 235 || g < 235 || b < 235) {
+        coloredPixels++;
+        // Mark grid cell as touched
+        const col = Math.min(Math.floor(x / cellWidth), gridCols - 1);
+        const row = Math.min(Math.floor(y / cellHeight), gridRows - 1);
+        gridTouched[row * gridCols + col] = true;
+      }
     }
   }
 
-  const approxColored = coloredPixels * skipFactor;
-  const coloredPercentage = (approxColored / totalPixels) * 100;
-  console.log(`Colored: ${coloredPercentage.toFixed(2)}%`);
+  const coloredPercentage = (coloredPixels / (canvas.width * canvas.height)) * 100;
+  const spreadCount = gridTouched.filter(Boolean).length;
+  console.log(`Colored: ${coloredPercentage.toFixed(2)}% | Spread: ${spreadCount} grid zones`);
 
-  // Show portal after any drawing
-  if (coloredPixels > 0) {
-    // Show mirror link with scaling effect
+  // Portal emerges only if both thresholds are met
+  if (coloredPercentage >= 0.5 && spreadCount >= 3) {
     showMirrorLink();
-    console.log('Mirror displayed with dark grey glow.');
+    console.log('Mirror displayed: threshold met (authorship + spread).');
   }
 }
 
