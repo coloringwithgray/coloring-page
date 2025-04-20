@@ -101,6 +101,7 @@ initializeCanvas();
  *******************************/
 function activateCrayon() {
   crayonActive = true;
+  portalShown = false; // Reset portal state
   // Hide the default cursor on the entire page
   document.body.classList.add('hide-cursor');
   // Hide the crayon element when activated
@@ -113,7 +114,8 @@ function activateCrayon() {
  *******************************/
 function drawLine(x, y, fromX, fromY) {
   ctx.globalCompositeOperation = 'source-over';
-  ctx.strokeStyle = texturedPattern || 'gray'; // fallback if not loaded yet
+  // Use a simple gray color for easier detection
+  ctx.strokeStyle = 'gray'; 
   ctx.lineWidth = 15;
   ctx.lineCap = 'round';
   ctx.beginPath();
@@ -172,16 +174,13 @@ function checkCanvasColored() {
   // Skip some pixels for performance
   const skipFactor = 10;
   for (let i = 0; i < imageData.length; i += 4 * skipFactor) {
-    // Check if pixel is "gray-ish" (allow range for each channel)
+    // Check if pixel is not white
     const r = imageData[i];
     const g = imageData[i + 1];
     const b = imageData[i + 2];
-    // Allow a tolerance of ±24
-    if (
-      Math.abs(r - 128) <= 24 &&
-      Math.abs(g - 128) <= 24 &&
-      Math.abs(b - 128) <= 24
-    ) {
+    
+    // If any pixel differs from white by more than 20, consider it colored
+    if (r < 235 || g < 235 || b < 235) {
       coloredPixels++;
     }
   }
@@ -190,8 +189,8 @@ function checkCanvasColored() {
   const coloredPercentage = (approxColored / totalPixels) * 100;
   console.log(`Colored: ${coloredPercentage.toFixed(2)}%`);
 
-  // 0.5% threshold (lowered for easier testing)
-  if (coloredPercentage >= 0.5) {
+  // Show portal after any drawing
+  if (coloredPixels > 0) {
     // Show mirror link with scaling effect
     showMirrorLink();
     console.log('Mirror displayed with dark grey glow.');
@@ -204,25 +203,16 @@ function checkCanvasColored() {
 function showMirrorLink() {
   if (portalShown) return; // Only show once per activation
   portalShown = true;
-  // Rule of thirds intersection points (as percentages)
-  const thirds = [0, 33.33, 66.66, 100];
-  // Generate all 9 intersection points (skip 0% and 100%)
-  const positions = [];
-  for (let i = 1; i <= 2; i++) {
-    for (let j = 1; j <= 2; j++) {
-      positions.push({
-        left: thirds[i] + (Math.random() - 0.5) * 6, // jitter ±3%
-        top: thirds[j] + (Math.random() - 0.5) * 6
-      });
-    }
-  }
-  // Add corners and center for more variety (optional)
-  positions.push({ left: 33.33 + (Math.random() - 0.5) * 6, top: 50 + (Math.random() - 0.5) * 6 }); // left center
-  positions.push({ left: 66.66 + (Math.random() - 0.5) * 6, top: 50 + (Math.random() - 0.5) * 6 }); // right center
-  positions.push({ left: 50 + (Math.random() - 0.5) * 6, top: 33.33 + (Math.random() - 0.5) * 6 }); // top center
-  positions.push({ left: 50 + (Math.random() - 0.5) * 6, top: 66.66 + (Math.random() - 0.5) * 6 }); // bottom center
-  positions.push({ left: 50 + (Math.random() - 0.5) * 6, top: 50 + (Math.random() - 0.5) * 6 }); // center
-
+  
+  // Simple positioning at rule of thirds
+  const thirds = [33.33, 66.66];
+  const positions = [
+    { left: thirds[0], top: thirds[0] }, // (1/3, 1/3)
+    { left: thirds[0], top: thirds[1] }, // (1/3, 2/3)
+    { left: thirds[1], top: thirds[0] }, // (2/3, 1/3)
+    { left: thirds[1], top: thirds[1] }  // (2/3, 2/3)
+  ];
+  
   const chosen = positions[Math.floor(Math.random() * positions.length)];
   mirrorLink.style.left = `${chosen.left}%`;
   mirrorLink.style.top = `${chosen.top}%`;
