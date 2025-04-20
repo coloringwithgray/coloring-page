@@ -17,6 +17,8 @@ const HUM_FADE_STEP = 0.03; // Smooth fade for hum
 
 
 const crayon = document.getElementById('crayon');
+const canvas = document.getElementById('canvas');
+const ctx = canvas ? canvas.getContext('2d') : null;
 
 
 
