@@ -16,41 +16,47 @@ const HUM_SOUND_VOLUME = 0.23; // Tuned for subtlety
 const HUM_FADE_STEP = 0.03; // Smooth fade for hum
 
 
-const canvas = document.getElementById('canvas');
-const ctx = canvas ? canvas.getContext('2d') : null;
 const crayon = document.getElementById('crayon');
-const liveRegion = document.getElementById('portal-announcement');
 
-// Enhanced crayon activation logic
+// Crayon sound effect
+const CRAYON_SOUND_FILE = '11L-1_singular_slow_cray-1745020327208.mp3';
+const crayonSound = new Audio(CRAYON_SOUND_FILE);
+crayonSound.preload = 'auto';
+crayonSound.volume = 0.5;
+
 if (crayon) {
   // Set accessibility attributes
   crayon.setAttribute('role', 'button');
   crayon.setAttribute('aria-pressed', 'false');
 
-  // Center crayon on load
+  // Center crayon on load (not strictly needed with flexbox centering, but harmless)
   function centerCrayon() {
-    crayon.style.left = '50%';
-    crayon.style.top = '50%';
-    crayon.style.transform = 'translate(-50%, -50%)';
+    crayon.style.left = '';
+    crayon.style.top = '';
+    crayon.style.transform = '';
   }
   centerCrayon();
   window.addEventListener('resize', centerCrayon);
 
-  function activateCrayonHandler(e) {
+  function tactileCrayonFeedback(e) {
     if (e) e.preventDefault();
-    crayon.classList.add('active');
+    // Play sound
+    crayonSound.currentTime = 0;
+    crayonSound.play().catch(() => {});
+    // Animate wiggle
+    crayon.classList.remove('crayon-wiggle');
+    // Force reflow to restart animation
+    void crayon.offsetWidth;
+    crayon.classList.add('crayon-wiggle');
+    // ARIA feedback
     crayon.setAttribute('aria-pressed', 'true');
-    if (liveRegion) liveRegion.textContent = 'Crayon activated. You can now draw.';
-    // Optionally: setTimeout to remove .active after animation
-    setTimeout(() => crayon.classList.remove('active'), 600);
-    // Call the main activateCrayon logic if it exists
-    if (typeof activateCrayon === 'function') activateCrayon();
+    setTimeout(() => crayon.setAttribute('aria-pressed', 'false'), 550);
   }
 
-  crayon.addEventListener('click', activateCrayonHandler);
+  crayon.addEventListener('click', tactileCrayonFeedback);
   crayon.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' || e.key === ' ') {
-      activateCrayonHandler(e);
+      tactileCrayonFeedback(e);
     }
   });
   crayon.addEventListener('focus', () => crayon.classList.add('focus-ring'));
