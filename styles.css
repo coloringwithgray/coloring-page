@@ -19,8 +19,8 @@ html, body {
   padding: 0;
   height: 100%;
   overflow: hidden; /* Prevent scrolling */
-  background-color: white;
-  font-family: 'Amatic SC', sans-serif; /* Optional */
+  background-color: #f8f6f1; /* Soft warm ivory */
+  font-family: 'Amatic SC', sans-serif;
 }
 
 .container {
@@ -113,25 +113,44 @@ html, body {
 #mirror {
   width: 100%;
   height: 100%;
+  /* Not a perfect circle: feathered, irregular edge */
   border-radius: 50%;
-  overflow: hidden;
   pointer-events: none;
-  /* More subtle, memory-rich gradient with fingerprint-like texture */
-  background: linear-gradient(135deg, #e6e6e6 0%, #b8b8b8 100%);
-  box-shadow: 0 0 22px 6px rgba(70,70,70,0.11), 
-              0 0 0 1px rgba(170,170,170,0.4) inset;
+  background: none;
   position: relative;
   transition: all 0.8s cubic-bezier(.25,0.1,.25,1);
-  /* Add very subtle fingerprint-like texture as a background */
-  background-image: radial-gradient(circle at 30% 40%, 
-                                  rgba(220,220,220,0.08) 0%, 
-                                  rgba(200,200,200,0.05) 40%, 
-                                  transparent 60%),
-                    radial-gradient(circle at 70% 60%, 
-                                  rgba(220,220,220,0.07) 0%, 
-                                  rgba(200,200,200,0.04) 40%, 
-                                  transparent 60%);
 }
+
+#mirror::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%,
+    #181818 65%, /* Matte black core */
+    rgba(24,24,24,0.85) 75%,
+    rgba(24,24,24,0.35) 82%,
+    rgba(24,24,24,0.12) 89%,
+    transparent 100%
+  );
+  filter: blur(2.5px);
+  z-index: 1;
+  pointer-events: none;
+  /* Subtle irregularity: use a mask image for analog edge, or add a rough SVG overlay if desired */
+}
+
+#mirror::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 50%;
+  /* Subtle noise texture for analog feel */
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><filter id="n" x="0" y="0"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="7"/></filter><ellipse cx="200" cy="200" rx="190" ry="190" fill="none" stroke="rgba(40,40,40,0.17)" stroke-width="24" filter="url(%23n)"/></svg>') center/cover no-repeat;
+  opacity: 0.22;
+  z-index: 2;
+  pointer-events: none;
+}
+
 
 #portal-preview-container {
   width: 100%;
@@ -176,19 +195,6 @@ html, body {
 /************************************
  *    DARK GREY GLOW ANIMATION
  ************************************/
-@keyframes glow {
-  0% {
-    box-shadow: 0 0 0 0 rgba(50, 50, 50, 0.6);
-  }
-  50% {
-    box-shadow: 0 0 25px 10px rgba(50, 50, 50, 0.7);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(50, 50, 50, 0.6);
-  }
-}
+/* Removed digital glow animation */
 
-.mirror-glow {
-  animation: glow 1.5s infinite;
-  border-radius: 50%; /* ensure the glow remains circular */
-}
+/* Removed mirror-glow: no digital glow, only analog feathering */
