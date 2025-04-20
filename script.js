@@ -294,7 +294,7 @@ function showMirrorLink() {
  *  Register Pointer Events
  *******************************/
 canvas.addEventListener('pointerdown', handlePointerDown);
-canvas.addEventListener('pointermove', throttledPointerMove);
+window.addEventListener('pointermove', throttledPointerMove);
 canvas.addEventListener('pointerup', handlePointerUp);
 canvas.addEventListener('pointercancel', handlePointerUp);
 // Also pause sound if window loses focus or pointer leaves canvas
