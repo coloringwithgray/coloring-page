@@ -22,6 +22,15 @@ const crayon = document.getElementById('crayon');
 
 // Ensure crayon can be activated by click and keyboard (Enter/Space)
 if (crayon) {
+  // Center crayon on load
+  function centerCrayon() {
+    crayon.style.left = '50%';
+    crayon.style.top = '50%';
+    crayon.style.transform = 'translate(-50%, -50%)';
+  }
+  centerCrayon();
+  window.addEventListener('resize', centerCrayon);
+
   crayon.addEventListener('click', activateCrayon);
   crayon.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -50,14 +59,46 @@ crayonSound.volume = CRAYON_SOUND_VOLUME;
 function playCrayonSound() {
   if (crayonSound.paused) {
     crayonSound.currentTime = 0;
-    crayonSound.play().catch(() => {}); // ignore autoplay errors
+    crayonSound.volume = 0;
+    crayonSound.play().then(() => {
+      // Fade in
+      let v = 0;
+      const target = CRAYON_SOUND_VOLUME;
+      const step = 0.04;
+      function up() {
+        if (v < target) {
+          v = Math.min(target, v + step);
+          crayonSound.volume = v;
+          requestAnimationFrame(up);
+        } else {
+          crayonSound.volume = target;
+        }
+      }
+      up();
+    }).catch((err) => {
+      // Autoplay restriction or other error
+      console.warn('Crayon sound error:', err);
+    });
   }
 }
 
 function pauseCrayonSound() {
   if (!crayonSound.paused) {
-    crayonSound.pause();
-    crayonSound.currentTime = 0;
+    // Fade out
+    let v = crayonSound.volume;
+    const step = 0.04;
+    function down() {
+      if (v > 0) {
+        v = Math.max(0, v - step);
+        crayonSound.volume = v;
+        requestAnimationFrame(down);
+      } else {
+        crayonSound.pause();
+        crayonSound.currentTime = 0;
+        crayonSound.volume = CRAYON_SOUND_VOLUME; // reset for next time
+      }
+    }
+    down();
   }
 }
 
@@ -65,10 +106,27 @@ function pauseCrayonSound() {
  *  Initialize Canvas
  *******************************/
 function initializeCanvas() {
+  // Save current drawing
+  let dataUrl = null;
+  if (canvas.width > 0 && canvas.height > 0) {
+    dataUrl = canvas.toDataURL();
+  }
+  // Resize canvas
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   ctx.fillStyle = 'white';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+  // Restore drawing if available
+  if (dataUrl) {
+    const img = new window.Image();
+    img.onload = function() {
+      // Center the restored image if aspect ratio changed
+      const x = (canvas.width - img.width) / 2;
+      const y = (canvas.height - img.height) / 2;
+      ctx.drawImage(img, x, y);
+    };
+    img.src = dataUrl;
+  }
   // console.log('Canvas initialized.');
 }
 
@@ -78,26 +136,45 @@ initializeCanvas();
 /*******************************
  *  Activate Crayon
  *******************************/
-function activateCrayon() {
+function activateCrayon(e) {
   crayonActive = true;
-  // Hide the default cursor on the entire page
   document.body.classList.add('hide-cursor');
-
-  // console.log('Crayon activated.');
+  // Move crayon to pointer position if available, else keep at center
+  if (e && e.clientX && e.clientY) {
+    moveCrayon(e.clientX, e.clientY);
+  } else {
+    moveCrayon(window.innerWidth / 2, window.innerHeight / 2);
+  }
+  crayon.style.display = 'block';
+  crayon.classList.add('crayon-activated');
+  // Remove tab focus outline after activation
+  crayon.blur && crayon.blur();
 }
+
 
 /*******************************
  *  Draw Helper
  *******************************/
 function drawLine(x, y, fromX, fromY) {
+  ctx.save();
   ctx.globalCompositeOperation = 'source-over';
   ctx.strokeStyle = DRAW_COLOR;
   ctx.lineWidth = DRAW_LINE_WIDTH;
   ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(fromX, fromY);
-  ctx.lineTo(x, y);
-  ctx.stroke();
+  // Simulate crayon texture with alpha noise
+  const steps = Math.max(2, Math.ceil(Math.hypot(x - fromX, y - fromY) / 2));
+  for (let i = 0; i < steps; i++) {
+    const t = i / (steps - 1);
+    const px = fromX + (x - fromX) * t + (Math.random() - 0.5) * 1.2; // jitter
+    const py = fromY + (y - fromY) * t + (Math.random() - 0.5) * 1.2;
+    ctx.globalAlpha = 0.7 + (Math.random() - 0.5) * 0.15; // subtle alpha noise
+    ctx.beginPath();
+    ctx.arc(px, py, DRAW_LINE_WIDTH / 2, 0, Math.PI * 2);
+    ctx.fillStyle = DRAW_COLOR;
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1.0;
+  ctx.restore();
 }
 
 /*******************************
@@ -140,6 +217,8 @@ function handlePointerUp() {
   isDrawing = false;
   pauseCrayonSound();
   checkCanvasColored();
+  crayon.classList.remove('crayon-activated');
+  // Do NOT hide or remove crayon; keep it visible as custom cursor
   // console.log('Pointer up: drawing stopped.');
 }
 
@@ -149,6 +228,29 @@ function handlePointerUp() {
 // Checks how much of the canvas has been colored with the crayon.
 // Uses pixel skipping for performance and only counts pixels that exactly match the crayon's gray.
 // When a poetic threshold is crossed, the portal emerges.
+function isGray(r, g, b, tolerance = 10) {
+  return (
+    Math.abs(r - GRAY_COLOR) <= tolerance &&
+    Math.abs(g - GRAY_COLOR) <= tolerance &&
+    Math.abs(b - GRAY_COLOR) <= tolerance
+  );
+}
+
+function updateProgressIndicator(percent) {
+  const indicator = document.getElementById('progress-indicator');
+  const bar = indicator.querySelector('.progress-bar');
+  const text = indicator.querySelector('.progress-text');
+  // Circumference of the circle
+  const r = 24;
+  const circumference = 2 * Math.PI * r;
+  const progress = Math.max(0, Math.min(100, percent));
+  const dash = (progress / 100) * circumference;
+  bar.setAttribute('stroke-dasharray', `${dash} ${circumference - dash}`);
+  text.textContent = `${Math.round(progress)}%`;
+  indicator.setAttribute('aria-hidden', progress >= 100 ? 'true' : 'false');
+  indicator.style.opacity = progress >= 100 ? '0' : '1';
+}
+
 function checkCanvasColored() {
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
   let coloredPixels = 0;
@@ -157,25 +259,19 @@ function checkCanvasColored() {
   // Skip some pixels for performance (tradeoff: less precision, much faster)
   const skipFactor = PIXEL_SKIP_FACTOR;
   for (let i = 0; i < imageData.length; i += 4 * skipFactor) {
-    // Only count pixels that are exactly the crayon's gray (prevents false positives)
-    if (
-      imageData[i] === GRAY_COLOR &&
-      imageData[i + 1] === GRAY_COLOR &&
-      imageData[i + 2] === GRAY_COLOR
-    ) {
+    const r = imageData[i];
+    const g = imageData[i + 1];
+    const b = imageData[i + 2];
+    if (isGray(r, g, b)) {
       coloredPixels++;
     }
   }
 
-  // Estimate colored area by scaling up skipped count
-  const approxColored = coloredPixels * skipFactor;
-  const coloredPercentage = (approxColored / totalPixels) * 100;
-  // console.log(`Colored: ${coloredPercentage.toFixed(2)}%`);
-
-  // If enough is colored, reveal the portal (poetic emergence)
-  if (coloredPercentage >= PORTAL_REVEAL_THRESHOLD) {
-    // Show portal and preview only once
-    const portal = document.getElementById('portal');
+  const percentColored = (coloredPixels * skipFactor) / totalPixels * 100;
+  updateProgressIndicator(percentColored);
+  // Reveal portal if threshold crossed
+  if (percentColored >= PORTAL_REVEAL_THRESHOLD) {
+    showMirrorLink();
     const preview = document.getElementById('portal-preview');
     const fullscreen = document.getElementById('portal-fullscreen');
     if (portal.classList.contains('hidden')) {
@@ -197,7 +293,17 @@ function checkCanvasColored() {
 /*******************************
  *  Show Mirror Link with Scaling
  *******************************/
+let portalRevealed = false;
+
 function showMirrorLink() {
+  if (portalRevealed) return;
+  portalRevealed = true;
+
+  // Robust DOM references
+  const mirrorLink = document.getElementById('portal');
+  const mirrorDiv = document.getElementById('portal-preview');
+  const liveRegion = document.getElementById('portal-announcement');
+
   // Rule of thirds intersection points (as percentages)
   const thirds = [33.33, 66.66];
   const positions = [
@@ -207,25 +313,28 @@ function showMirrorLink() {
     { left: thirds[1], top: thirds[1] }  // (2/3, 2/3)
   ];
   const chosen = positions[Math.floor(Math.random() * positions.length)];
-  mirrorLink.style.left = `${chosen.left}%`;
-  mirrorLink.style.top = `${chosen.top}%`;
-
-  // Add the 'active' class to trigger the scale-up animation
-  mirrorLink.classList.add('active');
-  
-  // Add glow to the #mirror div
-  mirrorDiv.classList.add('mirror-glow');
-
-  // Enable pointer events after animation
-  mirrorLink.style.pointerEvents = 'auto';
+  if (mirrorLink) {
+    mirrorLink.style.left = `${chosen.left}%`;
+    mirrorLink.style.top = `${chosen.top}%`;
+    mirrorLink.classList.add('active');
+    mirrorLink.style.pointerEvents = 'auto';
+  }
+  if (mirrorDiv) {
+    mirrorDiv.classList.add('mirror-glow');
+  }
+  // Accessibility: announce portal emergence
+  if (liveRegion) {
+    liveRegion.textContent = 'The portal has appeared.';
+  }
 }
 
 /*******************************
  *  Move Crayon (Cursor)
  *******************************/
 function moveCrayon(x, y) {
-  crayon.style.left = `${x - 15}px`;
-  crayon.style.top = `${y - 50}px`;
+  // Keep crayon centered on pointer
+  crayon.style.left = `${x - crayon.offsetWidth / 2}px`;
+  crayon.style.top = `${y - crayon.offsetHeight / 2}px`;
 }
 
 /*******************************
@@ -293,60 +402,70 @@ const fullscreen = document.getElementById('portal-fullscreen');
 const closeBtn = document.getElementById('portal-close');
 
 function showPreview() {
+  if (!preview) return;
   preview.setAttribute('aria-hidden', 'false');
   preview.classList.add('active');
 }
 function hidePreview() {
+  if (!preview) return;
   preview.setAttribute('aria-hidden', 'true');
   preview.classList.remove('active');
 }
 function showFullscreen() {
+  if (!fullscreen || !closeBtn) return;
   fullscreen.setAttribute('aria-hidden', 'false');
   fullscreen.classList.add('active');
   closeBtn.focus();
   document.body.style.overflow = 'hidden';
+  // Trap focus in fullscreen
+  fullscreen.setAttribute('tabindex', '0');
 }
 function hideFullscreen() {
+  if (!fullscreen || !portal) return;
   fullscreen.setAttribute('aria-hidden', 'true');
   fullscreen.classList.remove('active');
   document.body.style.overflow = '';
   portal.focus();
 }
 
-portal.addEventListener('mouseenter', () => {
-  portal.classList.add('blooming');
-});
-portal.addEventListener('focus', () => {
-  portal.classList.add('blooming');
-});
-portal.addEventListener('mouseleave', () => {
-  portal.classList.remove('blooming');
-});
-portal.addEventListener('blur', () => {
-  portal.classList.remove('blooming');
-});
-portal.addEventListener('click', e => {
-  portal.classList.remove('blooming');
-  showFullscreen();
-  fadeOutHum(); // Stop hum when entering fullscreen
-});
+if (portal) {
+  portal.addEventListener('mouseenter', () => {
+    portal.classList.add('blooming');
+  });
+  portal.addEventListener('focus', () => {
+    portal.classList.add('blooming');
+  });
+  portal.addEventListener('mouseleave', () => {
+    portal.classList.remove('blooming');
+  });
+  portal.addEventListener('blur', () => {
+    portal.classList.remove('blooming');
+  });
+  portal.addEventListener('click', e => {
+    portal.classList.remove('blooming');
+    showFullscreen();
+    fadeOutHum(); // Stop hum when entering fullscreen
+  });
+}
 
-// When closing fullscreen, hum resumes only on hover/focus
-closeBtn.addEventListener('click', () => {
-  hideFullscreen();
-  // Hum will resume only if user hovers/focuses again
-});
-closeBtn.addEventListener('click', hideFullscreen);
-fullscreen.addEventListener('keydown', e => {
-  if (e.key === 'Escape') hideFullscreen();
-});
+if (closeBtn) {
+  closeBtn.addEventListener('click', () => {
+    hideFullscreen();
+    // Hum will resume only if user hovers/focuses again
+  });
+  closeBtn.addEventListener('click', hideFullscreen);
+}
 
-// Trap focus in fullscreen
-fullscreen.addEventListener('keydown', e => {
-  if (e.key === 'Tab') {
-    e.preventDefault();
-    closeBtn.focus();
-  }
-});
+if (fullscreen) {
+  fullscreen.addEventListener('keydown', e => {
+    if (e.key === 'Escape') hideFullscreen();
+    // Trap focus in fullscreen
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      if (closeBtn) closeBtn.focus();
+    }
+  });
+}
+
 
 // console.log('Script loaded.');

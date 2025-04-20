@@ -5,6 +5,7 @@
   cursor: none !important;
 }
 
+
 /************************************
  *    BASIC PAGE & CONTAINER STYLE
  ************************************/
@@ -38,9 +39,13 @@ html, body {
  ************************************/
 #canvas {
   position: absolute;
-  top: 0;
   left: 0;
+  top: 0;
   z-index: 1; /* Canvas behind other elements */
+  background-color: white;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><rect width="80" height="80" fill="white"/><g opacity="0.07"><circle cx="40" cy="40" r="38" fill="none" stroke="gray" stroke-width="1.5"/><ellipse cx="40" cy="40" rx="34" ry="28" fill="none" stroke="gray" stroke-width="1"/><ellipse cx="40" cy="40" rx="28" ry="20" fill="none" stroke="gray" stroke-width="0.7"/></g></svg>');
+  background-repeat: repeat;
+  background-size: 80px 80px;
 }
 
 /************************************
@@ -50,17 +55,26 @@ html, body {
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(1);
   width: 80px;
   height: auto;
   z-index: 10;
-  cursor: pointer;
+  pointer-events: none;
   background: none;
   border: none;
   box-shadow: none;
   filter: drop-shadow(0 2px 8px rgba(80, 80, 80, 0.18)); /* subtle tactile shadow */
-  transition: filter 0.2s cubic-bezier(.4,0,.2,1);
+  transition: filter 0.2s cubic-bezier(.4,0,.2,1), transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s cubic-bezier(.4,0,.2,1);
 }
+
+#crayon.crayon-activated {
+  transform: translate(-50%, -50%) scale(1.12);
+  box-shadow: 0 0 24px 0 rgba(128, 128, 128, 0.13), 0 0 0 2px #bbb;
+  filter: brightness(1.15) drop-shadow(0 0 10px #bbb);
+}
+
+
+
 #crayon:focus {
   outline: 2px solid #888;
   filter: brightness(1.1) drop-shadow(0 0 6px #bbb);
@@ -146,6 +160,47 @@ html, body {
 }
 #portal:hover, #portal:focus {
   filter: blur(0.7px) brightness(1.07) contrast(1.07) saturate(0.94);
+}
+
+#progress-indicator {
+  position: fixed;
+  top: 32px;
+  right: 32px;
+  width: 56px;
+  height: 56px;
+  z-index: 100;
+  pointer-events: none;
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#progress-indicator svg {
+  width: 56px;
+  height: 56px;
+  display: block;
+}
+#progress-indicator .progress-bg {
+  stroke: #e0e0e0;
+  stroke-width: 5;
+  fill: none;
+}
+#progress-indicator .progress-bar {
+  stroke: gray;
+  stroke-width: 5;
+  fill: none;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.3s cubic-bezier(.4,0,.2,1);
+}
+#progress-indicator .progress-text {
+  font-family: 'Amatic SC', sans-serif;
+  font-size: 1.1rem;
+  fill: #888;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+}
+
   animation-duration: 2.2s;
   transform: translate(-50%, -50%) scale(1.18);
 }

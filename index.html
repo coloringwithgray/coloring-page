@@ -19,6 +19,13 @@
 </head>
 
 <body>
+  <div id="progress-indicator" aria-hidden="true">
+    <svg viewBox="0 0 56 56">
+      <circle class="progress-bg" cx="28" cy="28" r="24" />
+      <circle class="progress-bar" cx="28" cy="28" r="24" stroke-dasharray="0 150" />
+      <text class="progress-text" x="28" y="30">0%</text>
+    </svg>
+  </div>
   <div class="container">
     <!-- Canvas for drawing -->
     <canvas id="canvas" aria-label="Drawing canvas"></canvas>
@@ -30,9 +37,12 @@
       alt="Gray crayon, click to activate drawing"
       tabindex="0"
       aria-label="Activate crayon"
+      role="button"
     />
     <!-- Mirror link (initially hidden; revealed after threshold is met) -->
-    <div id="portal" tabindex="0" aria-label="Portal" class="hidden"></div>
+    <div id="portal" tabindex="0" aria-label="Portal" class="hidden" role="button"></div>
+<!-- Live region for portal emergence feedback -->
+<div id="portal-announcement" aria-live="polite" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">Portal will appear when enough of the canvas is colored.</div>
     <div id="portal-preview" aria-hidden="true" class="hidden">
       <iframe id="portal-iframe" src="https://coloringwithgray.github.io/reflection/" frameborder="0" tabindex="-1" title="Portal Content Preview"></iframe>
     </div>
