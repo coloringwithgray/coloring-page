@@ -69,27 +69,26 @@ html, body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) scale(0);
-  
-  /* Hidden initially so it won't block crayon clicks */
-  display: block; /* Changed to block for scaling */
-  
-  /* Increase the portal size (perfect circle) */
-  width: 400px;
-  height: 400px;
-
-  pointer-events: none; /* Initially none to allow crayon clicks */
-  z-index: 4; /* Above the crayon after threshold is met */
-  
-  /* Transition for scaling effect */
+  display: block;
+  width: 90px;
+  height: 90px;
+  pointer-events: none;
+  z-index: 4;
   transition: transform 0.5s ease, opacity 0.5s ease;
-  opacity: 0; /* Initially invisible */
+  opacity: 0;
 }
 
-/* When active, scale up and make visible */
+@media (max-width: 600px) {
+  #mirror-link {
+    width: 54px;
+    height: 54px;
+  }
+}
+
 #mirror-link.active {
   transform: translate(-50%, -50%) scale(1);
   opacity: 1;
-  pointer-events: auto; /* Enable pointer events when active */
+  pointer-events: auto;
 }
 
 /* The actual circular mirror container */
@@ -99,8 +98,12 @@ html, body {
   border-radius: 50%;
   overflow: hidden;
   pointer-events: none;
-  background: linear-gradient(135deg, #e0e0e0 0%, #b0b0b0 100%);
-  box-shadow: 0 0 32px 8px rgba(60,60,60,0.13), 0 0 0 2px #bbb inset;
+  background: radial-gradient(ellipse at 60% 40%, #e0e0e0 40%, #b0b0b0 100%),
+    repeating-radial-gradient(circle at 40% 60%, rgba(255,255,255,0.13) 2px, transparent 6px 12px);
+  box-shadow:
+    0 0 8px 2px rgba(180,180,210,0.15),
+    0 0 24px 8px rgba(120,120,140,0.08),
+    0 0 0 2px #bbb inset;
   position: relative;
   transition: box-shadow 0.6s cubic-bezier(.4,0,.2,1);
 }
