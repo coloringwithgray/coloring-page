@@ -201,9 +201,7 @@ html, body {
   pointer-events: none;
 }
 
-  animation-duration: 2.2s;
-  transform: translate(-50%, -50%) scale(1.18);
-}
+
 
 #portal-fullscreen {
   position: fixed;
@@ -281,5 +279,87 @@ html, body {
 
 
 /************************************
- *    DARK GREY GLOW ANIMATION
+ *    Palais de Tokyo Poetic Enhancements
  ************************************/
+.tokyo-title {
+  font-family: 'Amatic SC', cursive;
+  font-size: 2.8rem;
+  letter-spacing: 0.04em;
+  text-align: center;
+  margin-top: 2.2rem;
+  color: #444;
+  font-weight: 700;
+  text-shadow: 0 2px 12px rgba(180,180,180,0.13);
+}
+.tokyo-epigraph {
+  font-family: 'Amatic SC', cursive;
+  font-size: 1.3rem;
+  text-align: center;
+  color: #888;
+  margin-bottom: 1.7rem;
+  letter-spacing: 0.03em;
+  font-style: italic;
+}
+.gallery-space {
+  min-height: 100vh;
+  width: 100vw;
+  background: repeating-linear-gradient(135deg, #f7f7f7 0 80px, #f0f0f0 80px 160px);
+  position: relative;
+  overflow: hidden;
+  padding-bottom: 4vh;
+}
+.hum-mute-btn {
+  position: fixed;
+  bottom: 36px;
+  left: 36px;
+  z-index: 1200;
+  background: rgba(245,245,245,0.92);
+  border: 1.5px solid #bbb;
+  border-radius: 50%;
+  width: 46px;
+  height: 46px;
+  font-size: 1.6rem;
+  color: #888;
+  box-shadow: 0 2px 12px rgba(120,120,120,0.11);
+  cursor: pointer;
+  transition: background 0.25s, border 0.25s, box-shadow 0.25s;
+  outline: none;
+}
+.hum-mute-btn[aria-pressed="true"] {
+  background: #e0e0e0;
+  color: #666;
+  border-color: #888;
+  box-shadow: 0 4px 16px rgba(120,120,120,0.16);
+}
+.hum-mute-btn:focus {
+  border: 2.5px solid #444;
+  box-shadow: 0 0 0 3px #bdbdbd;
+}
+#portal-preview[role="dialog"],
+#portal-fullscreen[role="dialog"] {
+  border: 2.5px solid #bdbdbd;
+  box-shadow: 0 8px 40px 0 rgba(60,60,70,0.16), 0 1.5px 8px 0 rgba(80,80,80,0.10) inset;
+  background: #f9f9f7 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><ellipse cx="60" cy="60" rx="54" ry="50" fill="none" stroke="%23bbb" stroke-width="1.5" opacity=".13"/></svg>') repeat;
+  transition: box-shadow 0.6s cubic-bezier(.4,0,.2,1), border 0.5s cubic-bezier(.4,0,.2,1);
+}
+#portal {
+  background-blend-mode: lighten;
+  filter: blur(0.1px) brightness(1.04) grayscale(0.03) contrast(1.02);
+  transition: filter 0.7s, box-shadow 0.7s, transform 0.7s;
+}
+#portal:focus, #portal:hover {
+  box-shadow: 0 0 0 3.5px #d3d3d3, 0 1px 8px 2px rgba(80,80,80,0.13) inset;
+  filter: blur(0.7px) brightness(1.10) contrast(1.11) saturate(0.96);
+  outline: none;
+}
+button:focus, [role="button"]:focus, #crayon:focus, #portal:focus {
+  outline: 2.5px solid #444;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px #bdbdbd;
+}
+.paper-texture {
+  background-image:
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2"/></filter><rect width="300" height="300" fill="white"/><rect width="300" height="300" filter="url(%23noise)" opacity=".07"/></svg>');
+  background-repeat: repeat;
+  background-size: 300px 300px;
+}
