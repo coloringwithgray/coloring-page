@@ -53,31 +53,40 @@ function animateDust() {
 window.addEventListener('resize', resizeDustCanvas);
 createDustCanvas();
 
-// --- Grand Prix: Animate SVG turbulence for living edge ---
-function animatePortalMask() {
-  const svg = document.querySelector('object.portal-mask-obj');
-  if (!svg || !svg.contentDocument) return;
-  const turb = svg.contentDocument.getElementById('turbwave');
-  if (!turb) return;
-  let t = 0;
-  function step() {
-    t += 0.012;
-    const freq = 0.021 + 0.012 * Math.sin(t * 0.6);
-    turb.setAttribute('baseFrequency', freq + ' 0.09');
-    requestAnimationFrame(step);
+// --- Grand Prix: Dynamic, unique SVG mask for each portal emergence ---
+function generateIrregularPortalMask() {
+  // Generate a hand-drawn style closed path with deep, random notches
+  const cx = 200, cy = 200, rBase = 160, points = 16;
+  let d = '';
+  for (let i = 0; i < points; i++) {
+    const angle = (2 * Math.PI * i) / points;
+    // Randomize radius for notches/bulges
+    const r = rBase + Math.random() * 42 - 21 + (i % 2 === 0 ? Math.random() * 26 : 0);
+    const x = cx + Math.cos(angle) * r;
+    const y = cy + Math.sin(angle) * r;
+    d += (i === 0 ? 'M' : 'L') + x.toFixed(2) + ',' + y.toFixed(2) + ' ';
   }
-  step();
+  d += 'Z';
+  // SVG string with turbulence for subtle movement
+  const svg = `<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><defs><filter id="turb"><feTurbulence type="turbulence" baseFrequency="0.09 0.21" numOctaves="2" seed="${Math.floor(Math.random()*1000)}" result="turb"/><feDisplacementMap in2="turb" in="SourceGraphic" scale="28" xChannelSelector="R" yChannelSelector="G"/></filter></defs><path d="${d}" fill="white" filter="url(#turb)"/></svg>`;
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
 }
-window.addEventListener('DOMContentLoaded', () => {
-  // Insert SVG as <object> for DOM access
-  const obj = document.createElement('object');
-  obj.data = 'portal-mask.svg';
-  obj.type = 'image/svg+xml';
-  obj.className = 'portal-mask-obj';
-  obj.style.display = 'none';
-  document.body.appendChild(obj);
-  obj.addEventListener('load', animatePortalMask);
-});
+
+function applyRandomPortalMask() {
+  const url = generateIrregularPortalMask();
+  const mirror = document.getElementById('mirror');
+  mirror.style.webkitMaskImage = `url('${url}')`;
+  mirror.style.maskImage = `url('${url}')`;
+  // Also apply to ::before and ::after for analog shadow/gradient
+  mirror.style.setProperty('--portal-mask-url', `url('${url}')`);
+}
+
+// Call this function whenever the portal emerges (e.g., threshold met)
+window.applyRandomPortalMask = applyRandomPortalMask;
+
+// Optionally, apply once on load for preview
+window.addEventListener('DOMContentLoaded', applyRandomPortalMask);
+
 
 
 /*******************************

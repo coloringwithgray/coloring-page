@@ -99,15 +99,48 @@ html, body {
   background: none;
   position: relative;
   transition: transform 1.6s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 1.3s cubic-bezier(0.22, 0.61, 0.36, 1), filter 1.4s cubic-bezier(0.22, 0.61, 0.36, 1);
-  /* Hyper-analog animated edge using SVG turbulence mask */
-  -webkit-mask-image: url('portal-mask.svg');
-  mask-image: url('portal-mask.svg');
+  /* Use dynamic mask for hyper-analog edge */
+  -webkit-mask-image: var(--portal-mask-url, url('portal-mask.svg'));
+  mask-image: var(--portal-mask-url, url('portal-mask.svg'));
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
   transform: scale(0.18);
   opacity: 0.09;
   filter: blur(2.5px);
   animation: portal-quiver 3.2s cubic-bezier(0.22,0.61,0.36,1) infinite alternate;
+}
+
+#mirror::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at 50% 50%,
+    #181818 65%, /* Matte black core */
+    rgba(24,24,24,0.85) 75%,
+    rgba(24,24,24,0.35) 82%,
+    rgba(24,24,24,0.12) 89%,
+    transparent 100%
+  );
+  filter: blur(2.5px);
+  z-index: 1;
+  pointer-events: none;
+  -webkit-mask-image: var(--portal-mask-url, url('portal-mask.svg'));
+  mask-image: var(--portal-mask-url, url('portal-mask.svg'));
+}
+
+#mirror::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 22px 64px 0 rgba(40,30,20,0.17), 0 0 0 2.5px rgba(60,60,60,0.10) inset, 0 0 44px 0 rgba(0,0,0,0.07);
+  opacity: 0.44;
+  z-index: 0;
+  pointer-events: none;
+  -webkit-mask-image: var(--portal-mask-url, url('portal-mask.svg'));
+  mask-image: var(--portal-mask-url, url('portal-mask.svg'));
 }
 
 #mirror::after {
