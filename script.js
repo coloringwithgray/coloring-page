@@ -16,6 +16,52 @@ let lastY = 0;
 let crayonActive = false;
 let portalShown = false; // Track if portal has popped up this activation
 
+// --- Palais de Tokyo: Textured Line Pattern ---
+let texturedPattern = null;
+function createCrayonTexture() {
+  const size = 32;
+  const offCanvas = document.createElement('canvas');
+  offCanvas.width = size;
+  offCanvas.height = size;
+  const offCtx = offCanvas.getContext('2d');
+
+  // Fill with transparent base
+  offCtx.clearRect(0, 0, size, size);
+
+  // Draw random dots/lines for crayon effect
+  for (let i = 0; i < 120; i++) {
+    const x = Math.random() * size;
+    const y = Math.random() * size;
+    const alpha = 0.12 + Math.random() * 0.13;
+    offCtx.beginPath();
+    offCtx.arc(x, y, 1 + Math.random() * 1.6, 0, Math.PI * 2);
+    offCtx.fillStyle = `rgba(128,128,128,${alpha})`;
+    offCtx.fill();
+  }
+
+  // Optionally add some streaks
+  for (let i = 0; i < 6; i++) {
+    const x1 = Math.random() * size;
+    const y1 = Math.random() * size;
+    const x2 = x1 + (Math.random() - 0.5) * 8;
+    const y2 = y1 + (Math.random() - 0.5) * 8;
+    offCtx.strokeStyle = `rgba(128,128,128,${0.06 + Math.random() * 0.10})`;
+    offCtx.lineWidth = 1 + Math.random();
+    offCtx.beginPath();
+    offCtx.moveTo(x1, y1);
+    offCtx.lineTo(x2, y2);
+    offCtx.stroke();
+  }
+
+  return ctx.createPattern(offCanvas, 'repeat');
+}
+
+// Initialize pattern after canvas/context are available
+window.addEventListener('load', () => {
+  texturedPattern = createCrayonTexture();
+});
+
+
 // Crayon sound effect
 const crayonSound = new Audio('11L-1_singular_slow_cray-1745020327208.mp3');
 crayonSound.loop = true;
@@ -67,7 +113,7 @@ function activateCrayon() {
  *******************************/
 function drawLine(x, y, fromX, fromY) {
   ctx.globalCompositeOperation = 'source-over';
-  ctx.strokeStyle = 'gray';
+  ctx.strokeStyle = texturedPattern || 'gray'; // fallback if not loaded yet
   ctx.lineWidth = 15;
   ctx.lineCap = 'round';
   ctx.beginPath();
