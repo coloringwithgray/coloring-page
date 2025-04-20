@@ -13,6 +13,13 @@ app.use(express.json({ limit: '10mb' }));
 const IMAGE_PATH = '/app/shared-canvas.png';
 const WIDTH = 1200; // Adjust as needed
 const HEIGHT = 900;
+const path = require('path');
+
+// Ensure /app directory exists (for Railway persistent volume)
+const dir = path.dirname(IMAGE_PATH);
+if (!fs.existsSync(dir)) {
+  fs.mkdirSync(dir, { recursive: true });
+}
 
 // Initialize blank canvas if needed
 if (!fs.existsSync(IMAGE_PATH)) {
