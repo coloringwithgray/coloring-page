@@ -18,11 +18,7 @@ const HUM_FADE_STEP = 0.03; // Smooth fade for hum
 
 const crayon = document.getElementById('crayon');
 
-// Crayon sound effect
-const CRAYON_SOUND_FILE = '11L-1_singular_slow_cray-1745020327208.mp3';
-const crayonSound = new Audio(CRAYON_SOUND_FILE);
-crayonSound.preload = 'auto';
-crayonSound.volume = 0.5;
+
 
 if (crayon) {
   // Set accessibility attributes
