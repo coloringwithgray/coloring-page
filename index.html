@@ -26,29 +26,33 @@
     <!-- Crayon image (click to activate drawing) -->
     <img
       id="crayon"
-      src="8A783A74-2BBA-4683-94EE-ABC4C6EA089A_4_5005_c.jpeg"
+      src="F8282A26-2EFF-4A04-9DCB-87CE10A7E231.PNG"
       alt="Crayon"
       onclick="activateCrayon()"
     />
 
     <!-- Mirror link (initially hidden; revealed after threshold is met) -->
-    <div id="portal" tabindex="0" aria-label="Portal" class="hidden"></div>
-<div id="portal-preview" aria-hidden="true" class="hidden">
-  <iframe id="portal-iframe" src="https://coloringwithgray.github.io/reflection/" frameborder="0" tabindex="-1"></iframe>
+    <a
+      id="mirror-link"
+      href="https://coloringwithgray.github.io/reflection/"
+      target="_blank"
+    >
+      <div id="mirror" aria-label="Portal to reflection site">
+  <div id="portal-preview-container">
+    <iframe
+      id="mirror-iframe"
+      src="https://coloringwithgray.github.io/reflection/"
+      frameborder="0"
+      tabindex="-1"
+      aria-hidden="true"
+    ></iframe>
+    <div id="liquid-portal"></div>
+  </div>
 </div>
-<div id="portal-fullscreen" aria-hidden="true" class="hidden">
-  <button id="portal-close" aria-label="Close preview">×</button>
-  <iframe id="portal-full-iframe" src="https://coloringwithgray.github.io/reflection/" frameborder="0" tabindex="-1"></iframe>
-</div>
-<script src="liquid-portal.js"></script>
+<script src="liquidPortal.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    new LiquidPortal({
-      portalSelector: '#portal',
-      previewSelector: '#portal-preview',
-      fullscreenSelector: '#portal-fullscreen',
-      closeSelector: '#portal-close'
-    });
+    new LiquidPortal(document.getElementById('liquid-portal'), { size: 90, undulation: 4, speed: 0.7 });
   });
 </script>
     </a>
