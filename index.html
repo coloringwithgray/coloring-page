@@ -19,37 +19,82 @@
 </head>
 
 <body>
-  <div id="progress-indicator" aria-hidden="true">
-    <svg viewBox="0 0 56 56">
-      <circle class="progress-bg" cx="28" cy="28" r="24" />
-      <circle class="progress-bar" cx="28" cy="28" r="24" stroke-dasharray="0 150" />
-      <text class="progress-text" x="28" y="30">0%</text>
-    </svg>
-  </div>
-  <div class="container">
-    <!-- Canvas for drawing -->
-    <canvas id="canvas" aria-label="Drawing canvas"></canvas>
-
-    <!-- Crayon image (click to activate drawing) -->
+  <!-- Palais de Tokyo-inspired poetic header -->
+  <header>
+    <h1 class="tokyo-title">Coloring with Gray</h1>
+    <p class="tokyo-epigraph">“Every threshold is a poem.”</p>
+  </header>
+  <main class="gallery-space">
+    <!-- Progress Indicator: the slow reveal -->
+    <div id="progress-indicator" aria-hidden="true">
+      <svg viewBox="0 0 56 56">
+        <circle class="progress-bg" cx="28" cy="28" r="24" />
+        <circle class="progress-bar" cx="28" cy="28" r="24" stroke-dasharray="0 150" />
+        <text class="progress-text" x="28" y="30">0%</text>
+      </svg>
+    </div>
+    <!-- Canvas: unfinished, infinite -->
+    <canvas id="canvas" aria-label="Drawing canvas, unfinished and infinite"></canvas>
+    <!-- Crayon: tactile, poetic -->
     <img
       id="crayon"
       src="crayon.png"
-      alt="Gray crayon, click to activate drawing"
+      alt="Gray crayon, draw your own poem"
       tabindex="0"
-      aria-label="Activate crayon"
+      aria-label="Activate tactile crayon"
       role="button"
     />
-    <!-- Mirror link (initially hidden; revealed after threshold is met) -->
-    <div id="portal" tabindex="0" aria-label="Portal" class="hidden" role="button"></div>
-<!-- Live region for portal emergence feedback -->
-<div id="portal-announcement" aria-live="polite" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">Portal will appear when enough of the canvas is colored.</div>
-    <div id="portal-preview" aria-hidden="true" class="hidden">
-      <iframe id="portal-iframe" src="https://coloringwithgray.github.io/reflection/" frameborder="0" tabindex="-1" title="Portal Content Preview"></iframe>
+    <!-- Ambient Silence Button: poetic mute for portal hum -->
+    <button id="hum-mute-btn"
+            aria-label="Ambient Silence"
+            aria-pressed="false"
+            class="hum-mute-btn"
+            tabindex="0"
+            role="button"
+            title="Silence the portal’s hum">
+      🔇
+    </button>
+    <!-- Threshold (Portal): the mysterious link -->
+    <div id="portal"
+         tabindex="0"
+         aria-label="Threshold"
+         class="hidden"
+         role="button"
+         title="Step through to the other side"></div>
+    <!-- System Whisper (Live Region): poetic aria-label -->
+    <div id="portal-announcement"
+         aria-live="polite"
+         aria-label="System whispers"
+         style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">
+      Portal will appear when enough of the canvas is colored.
     </div>
-    <div id="portal-fullscreen" aria-hidden="true" class="hidden">
-      <button id="portal-close" aria-label="Close preview">×</button>
-      <iframe id="portal-full-iframe" src="https://coloringwithgray.github.io/reflection/" frameborder="0" tabindex="-1" title="Portal Content Fullscreen"></iframe>
+    <!-- Chambers (Dialogs): poetic, tactile -->
+    <div id="portal-preview"
+         aria-hidden="true"
+         class="hidden"
+         role="dialog"
+         aria-modal="true"
+         tabindex="-1">
+      <iframe id="portal-iframe"
+              src="https://coloringwithgray.github.io/reflection/"
+              frameborder="0"
+              tabindex="-1"
+              title="Preview Chamber"></iframe>
     </div>
+    <div id="portal-fullscreen"
+         aria-hidden="true"
+         class="hidden"
+         role="dialog"
+         aria-modal="true"
+         tabindex="-1">
+      <button id="portal-close" aria-label="Close Chamber">×</button>
+      <iframe id="portal-full-iframe"
+              src="https://coloringwithgray.github.io/reflection/"
+              frameborder="0"
+              tabindex="-1"
+              title="Reflection Chamber"></iframe>
+    </div>
+    <!-- Portal logic script -->
     <script src="liquid-portal.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
@@ -61,7 +106,6 @@
         });
       });
     </script>
-</div>
-</div>
+  </main>
 </body>
 </html>
