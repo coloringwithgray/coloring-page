@@ -2,8 +2,8 @@
  *    HIDE DEFAULT CURSOR ON BODY
  *******************************/
 .hide-cursor {
-  /* Use optimized crayon-cursor.png (64x96). Hotspot near bottom center for natural drawing. */
-  cursor: url('crayon-cursor.png') 32 90, auto !important;
+  /* Use same crayon.png for cursor to maintain visual consistency */
+  cursor: url('crayon.png') 32 90, auto !important;
 }
 
 
