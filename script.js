@@ -61,14 +61,11 @@ function ensureCrayonPattern() {
   if (!texturedPattern) texturedPattern = createAuthenticCrayonPattern();
 }
 window.addEventListener('load', ensureCrayonPattern);
-window.addEventListener('load', setCrayonSize);
-window.addEventListener('resize', setCrayonSize);
 // Also ensure pattern is ready on crayon activation
 function activateCrayon() {
   crayonActive = true;
   portalShown = false; // Reset portal state
   ensureCrayonPattern();
-  setCrayonSize();
   // Hide the default cursor on the entire page
   document.body.classList.add('hide-cursor');
   // Show the crayon element (do not hide)
@@ -122,8 +119,8 @@ function activateCrayon() {
   portalShown = false; // Reset portal state
   // Hide the default cursor on the entire page
   document.body.classList.add('hide-cursor');
-  // Show the crayon element when activated
-  crayon.style.display = 'block';
+  // Hide the crayon element when activated
+  crayon.style.display = 'none';
   console.log('Crayon activated.');
 }
 
@@ -159,7 +156,7 @@ function handlePointerDown(e) {
   isDrawing = true;
   lastX = e.clientX;
   lastY = e.clientY;
-  // Crayon remains visible and follows pointer
+  // Don't show crayon element - use cursor instead
   playCrayonSound();
   console.log('Pointer down: drawing started.');
 }
@@ -172,16 +169,20 @@ function handlePointerMove(e) {
   }
   // Move the crayon element to follow the pointer, like a real tool
   if (crayonActive) {
-    // Offset so the tip of the crayon aligns with the pointer
-    const crayonLength = Math.max(80, canvas.width * 0.09);
-    const crayonWidth = crayonLength * 0.4;
-    const crayonTipOffsetX = crayonWidth * 0.5; // center horizontally
-    const crayonTipOffsetY = crayonLength * 0.93; // tip near bottom
+    // --- Cannes-level rigor: precisely align crayon tip with pointer ---
+    // The crayon graphic should be drawn so its tip is at (20% from left, 90% from top)
+    // Adjust these if you change the crayon image or SVG
+    const crayonLength = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--crayon-length')) || crayon.offsetWidth;
+    const crayonWidth = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--crayon-width')) || crayon.offsetHeight;
+    const tipOffsetX = crayonLength * 0.2;
+    const tipOffsetY = crayonWidth * 0.9;
     crayon.style.position = 'fixed';
-    crayon.style.left = (e.clientX - crayonTipOffsetX) + 'px';
-    crayon.style.top = (e.clientY - crayonTipOffsetY) + 'px';
+    crayon.style.left = (e.clientX - tipOffsetX) + 'px';
+    crayon.style.top = (e.clientY - tipOffsetY) + 'px';
     crayon.style.pointerEvents = 'none'; // Prevent crayon from blocking pointer
-    crayon.style.zIndex = 1000;
+    crayon.style.zIndex = 1000; // Always above canvas
+    // Optionally: add a tiny rotation or jitter for realism
+
   }
 }
 
@@ -294,7 +295,7 @@ function showMirrorLink() {
  *  Register Pointer Events
  *******************************/
 canvas.addEventListener('pointerdown', handlePointerDown);
-window.addEventListener('pointermove', throttledPointerMove);
+canvas.addEventListener('pointermove', throttledPointerMove);
 canvas.addEventListener('pointerup', handlePointerUp);
 canvas.addEventListener('pointercancel', handlePointerUp);
 // Also pause sound if window loses focus or pointer leaves canvas
