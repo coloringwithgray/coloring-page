@@ -61,11 +61,14 @@ function ensureCrayonPattern() {
   if (!texturedPattern) texturedPattern = createAuthenticCrayonPattern();
 }
 window.addEventListener('load', ensureCrayonPattern);
+window.addEventListener('load', setCrayonSize);
+window.addEventListener('resize', setCrayonSize);
 // Also ensure pattern is ready on crayon activation
 function activateCrayon() {
   crayonActive = true;
   portalShown = false; // Reset portal state
   ensureCrayonPattern();
+  setCrayonSize();
   // Hide the default cursor on the entire page
   document.body.classList.add('hide-cursor');
   // Show the crayon element (do not hide)
@@ -170,8 +173,10 @@ function handlePointerMove(e) {
   // Move the crayon element to follow the pointer, like a real tool
   if (crayonActive) {
     // Offset so the tip of the crayon aligns with the pointer
-    const crayonTipOffsetX = crayon.offsetWidth * 0.2;
-    const crayonTipOffsetY = crayon.offsetHeight * 0.8;
+    const crayonLength = Math.max(80, canvas.width * 0.09);
+    const crayonWidth = crayonLength * 0.4;
+    const crayonTipOffsetX = crayonWidth * 0.5; // center horizontally
+    const crayonTipOffsetY = crayonLength * 0.93; // tip near bottom
     crayon.style.position = 'fixed';
     crayon.style.left = (e.clientX - crayonTipOffsetX) + 'px';
     crayon.style.top = (e.clientY - crayonTipOffsetY) + 'px';
