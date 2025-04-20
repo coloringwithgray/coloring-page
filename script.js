@@ -118,6 +118,40 @@ function initializeCanvas() {
 window.addEventListener('resize', initializeCanvas);
 initializeCanvas();
 
+// --- Shared, Decaying Memory Integration ---
+const SERVER_URL = 'http://localhost:3000'; // Change if deployed remotely
+let hasDrawn = false; // Track if user has drawn since last upload
+
+// Fetch the latest shared canvas from the server and draw onto local canvas
+function fetchSharedMemory() {
+  fetch(`${SERVER_URL}/latest`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.image) {
+        const img = new Image();
+        img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        img.src = data.image;
+      }
+    });
+}
+
+// Upload only the new marks (entire canvas for simplicity)
+function uploadCanvas() {
+  if (!hasDrawn) return;
+  const dataURL = canvas.toDataURL('image/png');
+  fetch(`${SERVER_URL}/upload`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ image: dataURL })
+  });
+  hasDrawn = false;
+}
+
+// Fetch shared canvas on load
+window.addEventListener('load', fetchSharedMemory);
+// Poll every 10 seconds to keep in sync with decaying memory
+setInterval(fetchSharedMemory, 10000);
+
 /*******************************
  *  Activate Crayon
  *******************************/
@@ -200,6 +234,8 @@ function handlePointerUp() {
   isDrawing = false;
   pauseCrayonSound();
   checkCanvasColored();
+  hasDrawn = true;
+  uploadCanvas();
   console.log('Pointer up: drawing stopped.');
 }
 
