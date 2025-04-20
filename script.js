@@ -56,6 +56,7 @@ function activateCrayon() {
   crayonActive = true;
   // Hide the default cursor on the entire page
   document.body.classList.add('hide-cursor');
+
   console.log('Crayon activated.');
 }
 
@@ -309,7 +310,7 @@ closeBtn.addEventListener('click', () => {
   hideFullscreen();
   // Hum will resume only if user hovers/focuses again
 });
-closeBtn.addEventListener('click', hideFullscreen);
+dicloseBtn.addEventListener('click', hideFullscreen);
 fullscreen.addEventListener('keydown', e => {
   if (e.key === 'Escape') hideFullscreen();
 });

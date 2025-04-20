@@ -61,7 +61,8 @@ html, body {
   filter: drop-shadow(0 2px 8px rgba(80,80,80,0.13));
   background: transparent;
   user-select: none;
-}
+
+
 
 @media (max-width: 600px) {
   #crayon {
