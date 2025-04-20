@@ -16,50 +16,48 @@ let lastY = 0;
 let crayonActive = false;
 let portalShown = false; // Track if portal has popped up this activation
 
-// --- Palais de Tokyo: Textured Line Pattern ---
+// --- Palais de Tokyo: Fine Crayon Pattern ---
 let texturedPattern = null;
-function createCrayonTexture() {
+function createFineCrayonPattern() {
   const size = 32;
   const offCanvas = document.createElement('canvas');
   offCanvas.width = size;
   offCanvas.height = size;
   const offCtx = offCanvas.getContext('2d');
-
-  // Fill with transparent base
   offCtx.clearRect(0, 0, size, size);
 
-  // Draw random dots/lines for crayon effect
-  for (let i = 0; i < 120; i++) {
+  // Sparse, fine, waxy dots
+  for (let i = 0; i < 20; i++) {
     const x = Math.random() * size;
     const y = Math.random() * size;
-    const alpha = 0.12 + Math.random() * 0.13;
+    const radius = 0.4 + Math.random() * 0.5;
+    const alpha = 0.07 + Math.random() * 0.07;
     offCtx.beginPath();
-    offCtx.arc(x, y, 1 + Math.random() * 1.6, 0, Math.PI * 2);
+    offCtx.arc(x, y, radius, 0, 2 * Math.PI);
     offCtx.fillStyle = `rgba(128,128,128,${alpha})`;
     offCtx.fill();
   }
-
-  // Optionally add some streaks
-  for (let i = 0; i < 6; i++) {
+  // Rare, fine streaks
+  for (let i = 0; i < 2; i++) {
     const x1 = Math.random() * size;
     const y1 = Math.random() * size;
-    const x2 = x1 + (Math.random() - 0.5) * 8;
-    const y2 = y1 + (Math.random() - 0.5) * 8;
-    offCtx.strokeStyle = `rgba(128,128,128,${0.06 + Math.random() * 0.10})`;
-    offCtx.lineWidth = 1 + Math.random();
+    const x2 = x1 + (Math.random() - 0.5) * 4;
+    const y2 = y1 + (Math.random() - 0.5) * 4;
+    offCtx.strokeStyle = `rgba(120,120,120,${0.05 + Math.random() * 0.05})`;
+    offCtx.lineWidth = 0.4 + Math.random() * 0.5;
     offCtx.beginPath();
     offCtx.moveTo(x1, y1);
     offCtx.lineTo(x2, y2);
     offCtx.stroke();
   }
-
   return ctx.createPattern(offCanvas, 'repeat');
 }
 
-// Initialize pattern after canvas/context are available
 window.addEventListener('load', () => {
-  texturedPattern = createCrayonTexture();
+  texturedPattern = createFineCrayonPattern();
 });
+
+
 
 
 // Crayon sound effect
@@ -114,9 +112,9 @@ function activateCrayon() {
  *******************************/
 function drawLine(x, y, fromX, fromY) {
   ctx.globalCompositeOperation = 'source-over';
-  // Use a simple gray color for easier detection
-  ctx.strokeStyle = 'gray'; 
-  ctx.lineWidth = 15;
+    // Use a subtle, waxy gray crayon pattern for stroke
+  ctx.strokeStyle = texturedPattern || 'gray'; 
+  ctx.lineWidth = 7; // Fine crayon width
   ctx.lineCap = 'round';
   ctx.beginPath();
   ctx.moveTo(fromX, fromY);
