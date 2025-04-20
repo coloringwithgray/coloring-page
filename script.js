@@ -159,7 +159,7 @@ function handlePointerDown(e) {
   isDrawing = true;
   lastX = e.clientX;
   lastY = e.clientY;
-  // Don't show crayon element - use cursor instead
+  // Crayon remains visible and follows pointer
   playCrayonSound();
   console.log('Pointer down: drawing started.');
 }
