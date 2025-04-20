@@ -117,10 +117,17 @@ initializeCanvas();
 function activateCrayon() {
   crayonActive = true;
   portalShown = false; // Reset portal state
-  // Hide the default cursor on the entire page
-  document.body.classList.add('hide-cursor');
+  
   // Hide the crayon element when activated
   crayon.style.display = 'none';
+  
+  // Apply custom cursor to both body and canvas
+  document.body.classList.add('hide-cursor');
+  canvas.classList.add('hide-cursor');
+  
+  // Force cursor update by toggling a CSS property
+  document.body.style.backgroundColor = document.body.style.backgroundColor;
+  
   console.log('Crayon activated.');
 }
 
