@@ -26,7 +26,7 @@
     <!-- Crayon image (click to activate drawing) -->
     <img
       id="crayon"
-      src="Gray+Crayon.png"
+      src="F8282A26-2EFF-4A04-9DCB-87CE10A7E231.PNG"
       alt="Crayon"
       onclick="activateCrayon()"
     />
@@ -37,13 +37,22 @@
       href="https://coloringwithgray.github.io/reflection/"
       target="_blank"
     >
-      <div id="mirror">
-        <iframe
-          id="mirror-iframe"
-          src="https://coloringwithgray.github.io/reflection/"
-          frameborder="0"
-        ></iframe>
-      </div>
+      <div id="mirror" aria-label="Portal to reflection site">
+  <div id="portal-preview-container">
+    <iframe
+      id="mirror-iframe"
+      src="https://coloringwithgray.github.io/reflection/"
+      frameborder="0"
+      tabindex="-1"
+      aria-hidden="true"
+    ></iframe>
+    <!-- Subtle SVG smudge overlay for memory effect -->
+    <svg id="portal-smudge" width="100%" height="100%" viewBox="0 0 400 400" style="position:absolute;top:0;left:0;pointer-events:none;z-index:2;">
+      <ellipse cx="200" cy="200" rx="170" ry="170" fill="none" stroke="rgba(120,120,120,0.18)" stroke-width="18" filter="url(#smudge-blur)"/>
+      <filter id="smudge-blur"><feGaussianBlur stdDeviation="4"/></filter>
+    </svg>
+  </div>
+</div>
     </a>
   </div>
 </body>

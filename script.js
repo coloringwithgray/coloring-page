@@ -15,6 +15,26 @@ let lastX = 0;
 let lastY = 0;
 let crayonActive = false;
 
+// Crayon sound effect
+const crayonSound = new Audio('11L-1_singular_slow_cray-1745020327208.mp3');
+crayonSound.loop = true;
+crayonSound.preload = 'auto';
+crayonSound.volume = 0.4; // adjust as needed
+
+function playCrayonSound() {
+  if (crayonSound.paused) {
+    crayonSound.currentTime = 0;
+    crayonSound.play().catch(() => {}); // ignore autoplay errors
+  }
+}
+
+function pauseCrayonSound() {
+  if (!crayonSound.paused) {
+    crayonSound.pause();
+    crayonSound.currentTime = 0;
+  }
+}
+
 /*******************************
  *  Initialize Canvas
  *******************************/
@@ -72,6 +92,7 @@ function handlePointerDown(e) {
   lastY = e.clientY;
   crayon.style.display = 'block';
   moveCrayon(e.clientX, e.clientY);
+  playCrayonSound();
   console.log('Pointer down: drawing started.');
 }
 
@@ -89,6 +110,7 @@ function handlePointerMove(e) {
 function handlePointerUp() {
   if (!crayonActive) return;
   isDrawing = false;
+  pauseCrayonSound();
   checkCanvasColored();
   console.log('Pointer up: drawing stopped.');
 }
@@ -130,6 +152,18 @@ function checkCanvasColored() {
  *  Show Mirror Link with Scaling
  *******************************/
 function showMirrorLink() {
+  // Rule of thirds intersection points (as percentages)
+  const thirds = [33.33, 66.66];
+  const positions = [
+    { left: thirds[0], top: thirds[0] }, // (1/3, 1/3)
+    { left: thirds[0], top: thirds[1] }, // (1/3, 2/3)
+    { left: thirds[1], top: thirds[0] }, // (2/3, 1/3)
+    { left: thirds[1], top: thirds[1] }  // (2/3, 2/3)
+  ];
+  const chosen = positions[Math.floor(Math.random() * positions.length)];
+  mirrorLink.style.left = `${chosen.left}%`;
+  mirrorLink.style.top = `${chosen.top}%`;
+
   // Add the 'active' class to trigger the scale-up animation
   mirrorLink.classList.add('active');
   
@@ -155,5 +189,60 @@ canvas.addEventListener('pointerdown', handlePointerDown);
 canvas.addEventListener('pointermove', throttledPointerMove);
 canvas.addEventListener('pointerup', handlePointerUp);
 canvas.addEventListener('pointercancel', handlePointerUp);
+// Also pause sound if window loses focus or pointer leaves canvas
+window.addEventListener('blur', pauseCrayonSound);
+canvas.addEventListener('pointerleave', pauseCrayonSound);
+
+/*******************************
+ *  Portal Ambient Hum
+ *******************************/
+const portalHum = new Audio('low-hum-14645.mp3');
+portalHum.loop = true;
+portalHum.preload = 'auto';
+portalHum.volume = 0;
+let portalHumFading = false;
+
+function fadeInHum() {
+  if (portalHumFading) return;
+  portalHumFading = true;
+  portalHum.currentTime = 0;
+  portalHum.play().catch(() => {});
+  let v = portalHum.volume;
+  const target = 0.23;
+  const step = 0.03;
+  function up() {
+    if (v < target) {
+      v = Math.min(target, v + step);
+      portalHum.volume = v;
+      requestAnimationFrame(up);
+    } else {
+      portalHumFading = false;
+    }
+  }
+  up();
+}
+function fadeOutHum() {
+  if (portalHumFading) return;
+  portalHumFading = true;
+  let v = portalHum.volume;
+  const step = 0.03;
+  function down() {
+    if (v > 0) {
+      v = Math.max(0, v - step);
+      portalHum.volume = v;
+      requestAnimationFrame(down);
+    } else {
+      portalHum.pause();
+      portalHumFading = false;
+    }
+  }
+  down();
+}
+
+const mirrorLinkEl = document.getElementById('mirror-link');
+mirrorLinkEl.addEventListener('mouseenter', fadeInHum);
+mirrorLinkEl.addEventListener('mouseleave', fadeOutHum);
+mirrorLinkEl.addEventListener('focus', fadeInHum);
+mirrorLinkEl.addEventListener('blur', fadeOutHum);
 
 console.log('Script loaded.');
