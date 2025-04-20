@@ -66,10 +66,17 @@ function activateCrayon() {
   crayonActive = true;
   portalShown = false; // Reset portal state
   ensureCrayonPattern();
-  // Hide the default cursor on the entire page
-  document.body.classList.add('hide-cursor');
-  // Show the crayon element (do not hide)
+  
+  // Hide the actual cursor, we'll use the crayon image element instead
+  document.body.style.cursor = 'none';
+  canvas.style.cursor = 'none';
+  
+  // Show the crayon element as a physical tool
   crayon.style.display = 'block';
+  crayon.style.position = 'fixed';
+  crayon.style.pointerEvents = 'none'; // Prevent blocking interactions
+  crayon.style.zIndex = 1000; // Keep above other elements
+  
   console.log('Crayon activated.');
 }
 
@@ -132,14 +139,25 @@ function activateCrayon() {
  *  Draw Helper
  *******************************/
 function drawLine(x, y, fromX, fromY) {
+  // Ensure the texture pattern is created
+  ensureCrayonPattern();
+  
   ctx.globalCompositeOperation = 'source-over';
-    // Use a subtle, waxy gray crayon pattern for stroke
-  ctx.strokeStyle = texturedPattern || 'gray'; 
-  ctx.lineWidth = 16; // Authentic crayon width, expressive
+  // Use textured pattern for authentic crayon mark with memory and imperfection
+  ctx.strokeStyle = texturedPattern || '#888888'; 
+  
+  // Slight imperfection in width for humanistic quality
+  const width = 15 + (Math.random() * 3 - 1.5);
+  ctx.lineWidth = width;
   ctx.lineCap = 'round';
+  
+  // Subtle jitter for authentic mark-making - the imperfect gesture
+  const jitterX = x + (Math.random() * 1.2 - 0.6);
+  const jitterY = y + (Math.random() * 1.2 - 0.6);
+  
   ctx.beginPath();
   ctx.moveTo(fromX, fromY);
-  ctx.lineTo(x, y);
+  ctx.lineTo(jitterX, jitterY);
   ctx.stroke();
 }
 
@@ -284,12 +302,20 @@ function showMirrorLink() {
  *  Move Crayon with Cursor
  *******************************/
 function moveCrayon(x, y) {
-  // Position crayon so its tip aligns with cursor position
-  // The transform in CSS is already centering the crayon horizontally
-  // and positioning it slightly above the cursor position
+  // Position crayon so its tip aligns with cursor position for authentic drawing
   crayon.style.position = 'fixed'; // Use fixed to follow cursor precisely
+  
+  // Position with slight offset to align the tip with the cursor
   crayon.style.left = `${x}px`;
-  crayon.style.top = `${y - 15}px`; // Offset to position tip at cursor
+  crayon.style.top = `${y - 15}px`; // Offset for drawing tip alignment
+  
+  // Add subtle tilt based on movement to enhance the physical tool feeling
+  if (lastX && lastY) {
+    const deltaX = x - lastX;
+    // Slight tilt angle based on horizontal movement (5 degrees max)
+    const tiltAngle = Math.min(Math.max(deltaX * 0.2, -5), 5);
+    crayon.style.transform = `translate(-50%, -50%) rotate(${tiltAngle}deg) scale(0.5)`;
+  }
   
   // Prevent crayon from blocking interactions with canvas
   crayon.style.pointerEvents = 'none';
