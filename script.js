@@ -17,11 +17,16 @@ const HUM_FADE_STEP = 0.03; // Smooth fade for hum
 
 
 const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
+const ctx = canvas ? canvas.getContext('2d') : null;
 const crayon = document.getElementById('crayon');
+const liveRegion = document.getElementById('portal-announcement');
 
-// Ensure crayon can be activated by click and keyboard (Enter/Space)
+// Enhanced crayon activation logic
 if (crayon) {
+  // Set accessibility attributes
+  crayon.setAttribute('role', 'button');
+  crayon.setAttribute('aria-pressed', 'false');
+
   // Center crayon on load
   function centerCrayon() {
     crayon.style.left = '50%';
@@ -31,14 +36,27 @@ if (crayon) {
   centerCrayon();
   window.addEventListener('resize', centerCrayon);
 
-  crayon.addEventListener('click', activateCrayon);
+  function activateCrayonHandler(e) {
+    if (e) e.preventDefault();
+    crayon.classList.add('active');
+    crayon.setAttribute('aria-pressed', 'true');
+    if (liveRegion) liveRegion.textContent = 'Crayon activated. You can now draw.';
+    // Optionally: setTimeout to remove .active after animation
+    setTimeout(() => crayon.classList.remove('active'), 600);
+    // Call the main activateCrayon logic if it exists
+    if (typeof activateCrayon === 'function') activateCrayon();
+  }
+
+  crayon.addEventListener('click', activateCrayonHandler);
   crayon.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      activateCrayon();
+      activateCrayonHandler(e);
     }
   });
+  crayon.addEventListener('focus', () => crayon.classList.add('focus-ring'));
+  crayon.addEventListener('blur', () => crayon.classList.remove('focus-ring'));
 }
+
 
 
 
@@ -54,33 +72,70 @@ let crayonActive = false;
 const crayonSound = new Audio(CRAYON_SOUND_FILE);
 crayonSound.loop = true;
 crayonSound.preload = 'auto';
-crayonSound.volume = CRAYON_SOUND_VOLUME;
+crayonSound.volume = 0;
+let crayonSoundFadeRAF = null;
+let crayonSoundMuted = false;
 
-function playCrayonSound() {
-  if (crayonSound.paused) {
-    crayonSound.currentTime = 0;
-    crayonSound.volume = 0;
-    crayonSound.play().then(() => {
-      // Fade in
-      let v = 0;
-      const target = CRAYON_SOUND_VOLUME;
-      const step = 0.04;
-      function up() {
-        if (v < target) {
-          v = Math.min(target, v + step);
-          crayonSound.volume = v;
-          requestAnimationFrame(up);
-        } else {
-          crayonSound.volume = target;
-        }
-      }
-      up();
-    }).catch((err) => {
-      // Autoplay restriction or other error
-      console.warn('Crayon sound error:', err);
-    });
-  }
+// Mute toggle for crayon sound (add button with id 'crayon-mute-btn' in HTML if desired)
+const crayonMuteBtn = document.getElementById('crayon-mute-btn');
+if (crayonMuteBtn) {
+  crayonMuteBtn.addEventListener('click', () => {
+    crayonSoundMuted = !crayonSoundMuted;
+    if (crayonSoundMuted) {
+      fadeOutCrayonSound();
+      crayonMuteBtn.setAttribute('aria-label', 'Unmute crayon sound');
+      if (liveRegion) liveRegion.textContent = 'Crayon sound muted.';
+    } else {
+      playCrayonSound();
+      crayonMuteBtn.setAttribute('aria-label', 'Mute crayon sound');
+      if (liveRegion) liveRegion.textContent = 'Crayon sound unmuted.';
+    }
+  });
 }
+
+function fadeCrayonSound(direction) {
+  if (crayonSoundFadeRAF) {
+    cancelAnimationFrame(crayonSoundFadeRAF);
+    crayonSoundFadeRAF = null;
+  }
+  if (crayonSoundMuted) {
+    crayonSound.volume = 0;
+    crayonSound.pause();
+    return;
+  }
+  let v = crayonSound.volume;
+  const target = direction === 'in' ? CRAYON_SOUND_VOLUME : 0;
+  const step = direction === 'in' ? 0.06 : 0.06;
+  if (direction === 'in') {
+    crayonSound.currentTime = 0;
+    if (crayonSound.paused) crayonSound.play().catch(() => {});
+  }
+  function fade() {
+    if (direction === 'in' && v < target) {
+      v = Math.min(target, v + step);
+      crayonSound.volume = v;
+      crayonSoundFadeRAF = requestAnimationFrame(fade);
+    } else if (direction === 'out' && v > target) {
+      v = Math.max(target, v - step);
+      crayonSound.volume = v;
+      crayonSoundFadeRAF = requestAnimationFrame(fade);
+    } else {
+      crayonSound.volume = target;
+      if (direction === 'out') crayonSound.pause();
+      crayonSoundFadeRAF = null;
+    }
+  }
+  fade();
+}
+function playCrayonSound() {
+  if (crayonSoundMuted) return;
+  fadeCrayonSound('in');
+}
+function fadeOutCrayonSound() {
+  fadeCrayonSound('out');
+}
+
+
 
 function pauseCrayonSound() {
   if (!crayonSound.paused) {
@@ -106,6 +161,7 @@ function pauseCrayonSound() {
  *  Initialize Canvas
  *******************************/
 function initializeCanvas() {
+  if (!canvas || !ctx) return;
   // Save current drawing
   let dataUrl = null;
   if (canvas.width > 0 && canvas.height > 0) {
@@ -123,12 +179,43 @@ function initializeCanvas() {
       // Center the restored image if aspect ratio changed
       const x = (canvas.width - img.width) / 2;
       const y = (canvas.height - img.height) / 2;
+      // Animate fade-in for poetry
+      ctx.globalAlpha = 0;
       ctx.drawImage(img, x, y);
+      let alpha = 0;
+      function fadeIn() {
+        alpha += 0.07;
+        ctx.globalAlpha = Math.min(1, alpha);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, x, y);
+        if (alpha < 1) {
+          requestAnimationFrame(fadeIn);
+        } else {
+          ctx.globalAlpha = 1;
+        }
+      }
+      fadeIn();
+      if (liveRegion) liveRegion.textContent = 'Canvas restored after resize.';
     };
     img.src = dataUrl;
+  } else {
+    if (liveRegion) liveRegion.textContent = 'Canvas resized.';
   }
-  // console.log('Canvas initialized.');
 }
+
+// Throttle resize event
+let resizeTimeout = null;
+window.addEventListener('resize', () => {
+  if (resizeTimeout) clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    initializeCanvas();
+    resizeTimeout = null;
+  }, 120);
+});
+initializeCanvas();
+
 
 window.addEventListener('resize', initializeCanvas);
 initializeCanvas();
@@ -137,6 +224,7 @@ initializeCanvas();
  *  Activate Crayon
  *******************************/
 function activateCrayon(e) {
+  if (!crayon || crayonActive) return;
   crayonActive = true;
   document.body.classList.add('hide-cursor');
   // Move crayon to pointer position if available, else keep at center
@@ -147,19 +235,29 @@ function activateCrayon(e) {
   }
   crayon.style.display = 'block';
   crayon.classList.add('crayon-activated');
+  // Animate crayon for tactile feedback
+  crayon.classList.add('crayon-animate');
+  setTimeout(() => crayon.classList.remove('crayon-animate'), 500);
   // Remove tab focus outline after activation
   crayon.blur && crayon.blur();
+  // Announce activation in live region
+  if (liveRegion) liveRegion.textContent = 'Crayon activated. You can now draw.';
+  // Optionally, return focus to canvas for keyboard users
+  if (e && e.type === 'keydown' && canvas) canvas.focus && canvas.focus();
 }
+
 
 
 /*******************************
  *  Draw Helper
  *******************************/
-function drawLine(x, y, fromX, fromY) {
+let hasDrawn = false;
+function drawLine(x, y, fromX, fromY, color = DRAW_COLOR, width = DRAW_LINE_WIDTH) {
+  if (!ctx) return;
   ctx.save();
   ctx.globalCompositeOperation = 'source-over';
-  ctx.strokeStyle = DRAW_COLOR;
-  ctx.lineWidth = DRAW_LINE_WIDTH;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
   ctx.lineCap = 'round';
   // Simulate crayon texture with alpha noise
   const steps = Math.max(2, Math.ceil(Math.hypot(x - fromX, y - fromY) / 2));
@@ -169,12 +267,17 @@ function drawLine(x, y, fromX, fromY) {
     const py = fromY + (y - fromY) * t + (Math.random() - 0.5) * 1.2;
     ctx.globalAlpha = 0.7 + (Math.random() - 0.5) * 0.15; // subtle alpha noise
     ctx.beginPath();
-    ctx.arc(px, py, DRAW_LINE_WIDTH / 2, 0, Math.PI * 2);
-    ctx.fillStyle = DRAW_COLOR;
+    ctx.arc(px, py, width / 2, 0, Math.PI * 2);
+    ctx.fillStyle = color;
     ctx.fill();
   }
   ctx.globalAlpha = 1.0;
   ctx.restore();
+  // Announce first drawing action for accessibility
+  if (!hasDrawn && liveRegion) {
+    liveRegion.textContent = 'Drawing started.';
+    hasDrawn = true;
+  }
 }
 
 /*******************************
@@ -191,17 +294,28 @@ function throttledPointerMove(e) {
 }
 
 function handlePointerDown(e) {
-  if (!crayonActive) return;
+  if (!crayonActive || !crayon) return;
+  if (typeof e.clientX !== 'number' || typeof e.clientY !== 'number') return;
+  // Prevent drawing outside canvas
+  const rect = canvas.getBoundingClientRect();
+  if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) return;
   isDrawing = true;
   lastX = e.clientX;
   lastY = e.clientY;
   crayon.style.display = 'block';
   moveCrayon(e.clientX, e.clientY);
   playCrayonSound();
+  // Animate crayon on drawing start
+  crayon.classList.add('crayon-drawing');
   // console.log('Pointer down: drawing started.');
 }
 
 function handlePointerMove(e) {
+  if (!crayon) return;
+  if (typeof e.clientX !== 'number' || typeof e.clientY !== 'number') return;
+  // Prevent drawing outside canvas
+  const rect = canvas.getBoundingClientRect();
+  if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) return;
   if (isDrawing) {
     drawLine(e.clientX, e.clientY, lastX, lastY);
     lastX = e.clientX;
@@ -213,11 +327,15 @@ function handlePointerMove(e) {
 }
 
 function handlePointerUp() {
-  if (!crayonActive) return;
+  if (!crayonActive || !crayon) return;
   isDrawing = false;
   pauseCrayonSound();
   checkCanvasColored();
   crayon.classList.remove('crayon-activated');
+  // Animate crayon on drawing stop
+  crayon.classList.remove('crayon-drawing');
+  // Announce drawing stopped in live region
+  if (liveRegion) liveRegion.textContent = 'Drawing stopped.';
   // Do NOT hide or remove crayon; keep it visible as custom cursor
   // console.log('Pointer up: drawing stopped.');
 }
@@ -238,6 +356,7 @@ function isGray(r, g, b, tolerance = 10) {
 
 function updateProgressIndicator(percent) {
   const indicator = document.getElementById('progress-indicator');
+  if (!indicator) return;
   const bar = indicator.querySelector('.progress-bar');
   const text = indicator.querySelector('.progress-text');
   // Circumference of the circle
@@ -245,11 +364,24 @@ function updateProgressIndicator(percent) {
   const circumference = 2 * Math.PI * r;
   const progress = Math.max(0, Math.min(100, percent));
   const dash = (progress / 100) * circumference;
-  bar.setAttribute('stroke-dasharray', `${dash} ${circumference - dash}`);
-  text.textContent = `${Math.round(progress)}%`;
-  indicator.setAttribute('aria-hidden', progress >= 100 ? 'true' : 'false');
-  indicator.style.opacity = progress >= 100 ? '0' : '1';
+  // Animate progress bar
+  if (bar) {
+    bar.style.transition = 'stroke-dasharray 0.5s cubic-bezier(0.4,0,0.2,1)';
+    bar.setAttribute('stroke-dasharray', `${dash} ${circumference - dash}`);
+  }
+  if (text) {
+    text.textContent = `${Math.round(progress)}% colored`;
+    text.setAttribute('aria-valuenow', Math.round(progress));
+  }
+  // ARIA live feedback
+  indicator.setAttribute('role', 'progressbar');
+  indicator.setAttribute('aria-valuemin', '0');
+  indicator.setAttribute('aria-valuemax', '100');
+  indicator.setAttribute('aria-valuenow', Math.round(progress));
+  // Announce progress in live region
+  if (liveRegion) liveRegion.textContent = `Canvas ${Math.round(progress)} percent colored.`;
 }
+
 
 function checkCanvasColored() {
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
@@ -272,20 +404,29 @@ function checkCanvasColored() {
   // Reveal portal if threshold crossed
   if (percentColored >= PORTAL_REVEAL_THRESHOLD) {
     showMirrorLink();
+    const portal = document.getElementById('portal');
     const preview = document.getElementById('portal-preview');
     const fullscreen = document.getElementById('portal-fullscreen');
-    if (portal.classList.contains('hidden')) {
+    // Defensive checks
+    if (portal && portal.classList.contains('hidden')) {
       portal.classList.remove('hidden');
       portal.classList.add('visible');
+      // Animate portal for magical effect
+      portal.classList.add('portal-animate');
+      setTimeout(() => portal.classList.remove('portal-animate'), 900);
     }
-    if (preview.classList.contains('hidden')) {
+    if (preview && preview.classList.contains('hidden')) {
       preview.classList.remove('hidden');
       preview.classList.add('visible');
     }
-    if (fullscreen.classList.contains('hidden')) {
+    if (fullscreen && fullscreen.classList.contains('hidden')) {
       fullscreen.classList.remove('hidden');
       fullscreen.classList.add('visible');
     }
+    // Announce portal emergence in live region
+    if (liveRegion) liveRegion.textContent = 'A portal has emerged. Press Enter or click to explore.';
+    // Optionally shift focus for accessibility
+    if (portal) portal.focus && portal.focus();
     // console.log('Portal displayed after drawing threshold.');
   }
 }
@@ -313,18 +454,26 @@ function showMirrorLink() {
     { left: thirds[1], top: thirds[1] }  // (2/3, 2/3)
   ];
   const chosen = positions[Math.floor(Math.random() * positions.length)];
+  // Defensive checks and focusability
   if (mirrorLink) {
     mirrorLink.style.left = `${chosen.left}%`;
     mirrorLink.style.top = `${chosen.top}%`;
     mirrorLink.classList.add('active');
     mirrorLink.style.pointerEvents = 'auto';
+    mirrorLink.setAttribute('tabindex', '0'); // Make focusable
+    mirrorLink.focus && mirrorLink.focus();
   }
   if (mirrorDiv) {
     mirrorDiv.classList.add('mirror-glow');
   }
-  // Accessibility: announce portal emergence
+  // Accessibility: announce portal emergence and position
   if (liveRegion) {
-    liveRegion.textContent = 'The portal has appeared.';
+    let posDesc = '';
+    if (chosen.left < 50 && chosen.top < 50) posDesc = 'upper left';
+    else if (chosen.left < 50 && chosen.top > 50) posDesc = 'lower left';
+    else if (chosen.left > 50 && chosen.top < 50) posDesc = 'upper right';
+    else posDesc = 'lower right';
+    liveRegion.textContent = `The portal has appeared at the ${posDesc}.`;
   }
 }
 
@@ -332,21 +481,41 @@ function showMirrorLink() {
  *  Move Crayon (Cursor)
  *******************************/
 function moveCrayon(x, y) {
+  if (!crayon) return;
+  // Animate crayon cursor on move
+  crayon.classList.add('crayon-move-animate');
+  setTimeout(() => crayon.classList.remove('crayon-move-animate'), 220);
   // Keep crayon centered on pointer
   crayon.style.left = `${x - crayon.offsetWidth / 2}px`;
   crayon.style.top = `${y - crayon.offsetHeight / 2}px`;
 }
 
+
+/*******************************
+ *  Move Crayon (Cursor)
+ *******************************/
+
+
 /*******************************
  *  Register Pointer Events
  *******************************/
-canvas.addEventListener('pointerdown', handlePointerDown);
-canvas.addEventListener('pointermove', throttledPointerMove);
-canvas.addEventListener('pointerup', handlePointerUp);
-canvas.addEventListener('pointercancel', handlePointerUp);
-// Also pause sound if window loses focus or pointer leaves canvas
-window.addEventListener('blur', pauseCrayonSound);
-canvas.addEventListener('pointerleave', pauseCrayonSound);
+// Register pointer events only if canvas exists
+if (canvas) {
+  canvas.addEventListener('pointerdown', handlePointerDown);
+  canvas.addEventListener('pointermove', throttledPointerMove);
+  canvas.addEventListener('pointerup', handlePointerUp);
+  canvas.addEventListener('pointercancel', handlePointerUp);
+  // Also pause sound if pointer leaves canvas
+  canvas.addEventListener('pointerleave', () => {
+    pauseCrayonSound();
+    if (liveRegion) liveRegion.textContent = 'Drawing paused: pointer left the canvas.';
+  });
+}
+// Pause sound and announce if window loses focus
+window.addEventListener('blur', () => {
+  pauseCrayonSound();
+  if (liveRegion) liveRegion.textContent = 'Drawing paused: window lost focus.';
+});
 
 /*******************************
  *  Portal Ambient Hum
@@ -355,44 +524,49 @@ const portalHum = new Audio(HUM_SOUND_FILE);
 portalHum.loop = true;
 portalHum.preload = 'auto';
 portalHum.volume = 0;
-let portalHumFading = false;
+let portalHumFadeRAF = null;
+let portalHumTarget = 0;
+let portalHumMuted = false;
 
-function fadeInHum() {
-  if (portalHumFading) return;
-  portalHumFading = true;
-  portalHum.currentTime = 0;
-  portalHum.play().catch(() => {});
+function fadeAmbientHum(direction) {
+  if (portalHumFadeRAF) {
+    cancelAnimationFrame(portalHumFadeRAF);
+    portalHumFadeRAF = null;
+  }
+  if (portalHumMuted) {
+    portalHum.volume = 0;
+    portalHum.pause();
+    return;
+  }
   let v = portalHum.volume;
-  const target = HUM_SOUND_VOLUME;
-  const step = HUM_FADE_STEP;
-  function up() {
-    if (v < target) {
+  const target = direction === 'in' ? HUM_SOUND_VOLUME : 0;
+  portalHumTarget = target;
+  const step = direction === 'in' ? HUM_FADE_STEP : 0.03;
+  if (direction === 'in') {
+    portalHum.currentTime = 0;
+    if (portalHum.paused) portalHum.play().catch(() => {});
+  }
+  function fade() {
+    if (direction === 'in' && v < target) {
       v = Math.min(target, v + step);
       portalHum.volume = v;
-      requestAnimationFrame(up);
-    } else {
-      portalHumFading = false;
-    }
-  }
-  up();
-}
-function fadeOutHum() {
-  if (portalHumFading) return;
-  portalHumFading = true;
-  let v = portalHum.volume;
-  const step = 0.03;
-  function down() {
-    if (v > 0) {
-      v = Math.max(0, v - step);
+      portalHumFadeRAF = requestAnimationFrame(fade);
+    } else if (direction === 'out' && v > target) {
+      v = Math.max(target, v - step);
       portalHum.volume = v;
-      requestAnimationFrame(down);
+      portalHumFadeRAF = requestAnimationFrame(fade);
     } else {
-      portalHum.pause();
-      portalHumFading = false;
+      portalHum.volume = target;
+      if (direction === 'out') portalHum.pause();
+      portalHumFadeRAF = null;
     }
   }
-  down();
+  fade();
 }
+function fadeInHum() { fadeAmbientHum('in'); }
+function fadeOutHum() { fadeAmbientHum('out'); }
+
+// Add mute toggle for accessibility
 
 
 // Portal interaction logic
@@ -401,38 +575,133 @@ const preview = document.getElementById('portal-preview');
 const fullscreen = document.getElementById('portal-fullscreen');
 const closeBtn = document.getElementById('portal-close');
 
+let lastActiveElement = null;
+
 function showPreview() {
   if (!preview) return;
   preview.setAttribute('aria-hidden', 'false');
-  preview.classList.add('active');
+  preview.setAttribute('role', 'dialog');
+  preview.setAttribute('aria-modal', 'true');
+  preview.classList.add('active', 'dialog-animate');
+  setTimeout(() => preview.classList.remove('dialog-animate'), 400);
+  lastActiveElement = document.activeElement;
+  preview.setAttribute('tabindex', '-1');
+  preview.focus();
+  // Announce dialog open
+  if (liveRegion) liveRegion.textContent = 'Portal preview opened.';
+  trapFocus(preview);
 }
 function hidePreview() {
   if (!preview) return;
   preview.setAttribute('aria-hidden', 'true');
   preview.classList.remove('active');
+  if (lastActiveElement) lastActiveElement.focus();
+  // Announce dialog close
+  if (liveRegion) liveRegion.textContent = 'Portal preview closed.';
 }
 function showFullscreen() {
   if (!fullscreen || !closeBtn) return;
   fullscreen.setAttribute('aria-hidden', 'false');
-  fullscreen.classList.add('active');
+  fullscreen.setAttribute('role', 'dialog');
+  fullscreen.setAttribute('aria-modal', 'true');
+  fullscreen.classList.add('active', 'dialog-animate');
+  setTimeout(() => fullscreen.classList.remove('dialog-animate'), 400);
+  lastActiveElement = document.activeElement;
+  fullscreen.setAttribute('tabindex', '-1');
+  fullscreen.focus();
   closeBtn.focus();
   document.body.style.overflow = 'hidden';
-  // Trap focus in fullscreen
-  fullscreen.setAttribute('tabindex', '0');
+  // Announce dialog open
+  if (liveRegion) liveRegion.textContent = 'Portal fullscreen opened.';
+  trapFocus(fullscreen);
 }
 function hideFullscreen() {
   if (!fullscreen || !portal) return;
   fullscreen.setAttribute('aria-hidden', 'true');
   fullscreen.classList.remove('active');
   document.body.style.overflow = '';
-  portal.focus();
+  if (lastActiveElement) lastActiveElement.focus();
+  // Announce dialog close
+  if (liveRegion) liveRegion.textContent = 'Portal fullscreen closed.';
 }
 
+// Keyboard activation for portal
 if (portal) {
+  portal.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      showFullscreen();
+      fadeOutHum();
+    }
+  });
+}
+
+// ESC closes preview/fullscreen
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (fullscreen && fullscreen.classList.contains('active')) {
+      hideFullscreen();
+    } else if (preview && preview.classList.contains('active')) {
+      hidePreview();
+    }
+  }
+});
+
+// Trap Tab focus in fullscreen dialog
+if (fullscreen) {
+  fullscreen.addEventListener('keydown', e => {
+    if (e.key === 'Tab') {
+      const focusable = fullscreen.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (!focusable || focusable.length === 0) {
+        e.preventDefault();
+        return;
+      }
+      // Ensure ARIA labels for focusable elements
+      focusable.forEach(el => {
+        if (!el.hasAttribute('aria-label') && el.textContent) {
+          el.setAttribute('aria-label', el.textContent.trim());
+        }
+      });
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }
+    // Announce dialog focus for accessibility
+    if (e.key === 'Tab' && liveRegion) {
+      liveRegion.textContent = 'Portal dialog focused.';
+    }
+  });
+}
+
+
+if (portal) {
+  let portalActivated = false;
+  const liveRegion = document.getElementById('portal-announcement');
+  function activatePortal() {
+    if (portalActivated) return;
+    portalActivated = true;
+    portal.classList.remove('blooming');
+    showFullscreen();
+    fadeOutHum();
+    if (liveRegion) liveRegion.textContent = 'Portal activated.';
+    setTimeout(() => { portalActivated = false; }, 1000); // allow re-activation after 1s
+  }
   portal.addEventListener('mouseenter', () => {
     portal.classList.add('blooming');
   });
   portal.addEventListener('focus', () => {
+    if (liveRegion) liveRegion.textContent = 'Portal focused.';
+  
     portal.classList.add('blooming');
   });
   portal.addEventListener('mouseleave', () => {
@@ -440,32 +709,32 @@ if (portal) {
   });
   portal.addEventListener('blur', () => {
     portal.classList.remove('blooming');
+    if (liveRegion) liveRegion.textContent = 'Portal lost focus.';
   });
   portal.addEventListener('click', e => {
-    portal.classList.remove('blooming');
-    showFullscreen();
-    fadeOutHum(); // Stop hum when entering fullscreen
+    activatePortal();
   });
 }
+// Remove blooming class on fullscreen close, too
+function hideFullscreen() {
+  if (!fullscreen || !portal) return;
+  fullscreen.setAttribute('aria-hidden', 'true');
+  fullscreen.classList.remove('active');
+  document.body.style.overflow = '';
+  portal.classList.remove('blooming');
+  if (lastActiveElement) lastActiveElement.focus();
+}
+
 
 if (closeBtn) {
   closeBtn.addEventListener('click', () => {
     hideFullscreen();
+    // Announce portal close for accessibility
+    if (liveRegion) liveRegion.textContent = 'Portal closed.';
     // Hum will resume only if user hovers/focuses again
   });
-  closeBtn.addEventListener('click', hideFullscreen);
 }
-
-if (fullscreen) {
-  fullscreen.addEventListener('keydown', e => {
-    if (e.key === 'Escape') hideFullscreen();
-    // Trap focus in fullscreen
-    if (e.key === 'Tab') {
-      e.preventDefault();
-      if (closeBtn) closeBtn.focus();
-    }
-  });
-}
+// Robust Tab trap for fullscreen dialog is already implemented above (see Tab trap logic)
 
 
 // console.log('Script loaded.');
