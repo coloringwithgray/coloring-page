@@ -122,8 +122,8 @@ function activateCrayon() {
   portalShown = false; // Reset portal state
   // Hide the default cursor on the entire page
   document.body.classList.add('hide-cursor');
-  // Hide the crayon element when activated
-  crayon.style.display = 'none';
+  // Show the crayon element when activated
+  crayon.style.display = 'block';
   console.log('Crayon activated.');
 }
 
