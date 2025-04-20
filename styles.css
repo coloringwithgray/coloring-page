@@ -56,10 +56,7 @@ html, body {
  *    CRAYON
  ************************************/
 #crayon {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%) scale(1);
+  /* Remove position/left/top/transform so flexbox can center and pointer events work */
   width: 80px;
   height: auto;
   z-index: 10;
@@ -68,7 +65,6 @@ html, body {
   border: none;
   box-shadow: none;
   filter: none;
-  box-shadow: none;
   transition: transform 0.25s cubic-bezier(.4,0,.2,1);
 }
 
