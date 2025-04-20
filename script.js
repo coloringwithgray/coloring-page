@@ -285,11 +285,6 @@ function fadeOutHum() {
   down();
 }
 
-const mirrorLinkEl = document.getElementById('mirror-link');
-mirrorLinkEl.addEventListener('mouseenter', fadeInHum);
-mirrorLinkEl.addEventListener('mouseleave', fadeOutHum);
-mirrorLinkEl.addEventListener('focus', fadeInHum);
-mirrorLinkEl.addEventListener('blur', fadeOutHum);
 
 // Portal interaction logic
 const portal = document.getElementById('portal');
