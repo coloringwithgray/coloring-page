@@ -118,15 +118,12 @@ function activateCrayon() {
   crayonActive = true;
   portalShown = false; // Reset portal state
   
-  // Hide the crayon element when activated
-  crayon.style.display = 'none';
+  // Hide the actual cursor, we'll use the crayon image element instead
+  document.body.style.cursor = 'none';
+  canvas.style.cursor = 'none';
   
-  // Apply custom cursor to both body and canvas
-  document.body.classList.add('hide-cursor');
-  canvas.classList.add('hide-cursor');
-  
-  // Force cursor update by toggling a CSS property
-  document.body.style.backgroundColor = document.body.style.backgroundColor;
+  // Make sure crayon is visible and following the cursor
+  crayon.style.display = 'block';
   
   console.log('Crayon activated.');
 }
@@ -174,22 +171,9 @@ function handlePointerMove(e) {
     lastX = e.clientX;
     lastY = e.clientY;
   }
-  // Move the crayon element to follow the pointer, like a real tool
+  // Move the crayon element to follow the pointer
   if (crayonActive) {
-    // --- Cannes-level rigor: precisely align crayon tip with pointer ---
-    // The crayon graphic should be drawn so its tip is at (20% from left, 90% from top)
-    // Adjust these if you change the crayon image or SVG
-    const crayonLength = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--crayon-length')) || crayon.offsetWidth;
-    const crayonWidth = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--crayon-width')) || crayon.offsetHeight;
-    const tipOffsetX = crayonLength * 0.2;
-    const tipOffsetY = crayonWidth * 0.9;
-    crayon.style.position = 'fixed';
-    crayon.style.left = (e.clientX - tipOffsetX) + 'px';
-    crayon.style.top = (e.clientY - tipOffsetY) + 'px';
-    crayon.style.pointerEvents = 'none'; // Prevent crayon from blocking pointer
-    crayon.style.zIndex = 1000; // Always above canvas
-    // Optionally: add a tiny rotation or jitter for realism
-
+    moveCrayon(e.clientX, e.clientY);
   }
 }
 
@@ -296,7 +280,23 @@ function showMirrorLink() {
 }
 
 
-// Function removed - now using CSS cursor instead
+/*******************************
+ *  Move Crayon with Cursor
+ *******************************/
+function moveCrayon(x, y) {
+  // Position crayon so its tip aligns with cursor position
+  // The transform in CSS is already centering the crayon horizontally
+  // and positioning it slightly above the cursor position
+  crayon.style.position = 'fixed'; // Use fixed to follow cursor precisely
+  crayon.style.left = `${x}px`;
+  crayon.style.top = `${y - 15}px`; // Offset to position tip at cursor
+  
+  // Prevent crayon from blocking interactions with canvas
+  crayon.style.pointerEvents = 'none';
+  
+  // Make sure crayon is above other elements
+  crayon.style.zIndex = 1000;
+}
 
 /*******************************
  *  Register Pointer Events

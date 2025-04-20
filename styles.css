@@ -48,7 +48,7 @@ html, body {
 #crayon {
   position: absolute;
   display: block;
-  transform: translate(-50%, -50%) scale(0.5); /* Increased scale for new crayon */
+  transform: translate(-50%, -50%) scale(0.5); /* Center crayon */
   top: 50%;
   left: 50%;
   cursor: pointer;
@@ -57,6 +57,8 @@ html, body {
   max-height: 120px;
   width: auto;
   height: auto;
+  transform-origin: 50% 90%; /* Position so bottom center is the rotation point */
+  transition: transform 0.1s ease; /* Smooth movement */
 }
 
 @media (max-width: 600px) {
