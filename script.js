@@ -62,12 +62,27 @@ function ensureCrayonPattern() {
 }
 window.addEventListener('load', ensureCrayonPattern);
 // Also ensure pattern is ready on crayon activation
+function setCrayonCursor(state) {
+  // Remove all crayon cursor classes
+  document.body.classList.remove('crayon-cursor-active', 'crayon-cursor-pressed', 'hide-cursor');
+  canvas.classList.remove('crayon-cursor-active', 'crayon-cursor-pressed', 'hide-cursor');
+  if (state === 'active') {
+    document.body.classList.add('crayon-cursor-active');
+    canvas.classList.add('crayon-cursor-active');
+  } else if (state === 'pressed') {
+    document.body.classList.add('crayon-cursor-pressed');
+    canvas.classList.add('crayon-cursor-pressed');
+  } else if (state === 'hide') {
+    document.body.classList.add('hide-cursor');
+    canvas.classList.add('hide-cursor');
+  }
+}
+
 function activateCrayon() {
   crayonActive = true;
   portalShown = false; // Reset portal state
   ensureCrayonPattern();
-  // Hide the default cursor on the entire page
-  document.body.classList.add('hide-cursor');
+  setCrayonCursor('active');
   // Hide the crayon element when activated
   crayon.style.display = 'none';
   console.log('Crayon activated.');
@@ -156,8 +171,8 @@ function handlePointerDown(e) {
   isDrawing = true;
   lastX = e.clientX;
   lastY = e.clientY;
-  // Don't show crayon element - use cursor instead
   playCrayonSound();
+  setCrayonCursor('pressed');
   console.log('Pointer down: drawing started.');
 }
 
@@ -174,6 +189,7 @@ function handlePointerUp() {
   if (!crayonActive) return;
   isDrawing = false;
   pauseCrayonSound();
+  setCrayonCursor('active');
   checkCanvasColored();
   console.log('Pointer up: drawing stopped.');
 }

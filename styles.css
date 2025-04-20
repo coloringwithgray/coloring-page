@@ -1,9 +1,14 @@
 /*******************************
  *    HIDE DEFAULT CURSOR ON BODY
  *******************************/
-.hide-cursor {
-  /* Use optimized crayon-cursor.png (64x96). Hotspot near bottom center for natural drawing. */
-  cursor: url('crayon-cursor.png') 32 90, auto !important;
+body.crayon-cursor-active, #canvas.crayon-cursor-active {
+  cursor: url('crayon-cursor.svg') 10 38, url('crayon-cursor.png') 10 38, pointer !important;
+}
+body.crayon-cursor-pressed, #canvas.crayon-cursor-pressed {
+  cursor: url('crayon-cursor-pressed.svg') 10 38, url('crayon-cursor-pressed.png') 10 38, pointer !important;
+}
+body.hide-cursor, #canvas.hide-cursor {
+  cursor: none !important;
 }
 
 
