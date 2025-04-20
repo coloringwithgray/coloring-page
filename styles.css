@@ -2,8 +2,9 @@
  *    HIDE DEFAULT CURSOR ON BODY
  *******************************/
 .hide-cursor {
-  cursor: none !important;
+  cursor: url('crayon.png') 16 48, none !important;
 }
+
 
 /************************************
  *    BASIC PAGE & CONTAINER STYLE
