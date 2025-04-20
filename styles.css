@@ -8,6 +8,13 @@
 /************************************
  *    BASIC PAGE & CONTAINER STYLE
  ************************************/
+.hidden {
+  display: none !important;
+}
+.visible {
+  display: block !important;
+}
+
 html, body {
   margin: 0;
   padding: 0;

@@ -142,9 +142,23 @@ function checkCanvasColored() {
 
   // 1.37% threshold
   if (coloredPercentage >= 1.37) {
-    // Show mirror link with scaling effect
-    showMirrorLink();
-    console.log('Mirror displayed with dark grey glow.');
+    // Show portal and preview only once
+    const portal = document.getElementById('portal');
+    const preview = document.getElementById('portal-preview');
+    const fullscreen = document.getElementById('portal-fullscreen');
+    if (portal.classList.contains('hidden')) {
+      portal.classList.remove('hidden');
+      portal.classList.add('visible');
+    }
+    if (preview.classList.contains('hidden')) {
+      preview.classList.remove('hidden');
+      preview.classList.add('visible');
+    }
+    if (fullscreen.classList.contains('hidden')) {
+      fullscreen.classList.remove('hidden');
+      fullscreen.classList.add('visible');
+    }
+    console.log('Portal displayed after drawing threshold.');
   }
 }
 
@@ -244,5 +258,68 @@ mirrorLinkEl.addEventListener('mouseenter', fadeInHum);
 mirrorLinkEl.addEventListener('mouseleave', fadeOutHum);
 mirrorLinkEl.addEventListener('focus', fadeInHum);
 mirrorLinkEl.addEventListener('blur', fadeOutHum);
+
+// Portal interaction logic
+const portal = document.getElementById('portal');
+const preview = document.getElementById('portal-preview');
+const fullscreen = document.getElementById('portal-fullscreen');
+const closeBtn = document.getElementById('portal-close');
+
+function showPreview() {
+  preview.setAttribute('aria-hidden', 'false');
+  preview.classList.add('active');
+}
+function hidePreview() {
+  preview.setAttribute('aria-hidden', 'true');
+  preview.classList.remove('active');
+}
+function showFullscreen() {
+  fullscreen.setAttribute('aria-hidden', 'false');
+  fullscreen.classList.add('active');
+  closeBtn.focus();
+  document.body.style.overflow = 'hidden';
+}
+function hideFullscreen() {
+  fullscreen.setAttribute('aria-hidden', 'true');
+  fullscreen.classList.remove('active');
+  document.body.style.overflow = '';
+  portal.focus();
+}
+
+portal.addEventListener('mouseenter', () => {
+  portal.classList.add('blooming');
+});
+portal.addEventListener('focus', () => {
+  portal.classList.add('blooming');
+});
+portal.addEventListener('mouseleave', () => {
+  portal.classList.remove('blooming');
+});
+portal.addEventListener('blur', () => {
+  portal.classList.remove('blooming');
+});
+portal.addEventListener('click', e => {
+  portal.classList.remove('blooming');
+  showFullscreen();
+  fadeOutHum(); // Stop hum when entering fullscreen
+});
+
+// When closing fullscreen, hum resumes only on hover/focus
+closeBtn.addEventListener('click', () => {
+  hideFullscreen();
+  // Hum will resume only if user hovers/focuses again
+});
+closeBtn.addEventListener('click', hideFullscreen);
+fullscreen.addEventListener('keydown', e => {
+  if (e.key === 'Escape') hideFullscreen();
+});
+
+// Trap focus in fullscreen
+fullscreen.addEventListener('keydown', e => {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    closeBtn.focus();
+  }
+});
 
 console.log('Script loaded.');
