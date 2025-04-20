@@ -119,7 +119,7 @@ window.addEventListener('resize', initializeCanvas);
 initializeCanvas();
 
 // --- Shared, Decaying Memory Integration ---
-const SERVER_URL = 'http://localhost:3000'; // Change if deployed remotely
+const SERVER_URL = 'https://adaptable-quietude.up.railway.app'; // Live Railway backend
 let hasDrawn = false; // Track if user has drawn since last upload
 
 // Fetch the latest shared canvas from the server and draw onto local canvas
