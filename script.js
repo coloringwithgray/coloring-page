@@ -118,40 +118,6 @@ function initializeCanvas() {
 window.addEventListener('resize', initializeCanvas);
 initializeCanvas();
 
-// --- Shared, Decaying Memory Integration ---
-const SERVER_URL = 'https://adaptable-quietude.up.railway.app'; // Live Railway backend
-let hasDrawn = false; // Track if user has drawn since last upload
-
-// Fetch the latest shared canvas from the server and draw onto local canvas
-function fetchSharedMemory() {
-  fetch(`${SERVER_URL}/latest`)
-    .then(res => res.json())
-    .then(data => {
-      if (data.image) {
-        const img = new Image();
-        img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        img.src = data.image;
-      }
-    });
-}
-
-// Upload only the new marks (entire canvas for simplicity)
-function uploadCanvas() {
-  if (!hasDrawn) return;
-  const dataURL = canvas.toDataURL('image/png');
-  fetch(`${SERVER_URL}/upload`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ image: dataURL })
-  });
-  hasDrawn = false;
-}
-
-// Fetch shared canvas on load
-window.addEventListener('load', fetchSharedMemory);
-// Poll every 10 seconds to keep in sync with decaying memory
-setInterval(fetchSharedMemory, 10000);
-
 /*******************************
  *  Activate Crayon
  *******************************/
@@ -172,27 +138,56 @@ function activateCrayon() {
 /*******************************
  *  Draw Helper
  *******************************/
+// --- Grand Prix Level: Dynamic Wiggle ---
+let lastDrawTimestamp = Date.now();
+let lastDrawSeed = Math.random() * 10000;
+
 function drawLine(x, y, fromX, fromY) {
-  // Ensure the texture pattern is created
   ensureCrayonPattern();
-  
+
+  // Calculate speed (pixels per millisecond)
+  const now = Date.now();
+  const dx = x - fromX;
+  const dy = y - fromY;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  const dt = now - lastDrawTimestamp || 1;
+  const speed = distance / dt; // pixels/ms
+
+  // Map speed to wiggle amplitude (tunable)
+  // Slow: 0.5px, Fast: up to 3px
+  const minWiggle = 0.5;
+  const maxWiggle = 3.0;
+  const speedClamp = Math.min(speed, 2.5); // Clamp for wild gestures
+  const wiggle = minWiggle + (maxWiggle - minWiggle) * (speedClamp / 2.5);
+
+  // Unique per-stroke seed for subtle individuality
+  if (dt > 100) lastDrawSeed = Math.random() * 10000; // New seed if pause between segments
+  function seededJitter(val) {
+    // Simple pseudo-random with seed
+    return (
+      Math.sin(val * 12.9898 + lastDrawSeed) * 43758.5453 -
+      Math.floor(Math.sin(val * 12.9898 + lastDrawSeed) * 43758.5453)
+    );
+  }
+
+  // Apply jitter
+  const jitterX = x + (seededJitter(x + now) - 0.5) * 2 * wiggle;
+  const jitterY = y + (seededJitter(y + now) - 0.5) * 2 * wiggle;
+
   ctx.globalCompositeOperation = 'source-over';
-  // Use textured pattern for authentic crayon mark with memory and imperfection
-  ctx.strokeStyle = texturedPattern || '#888888'; 
-  
+  ctx.strokeStyle = texturedPattern || '#888888';
+
   // Slight imperfection in width for humanistic quality
   const width = 15 + (Math.random() * 3 - 1.5);
   ctx.lineWidth = width;
   ctx.lineCap = 'round';
-  
-  // Subtle jitter for authentic mark-making - the imperfect gesture
-  const jitterX = x + (Math.random() * 1.2 - 0.6);
-  const jitterY = y + (Math.random() * 1.2 - 0.6);
-  
+
   ctx.beginPath();
   ctx.moveTo(fromX, fromY);
   ctx.lineTo(jitterX, jitterY);
   ctx.stroke();
+
+  lastDrawTimestamp = now;
 }
 
 /*******************************
@@ -234,8 +229,6 @@ function handlePointerUp() {
   isDrawing = false;
   pauseCrayonSound();
   checkCanvasColored();
-  hasDrawn = true;
-  uploadCanvas();
   console.log('Pointer up: drawing stopped.');
 }
 
