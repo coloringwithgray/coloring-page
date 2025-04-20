@@ -1,0 +1,14 @@
+# Node modules, logs, OS files
+node_modules/
+.DS_Store
+*.log
+.env
+# Build output
+/dist
+/build
+# VSCode
+.vscode/
+# Mac system files
+Icon?
+# Other
+*.swp

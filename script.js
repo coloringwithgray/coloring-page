@@ -172,11 +172,15 @@ function checkCanvasColored() {
   // Skip some pixels for performance
   const skipFactor = 10;
   for (let i = 0; i < imageData.length; i += 4 * skipFactor) {
-    // Check if pixel is "gray" (128,128,128)
+    // Check if pixel is "gray-ish" (allow range for each channel)
+    const r = imageData[i];
+    const g = imageData[i + 1];
+    const b = imageData[i + 2];
+    // Allow a tolerance of ±24
     if (
-      imageData[i] === 128 &&
-      imageData[i + 1] === 128 &&
-      imageData[i + 2] === 128
+      Math.abs(r - 128) <= 24 &&
+      Math.abs(g - 128) <= 24 &&
+      Math.abs(b - 128) <= 24
     ) {
       coloredPixels++;
     }
@@ -186,8 +190,8 @@ function checkCanvasColored() {
   const coloredPercentage = (approxColored / totalPixels) * 100;
   console.log(`Colored: ${coloredPercentage.toFixed(2)}%`);
 
-  // 1.37% threshold
-  if (coloredPercentage >= 1.37) {
+  // 0.5% threshold (lowered for easier testing)
+  if (coloredPercentage >= 0.5) {
     // Show mirror link with scaling effect
     showMirrorLink();
     console.log('Mirror displayed with dark grey glow.');

@@ -1,0 +1,7 @@
+# Netlify configuration for Palais de Tokyo digital submission
+[build]
+  publish = "."
+  command = ""
+
+[template.environment]
+# Add environment variables here if needed
