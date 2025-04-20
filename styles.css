@@ -113,17 +113,19 @@ html, body {
 #mirror::after {
   content: '';
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 82%;
-  height: 82%;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  /* No border-radius - use mask from parent element */
   /* Multi-layered analog shadow */
   box-shadow: 0 22px 64px 0 rgba(40,30,20,0.17), 0 0 0 2.5px rgba(60,60,60,0.10) inset, 0 0 44px 0 rgba(0,0,0,0.07);
   opacity: 0.44;
   z-index: 0;
   pointer-events: none;
+  /* Inherit mask from parent for irregular edge */
+  -webkit-mask-image: inherit;
+  mask-image: inherit;
 }
 
 .dust-canvas {
@@ -168,26 +170,13 @@ html, body {
 }
 
 
-/* The actual circular mirror container - Reflection / Memory */
-#mirror {
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  background: none;
-  position: relative;
-  transition: all 0.8s cubic-bezier(.25,0.1,.25,1);
-  /* Analog irregular edge using SVG mask */
-  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg"><ellipse cx="200" cy="200" rx="185" ry="185" fill="white"/><path d="M200,15 Q220,30 235,60 Q250,90 260,120 Q270,150 280,200 Q290,250 260,280 Q230,310 200,385 Q170,310 140,280 Q110,250 120,200 Q130,150 140,120 Q150,90 165,60 Q180,30 200,15 Z" fill="black" opacity="0.18"/></svg>');
-  mask-image: url('data:image/svg+xml;utf8,<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg"><ellipse cx="200" cy="200" rx="185" ry="185" fill="white"/><path d="M200,15 Q220,30 235,60 Q250,90 260,120 Q270,150 280,200 Q290,250 260,280 Q230,310 200,385 Q170,310 140,280 Q110,250 120,200 Q130,150 140,120 Q150,90 165,60 Q180,30 200,15 Z" fill="black" opacity="0.18"/></svg>');
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
-}
+/* REMOVED DUPLICATE CIRCULAR MIRROR DEFINITION */
 
 #mirror::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  border-radius: 50%;
+  /* No border-radius - use mask from parent element instead */
   background: radial-gradient(circle at 50% 50%,
     #181818 65%, /* Matte black core */
     rgba(24,24,24,0.85) 75%,
@@ -198,6 +187,9 @@ html, body {
   filter: blur(2.5px);
   z-index: 1;
   pointer-events: none;
+  /* Inherit mask from parent for irregular edge */
+  -webkit-mask-image: inherit;
+  mask-image: inherit;
 }
 
 #mirror::after {
@@ -216,35 +208,9 @@ html, body {
   pointer-events: none;
 }
 
-#mirror::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  border-radius: 50%;
-  background: radial-gradient(circle at 50% 50%,
-    #181818 65%, /* Matte black core */
-    rgba(24,24,24,0.85) 75%,
-    rgba(24,24,24,0.35) 82%,
-    rgba(24,24,24,0.12) 89%,
-    transparent 100%
-  );
-  filter: blur(2.5px);
-  z-index: 1;
-  pointer-events: none;
-  /* Subtle irregularity: use a mask image for analog edge, or add a rough SVG overlay if desired */
-}
+/* REMOVED DUPLICATE CIRCULAR MIRROR::BEFORE DEFINITION */
 
-#mirror::after {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  border-radius: 50%;
-  /* Subtle noise texture for analog feel */
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><filter id="n" x="0" y="0"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="7"/></filter><ellipse cx="200" cy="200" rx="190" ry="190" fill="none" stroke="rgba(40,40,40,0.17)" stroke-width="24" filter="url(%23n)"/></svg>') center/cover no-repeat;
-  opacity: 0.22;
-  z-index: 2;
-  pointer-events: none;
-}
+/* REMOVED DUPLICATE CIRCULAR MIRROR::AFTER DEFINITION */
 
 
 #portal-preview-container {
@@ -284,7 +250,8 @@ html, body {
 
 #mirror-link:focus #mirror,
 #mirror-link:hover #mirror {
-  box-shadow: 0 0 40px 14px rgba(80,80,80,0.19), 0 0 0 4px #bbb inset;
+  /* Removed circular box-shadow */
+  filter: blur(1.5px);
 }
 
 /************************************
