@@ -62,29 +62,14 @@ function ensureCrayonPattern() {
 }
 window.addEventListener('load', ensureCrayonPattern);
 // Also ensure pattern is ready on crayon activation
-function setCrayonCursor(state) {
-  // Remove all crayon cursor classes
-  document.body.classList.remove('crayon-cursor-active', 'crayon-cursor-pressed', 'hide-cursor');
-  canvas.classList.remove('crayon-cursor-active', 'crayon-cursor-pressed', 'hide-cursor');
-  if (state === 'active') {
-    document.body.classList.add('crayon-cursor-active');
-    canvas.classList.add('crayon-cursor-active');
-  } else if (state === 'pressed') {
-    document.body.classList.add('crayon-cursor-pressed');
-    canvas.classList.add('crayon-cursor-pressed');
-  } else if (state === 'hide') {
-    document.body.classList.add('hide-cursor');
-    canvas.classList.add('hide-cursor');
-  }
-}
-
 function activateCrayon() {
   crayonActive = true;
   portalShown = false; // Reset portal state
   ensureCrayonPattern();
-  setCrayonCursor('active');
-  // Hide the crayon element when activated
-  crayon.style.display = 'none';
+  // Hide the default cursor on the entire page
+  document.body.classList.add('hide-cursor');
+  // Show the crayon element (do not hide)
+  crayon.style.display = 'block';
   console.log('Crayon activated.');
 }
 
@@ -171,8 +156,8 @@ function handlePointerDown(e) {
   isDrawing = true;
   lastX = e.clientX;
   lastY = e.clientY;
+  // Don't show crayon element - use cursor instead
   playCrayonSound();
-  setCrayonCursor('pressed');
   console.log('Pointer down: drawing started.');
 }
 
@@ -182,14 +167,23 @@ function handlePointerMove(e) {
     lastX = e.clientX;
     lastY = e.clientY;
   }
-  // Let CSS cursor handle the crayon movement
+  // Move the crayon element to follow the pointer, like a real tool
+  if (crayonActive) {
+    // Offset so the tip of the crayon aligns with the pointer
+    const crayonTipOffsetX = crayon.offsetWidth * 0.2;
+    const crayonTipOffsetY = crayon.offsetHeight * 0.8;
+    crayon.style.position = 'fixed';
+    crayon.style.left = (e.clientX - crayonTipOffsetX) + 'px';
+    crayon.style.top = (e.clientY - crayonTipOffsetY) + 'px';
+    crayon.style.pointerEvents = 'none'; // Prevent crayon from blocking pointer
+    crayon.style.zIndex = 1000;
+  }
 }
 
 function handlePointerUp() {
   if (!crayonActive) return;
   isDrawing = false;
   pauseCrayonSound();
-  setCrayonCursor('active');
   checkCanvasColored();
   console.log('Pointer up: drawing stopped.');
 }
