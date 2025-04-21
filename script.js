@@ -55,20 +55,20 @@ createDustCanvas();
 
 // --- Grand Prix: Dynamic, unique SVG mask for each portal emergence ---
 function generateIrregularPortalMask() {
-  // Generate a hand-drawn style closed path with deep, random notches
-  const cx = 200, cy = 200, rBase = 160, points = 16;
+  // Larger, more elegant/analog path for grand portal
+  const cx = 200, cy = 200, rBase = 164, points = 22;
   let d = '';
   for (let i = 0; i < points; i++) {
     const angle = (2 * Math.PI * i) / points;
-    // Randomize radius for notches/bulges
-    const r = rBase + Math.random() * 42 - 21 + (i % 2 === 0 ? Math.random() * 26 : 0);
+    // More elegant, deeper irregularity
+    const r = rBase + Math.sin(i) * 18 + Math.random() * 54 - 27 + (i % 3 === 0 ? Math.random() * 32 : 0);
     const x = cx + Math.cos(angle) * r;
     const y = cy + Math.sin(angle) * r;
     d += (i === 0 ? 'M' : 'L') + x.toFixed(2) + ',' + y.toFixed(2) + ' ';
   }
   d += 'Z';
-  // SVG string with turbulence for subtle movement
-  const svg = `<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><defs><filter id="turb"><feTurbulence type="turbulence" baseFrequency="0.09 0.21" numOctaves="2" seed="${Math.floor(Math.random()*1000)}" result="turb"/><feDisplacementMap in2="turb" in="SourceGraphic" scale="28" xChannelSelector="R" yChannelSelector="G"/></filter></defs><path d="${d}" fill="white" filter="url(#turb)"/></svg>`;
+  // SVG string with larger turbulence for analog movement
+  const svg = `<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><defs><filter id="turb"><feTurbulence type="turbulence" baseFrequency="0.07 0.17" numOctaves="2" seed="${Math.floor(Math.random()*1000)}" result="turb"/><feDisplacementMap in2="turb" in="SourceGraphic" scale="34" xChannelSelector="R" yChannelSelector="G"/></filter></defs><path d="${d}" fill="white" filter="url(#turb)"/></svg>`;
   return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
 }
 

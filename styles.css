@@ -83,14 +83,52 @@ html, body {
   left: 50%;
   transform: translate(-50%, -50%);
   display: block;
-  width: 110px;
-  height: 110px;
+  width: 340px;
+  height: 340px;
+  max-width: 90vw;
+  max-height: 90vh;
+  min-width: 180px;
+  min-height: 180px;
   pointer-events: none;
   z-index: 4;
   opacity: 0;
   background: transparent;
-  /* Remove digital boundary and box-shadow for purity */
 }
+
+@media (max-width: 600px) {
+  #mirror-link {
+    width: 90vw;
+    height: 90vw;
+    min-width: 120px;
+    min-height: 120px;
+    max-width: 98vw;
+    max-height: 98vw;
+  }
+}
+
+#mirror {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: none;
+  position: relative;
+  transition: transform 1.6s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 1.3s cubic-bezier(0.22, 0.61, 0.36, 1), filter 1.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+  -webkit-mask-image: var(--portal-mask-url, url('portal-mask.svg'));
+  mask-image: var(--portal-mask-url, url('portal-mask.svg'));
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  transform: scale(0.12);
+  opacity: 0.09;
+  filter: blur(2.5px);
+  animation: portal-quiver 3.2s cubic-bezier(0.22,0.61,0.36,1) infinite alternate;
+}
+
+#mirror-link.active #mirror {
+  transform: scale(1);
+  opacity: 1;
+  filter: blur(2.5px);
+}
+
 
 #mirror {
   width: 100%;
