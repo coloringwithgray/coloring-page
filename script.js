@@ -398,8 +398,8 @@ function handlePointerUp() {
  *  Check How Much is Colored
  *******************************/
 function checkCanvasColored() {
-  // --- Cannes Grand Prix Level: Portal Emergence Threshold ---
-  // 1. Pixel threshold: at least 0.5% of canvas colored
+  // --- Palais de Tokyo Level: Portal Emergence Threshold ---
+  // 1. Pixel threshold: at least 1.37% of canvas colored (more demanding creative engagement)
   // 2. Spread threshold: marks in at least 3 distinct regions of a 3x3 grid
 
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
@@ -436,8 +436,8 @@ function checkCanvasColored() {
   
   // --- Palais de Tokyo: Portal grows in direct response to user input ---
   // Calculate progress as a combination of colored percentage and spread
-  // Threshold: 0.5% colored and 3 grid zones
-  const colorProgress = Math.min(1, coloredPercentage / 0.5);
+  // Threshold: 1.37% colored and 3 grid zones
+  const colorProgress = Math.min(1, coloredPercentage / 1.37);
   const spreadProgress = Math.min(1, spreadCount / 3);
   // Combined progress (weighted toward the lesser value for poetic tension)
   const combinedProgress = Math.min(colorProgress, spreadProgress) * 0.7 + 
@@ -449,7 +449,7 @@ function checkCanvasColored() {
   console.log(`Colored: ${coloredPercentage.toFixed(2)}% | Spread: ${spreadCount} grid zones | Portal: ${(combinedProgress*100).toFixed(0)}%`);
 
   // Portal fully emerges only if both thresholds are met
-  if (coloredPercentage >= 0.5 && spreadCount >= 3) {
+  if (coloredPercentage >= 1.37 && spreadCount >= 3) {
     showMirrorLink();
     console.log('Mirror displayed: threshold met (authorship + spread).');
   }
