@@ -277,18 +277,25 @@ html, body {
 }
 
 #mirror-iframe {
-  position: absolute;
+  position: fixed;
   left: 50%;
   top: 50%;
-  width: 115%;
-  height: 115%;
-  transform: translate(-50%, -50%) scale(0.72) rotate(-7deg) translateY(0px);
+  width: 60vw;
+  height: 33.75vw; /* 16:9 aspect ratio */
+  max-width: 90vw;
+  max-height: 50.625vw;
+  min-width: 320px;
+  min-height: 180px;
+  transform: translate(-50%, -50%) scale(0.92);
   opacity: 0;
+  background: #181818;
+  border: 3.5vw solid #111; /* Letterbox bars for cinematic effect */
+  box-sizing: border-box;
+  box-shadow: 0 0 64px 12px rgba(80,80,80,0.22), 0 0 0 2px rgba(160,160,160,0.19);
+  border-radius: 16px;
   filter: grayscale(1) blur(8px) brightness(0.94) contrast(0.92);
-  box-shadow: 0 0 40px 8px rgba(120,120,120,0.18);
-  border: 1px solid rgba(160,160,160,0.25);
-  z-index: 10; /* Above portal */
   pointer-events: none;
+  z-index: 100;
   transition: opacity 1.15s cubic-bezier(.2,.8,.2,1),
               transform 1.15s cubic-bezier(.2,.8,.2,1),
               filter 1.15s cubic-bezier(.2,.8,.2,1);
@@ -296,9 +303,10 @@ html, body {
 
 #mirror-link.active:hover #mirror-iframe {
   opacity: 1;
-  transform: translate(-50%, -50%) scale(1.08) rotate(0deg) translateY(-90px);
+  transform: translate(-50%, -50%) scale(1.04);
   filter: grayscale(1) blur(2.5px) brightness(0.97) contrast(0.95);
 }
+
 
 
 #portal-smudge {
