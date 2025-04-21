@@ -297,6 +297,13 @@ html, body {
   transform: translateY(0) scale(1);
 }
 
+#mirror-link.active:focus #mirror::before,
+#mirror-link.active:hover #mirror::before,
+#mirror-link.active:focus #mirror::after,
+#mirror-link.active:hover #mirror::after {
+  opacity: 0.12;
+}
+
 #mirror-link:focus #portal-smudge,
 #mirror-link:hover #portal-smudge {
   opacity: 1;
