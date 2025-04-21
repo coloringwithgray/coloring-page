@@ -97,29 +97,54 @@ window.addEventListener('DOMContentLoaded', applyRandomPortalMask);
 
 // --- Portal progress-driven emergence (aesthetic, poetic) ---
 // progress: 0 (closed) ... 1 (fully open)
-// --- Animated Portal Progress for Poetic Emergence ---
+// --- Animated Living Vortex Portal ---
 (function() {
   const mirror = document.getElementById('mirror');
   let current = { scale: 0.13, opacity: 0.10, blur: 8 };
   let target = { scale: 0.13, opacity: 0.10, blur: 8 };
   let animating = false;
+  let vortexAnimating = false;
+  let vortexAngle = 0;
+  let lastVortexTime = performance.now();
+  let vortexWobble = 0;
 
   function animate() {
     let changed = false;
     for (const prop of ['scale','opacity','blur']) {
       const diff = target[prop] - current[prop];
       if (Math.abs(diff) > 0.002) {
-        current[prop] += diff * 0.19; // Smooth, slow approach
+        current[prop] += diff * 0.19;
         changed = true;
       } else {
         current[prop] = target[prop];
       }
     }
-    mirror.style.transform = `scale(${current.scale})`;
+    // Blend with vortex rotation and analog wobble
+    if (!vortexAnimating) startVortex();
+    mirror.style.transform =
+      `scale(${current.scale}) rotate(${vortexAngle + vortexWobble}deg)`;
     mirror.style.opacity = current.opacity;
     mirror.style.filter = `blur(${current.blur}px)`;
     if (changed) requestAnimationFrame(animate);
     else animating = false;
+  }
+
+  function startVortex() {
+    vortexAnimating = true;
+    function vortexFrame(now) {
+      // Animate slow, analog vortex with subtle oscillation
+      const elapsed = (now - lastVortexTime) / 1000;
+      lastVortexTime = now;
+      // Slow rotation, 360deg in ~36s
+      vortexAngle += elapsed * 10;
+      // Analog wobble: slow, irregular oscillation
+      vortexWobble = Math.sin(now/1700) * 2.1 + Math.sin(now/3400) * 1.1 + Math.cos(now/2600) * 0.7;
+      // Always update transform to keep portal alive
+      mirror.style.transform =
+        `scale(${current.scale}) rotate(${vortexAngle + vortexWobble}deg)`;
+      requestAnimationFrame(vortexFrame);
+    }
+    requestAnimationFrame(vortexFrame);
   }
 
   window.setPortalProgress = function(progress) {
@@ -138,6 +163,8 @@ window.addEventListener('DOMContentLoaded', applyRandomPortalMask);
       animate();
     }
   };
+  // Start vortex on load for living effect (even before fully emerged)
+  startVortex();
 })();
 
 
