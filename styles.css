@@ -314,16 +314,13 @@ html, body {
   transition: opacity 1.1s cubic-bezier(.4,0,.2,1);
 }
 
-#mirror-link.active #mirror-iframe, #mirror-link.active:focus #mirror-iframe, #mirror-link.active:hover #mirror-iframe {
+#mirror-link.active:focus #mirror-iframe,
+#mirror-link.active:hover #mirror-iframe {
   opacity: 1;
-  /* Emerge outward as a billboard, perfectly centered */
   transform: translate(-50%, -50%) scale(1.04);
   filter: grayscale(1) blur(2.5px) brightness(0.97) contrast(0.95);
-  border: 3px solid #ff00ff;
-  box-shadow: 0 0 0 6px rgba(255,0,255,0.15), 0 0 32px 8px rgba(0,0,0,0.18);
-  background: rgba(255,255,0,0.12);
+  border: 1px solid rgba(160,160,160,0.25);
 }
-
 
 #mirror-link.active:focus #mirror::before,
 #mirror-link.active:hover #mirror::before,
