@@ -271,7 +271,8 @@ html, body {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  overflow: hidden;
+  /* Remove overflow:hidden to allow billboard to extend outside */
+  overflow: visible;
   position: relative;
 }
 
@@ -293,9 +294,9 @@ html, body {
   left: 0;
   z-index: 5; /* Above the portal gradients */
   box-shadow: 0 0 40px 8px rgba(120,120,120,0.18);
-  /* No mask for billboard effect */
-  -webkit-mask-image: var(--portal-mask-url, url('portal-mask.svg'));
-  mask-image: var(--portal-mask-url, url('portal-mask.svg'));
+  /* Remove masks to allow rectangular billboard shape */
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 
 #portal-smudge {
@@ -307,8 +308,10 @@ html, body {
 #mirror-link.active:hover #mirror-iframe {
   opacity: 1;
   /* Emerge outward as a billboard, static, no parallax */
-  transform: translate(-7.5%, -7.5%) scale(1.08) rotate(0deg) translateY(-68px);
+  transform: translate(-7.5%, -7.5%) scale(1.08) rotate(0deg) translateY(-90px);
   filter: grayscale(1) blur(2.5px) brightness(0.97) contrast(0.95);
+  /* Add subtle border for billboard effect */
+  border: 1px solid rgba(160,160,160,0.25);
 }
 
 #mirror-link.active:focus #mirror::before,
