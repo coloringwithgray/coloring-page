@@ -87,6 +87,26 @@ window.applyRandomPortalMask = applyRandomPortalMask;
 // Optionally, apply once on load for preview
 window.addEventListener('DOMContentLoaded', applyRandomPortalMask);
 
+// --- Portal progress-driven emergence (aesthetic, poetic) ---
+// progress: 0 (closed) ... 1 (fully open)
+window.setPortalProgress = function(progress) {
+  const mirror = document.getElementById('mirror');
+  // Clamp and ease
+  const p = Math.max(0, Math.min(1, progress));
+  // Nonlinear (ease-in-out) for organic feel
+  const ease = p < 0.5 ? 2*p*p : -1+(4-2*p)*p;
+  // Aesthetic bounds
+  const minScale = 0.13, maxScale = 1;
+  const minOpacity = 0.10, maxOpacity = 1;
+  const minBlur = 8, maxBlur = 2.5;
+  const scale = minScale + (maxScale - minScale) * ease;
+  const opacity = minOpacity + (maxOpacity - minOpacity) * ease;
+  const blur = minBlur + (maxBlur - minBlur) * ease;
+  mirror.style.transform = `scale(${scale})`;
+  mirror.style.opacity = opacity;
+  mirror.style.filter = `blur(${blur}px)`;
+};
+
 
 
 /*******************************
@@ -328,31 +348,47 @@ function checkCanvasColored() {
   // Track which grid cells have been marked
   const gridRows = 3;
   const gridCols = 3;
-  const gridTouched = Array.from({ length: gridRows * gridCols }, () => false);
-  const cellWidth = Math.floor(canvas.width / gridCols);
-  const cellHeight = Math.floor(canvas.height / gridRows);
+  const gridTouched = new Array(gridRows * gridCols).fill(false);
 
-  for (let y = 0; y < canvas.height; y++) {
-    for (let x = 0; x < canvas.width; x++) {
-      const idx = (y * canvas.width + x) * 4;
-      const r = imageData[idx];
-      const g = imageData[idx + 1];
-      const b = imageData[idx + 2];
-      if (r < 235 || g < 235 || b < 235) {
-        coloredPixels++;
-        // Mark grid cell as touched
-        const col = Math.min(Math.floor(x / cellWidth), gridCols - 1);
-        const row = Math.min(Math.floor(y / cellHeight), gridRows - 1);
-        gridTouched[row * gridCols + col] = true;
+  for (let i = 0; i < imageData.length; i += 4) {
+    // Check if pixel is colored (not white/transparent)
+    if (imageData[i + 3] > 10) { // Alpha > 10 (not transparent)
+      coloredPixels++;
+
+      // Track which grid cell this pixel belongs to
+      const pixelIndex = i / 4;
+      const x = pixelIndex % canvas.width;
+      const y = Math.floor(pixelIndex / canvas.width);
+
+      // Calculate grid cell
+      const gridCol = Math.floor(x / (canvas.width / gridCols));
+      const gridRow = Math.floor(y / (canvas.height / gridRows));
+      const gridIndex = gridRow * gridCols + gridCol;
+
+      if (gridIndex >= 0 && gridIndex < gridTouched.length) {
+        gridTouched[gridIndex] = true;
       }
     }
   }
 
   const coloredPercentage = (coloredPixels / (canvas.width * canvas.height)) * 100;
   const spreadCount = gridTouched.filter(Boolean).length;
-  console.log(`Colored: ${coloredPercentage.toFixed(2)}% | Spread: ${spreadCount} grid zones`);
+  
+  // --- Palais de Tokyo: Portal grows in direct response to user input ---
+  // Calculate progress as a combination of colored percentage and spread
+  // Threshold: 0.5% colored and 3 grid zones
+  const colorProgress = Math.min(1, coloredPercentage / 0.5);
+  const spreadProgress = Math.min(1, spreadCount / 3);
+  // Combined progress (weighted toward the lesser value for poetic tension)
+  const combinedProgress = Math.min(colorProgress, spreadProgress) * 0.7 + 
+                          Math.max(colorProgress, spreadProgress) * 0.3;
+  
+  // Update portal scale/opacity based on drawing progress
+  setPortalProgress(combinedProgress);
+  
+  console.log(`Colored: ${coloredPercentage.toFixed(2)}% | Spread: ${spreadCount} grid zones | Portal: ${(combinedProgress*100).toFixed(0)}%`);
 
-  // Portal emerges only if both thresholds are met
+  // Portal fully emerges only if both thresholds are met
   if (coloredPercentage >= 0.5 && spreadCount >= 3) {
     showMirrorLink();
     console.log('Mirror displayed: threshold met (authorship + spread).');
@@ -364,33 +400,31 @@ function checkCanvasColored() {
  *******************************/
 function showMirrorLink() {
   if (portalShown) return; // Only show once per activation
-  portalShown = true;
-
-  // --- Cannes Grand Prix Level: Portal Placement ---
+  
+  // --- Palais de Tokyo: Portal Placement ---
   // Rule of thirds intersection points (as percentages)
   const thirds = [33.33, 66.66];
   const intersections = [
     { left: thirds[0], top: thirds[0] }, // (1/3, 1/3)
     { left: thirds[0], top: thirds[1] }, // (1/3, 2/3)
     { left: thirds[1], top: thirds[0] }, // (2/3, 1/3)
-    { left: thirds[1], top: thirds[1] }  // (2/3, 2/3)
+    { left: thirds[1], top: thirds[1] }, // (2/3, 2/3)
   ];
 
-  // For each intersection, define an elliptical "zone of possibility" (±13% in x/y)
-  function randomInEllipse(center, rx, ry) {
-    // Polar coordinates for uniform ellipse distribution
-    const t = 2 * Math.PI * Math.random();
-    const r = Math.sqrt(Math.random()); // denser near center
-    const dx = rx * r * Math.cos(t);
-    const dy = ry * r * Math.sin(t);
+  // Helper function for random position within an ellipse
+  function randomInEllipse(center, radiusX, radiusY) {
+    const angle = Math.random() * 2 * Math.PI;
+    const r = Math.sqrt(Math.random()); // Square root for uniform distribution
     return {
-      left: center.left + dx,
-      top: center.top + dy
+      left: center.left + r * radiusX * Math.cos(angle),
+      top: center.top + r * radiusY * Math.sin(angle)
     };
   }
 
-  // Pick a random intersection and random point in its ellipse
+  // Choose a random rule-of-thirds intersection
   const intersection = intersections[Math.floor(Math.random() * intersections.length)];
+  
+  // Place portal within an elliptical area around the intersection
   const ellipseRadiusX = 13; // percent
   const ellipseRadiusY = 13; // percent
   const pos = randomInEllipse(intersection, ellipseRadiusX, ellipseRadiusY);
@@ -398,13 +432,19 @@ function showMirrorLink() {
   mirrorLink.style.left = `${pos.left}%`;
   mirrorLink.style.top = `${pos.top}%`;
 
-  // Add the 'active' class to trigger the scale-up animation
+  // Generate a new mask when threshold is reached
+  applyRandomPortalMask();
+  
+  // Set portal to fully open
+  setPortalProgress(1.0);
+  
+  // Add the 'active' class to make it clickable
   mirrorLink.classList.add('active');
   
-  // Add glow to the #mirror div
-  mirrorDiv.classList.add('mirror-glow');
-
-  // Enable pointer events after animation
+  // Mark portal as shown
+  portalShown = true;
+  
+  // Enable pointer events
   mirrorLink.style.pointerEvents = 'auto';
 }
 

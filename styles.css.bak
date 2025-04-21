@@ -106,7 +106,6 @@ html, body {
   }
 }
 
-/* The portal itself - controlled by JS for user-input-driven emergence */
 #mirror {
   width: 100%;
   height: 100%;
@@ -118,16 +117,32 @@ html, body {
   mask-image: var(--portal-mask-url, url('portal-mask.svg'));
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
-  /* Initial state - JS will override */
-  transform: scale(0.13);
-  opacity: 0.10;
-  filter: blur(8px);
 }
 
-/* Portal active state - JS controls transform/opacity/filter */
+
 #mirror-link.active #mirror {
-  /* JS controls scale/opacity/blur, but we enable pointer events */
-  pointer-events: auto;
+  transform: scale(1);
+  opacity: 1;
+  filter: blur(2.5px);
+}
+
+
+#mirror {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: none;
+  position: relative;
+  transition: transform 1.6s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 1.3s cubic-bezier(0.22, 0.61, 0.36, 1), filter 1.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+  /* Use dynamic mask for hyper-analog edge */
+  -webkit-mask-image: var(--portal-mask-url, url('portal-mask.svg'));
+  mask-image: var(--portal-mask-url, url('portal-mask.svg'));
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  transform: scale(0.18);
+  opacity: 0.09;
+  filter: blur(2.5px);
+  animation: portal-quiver 3.2s cubic-bezier(0.22,0.61,0.36,1) infinite alternate;
 }
 
 #mirror::before {
