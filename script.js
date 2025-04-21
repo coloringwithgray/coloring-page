@@ -135,8 +135,8 @@ window.addEventListener('DOMContentLoaded', applyRandomPortalMask);
       // Animate slow, analog vortex with subtle oscillation
       const elapsed = (now - lastVortexTime) / 1000;
       lastVortexTime = now;
-      // Slow rotation, 360deg in ~36s
-      vortexAngle += elapsed * 10;
+      // Very slow rotation, 360deg in ~120s (2 minutes)
+      vortexAngle += elapsed * 3;
       // Analog wobble: slow, irregular oscillation
       vortexWobble = Math.sin(now/1700) * 2.1 + Math.sin(now/3400) * 1.1 + Math.cos(now/2600) * 0.7;
       // Always update transform to keep portal alive
