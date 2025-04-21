@@ -602,38 +602,8 @@ mirrorLinkEl.addEventListener('blur', fadeOutHum);
 const mirrorIframe = document.getElementById('mirror-iframe');
 let parallaxActive = false;
 
-mirrorLinkEl.addEventListener('mouseenter', () => {
-  if (mirrorLinkEl.classList.contains('active')) {
-    parallaxActive = true;
-  }
-});
-
-mirrorLinkEl.addEventListener('mouseleave', () => {
-  parallaxActive = false;
-  // Reset transform when leaving
-  if (mirrorIframe) {
-    mirrorIframe.style.transform = 'translate(-7.5%, -7.5%) scale(1.08) rotate(0deg)';
-  }
-});
-
-mirrorLinkEl.addEventListener('mousemove', (e) => {
-  if (!parallaxActive || !mirrorIframe) return;
-  
-  // Calculate mouse position relative to portal center
-  const rect = mirrorLinkEl.getBoundingClientRect();
-  const centerX = rect.left + rect.width / 2;
-  const centerY = rect.top + rect.height / 2;
-  
-  // Normalize position (-1 to 1 range)
-  const normalizedX = (e.clientX - centerX) / (rect.width / 2);
-  const normalizedY = (e.clientY - centerY) / (rect.height / 2);
-  
-  // Apply subtle shift (max 3% movement)
-  const shiftX = normalizedX * 3;
-  const shiftY = normalizedY * 3;
-  
-  // Apply parallax with subtle restraint
-  mirrorIframe.style.transform = `translate(${-7.5 + shiftX}%, ${-7.5 + shiftY}%) scale(1.08) rotate(0deg)`;
-});
+// --- Removed all dynamic transform/parallax logic for mirror-iframe ---
+// Billboard hologram is now always perfectly centered via CSS only.
+// Only show/hide logic remains.
 
 console.log('Script loaded.');
