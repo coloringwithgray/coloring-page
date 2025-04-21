@@ -277,27 +277,29 @@ html, body {
 }
 
 #mirror-iframe {
+  position: absolute;
+  left: 50%;
+  top: 50%;
   width: 115%;
   height: 115%;
-  border: none;
-  filter: grayscale(1) blur(8px) brightness(0.94) contrast(0.92);
+  transform: translate(-50%, -50%) scale(0.72) rotate(-7deg) translateY(0px);
   opacity: 0;
-  /* Start retracted, visually inside the portal */
-  transform: translate(-7.5%, -7.5%) scale(0.72) rotate(-7deg) translateY(0px);
+  filter: grayscale(1) blur(8px) brightness(0.94) contrast(0.92);
+  box-shadow: 0 0 40px 8px rgba(120,120,120,0.18);
+  border: 1px solid rgba(160,160,160,0.25);
+  z-index: 10; /* Above portal */
+  pointer-events: none;
   transition: opacity 1.15s cubic-bezier(.2,.8,.2,1),
               transform 1.15s cubic-bezier(.2,.8,.2,1),
               filter 1.15s cubic-bezier(.2,.8,.2,1);
-  transform-origin: center bottom;
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 5; /* Above the portal gradients */
-  box-shadow: 0 0 40px 8px rgba(120,120,120,0.18);
-  /* Remove masks to allow rectangular billboard shape */
-  -webkit-mask-image: none;
-  mask-image: none;
 }
+
+#mirror-link.active:hover #mirror-iframe {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.08) rotate(0deg) translateY(-90px);
+  filter: grayscale(1) blur(2.5px) brightness(0.97) contrast(0.95);
+}
+
 
 #portal-smudge {
   opacity: 0;
