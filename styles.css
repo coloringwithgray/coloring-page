@@ -317,10 +317,9 @@ html, body {
 #mirror-link.active:focus #mirror-iframe,
 #mirror-link.active:hover #mirror-iframe {
   opacity: 1;
-  /* Emerge outward as a billboard, static, no parallax */
-  transform: translate(-7.5%, -7.5%) scale(1.08) rotate(0deg) translateY(-90px);
+  /* Emerge outward as a billboard, perfectly centered */
+  transform: translate(-50%, -50%) scale(1.04);
   filter: grayscale(1) blur(2.5px) brightness(0.97) contrast(0.95);
-  /* Add subtle border for billboard effect */
   border: 1px solid rgba(160,160,160,0.25);
 }
 
