@@ -314,8 +314,7 @@ html, body {
   transition: opacity 1.1s cubic-bezier(.4,0,.2,1);
 }
 
-#mirror-link.active:focus #mirror-iframe,
-#mirror-link.active:hover #mirror-iframe {
+#mirror-link.active #mirror-iframe, #mirror-link.active:focus #mirror-iframe, #mirror-link.active:hover #mirror-iframe {
   opacity: 1;
   /* Emerge outward as a billboard, perfectly centered */
   transform: translate(-50%, -50%) scale(1.04);

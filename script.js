@@ -449,7 +449,7 @@ function checkCanvasColored() {
   console.log(`Colored: ${coloredPercentage.toFixed(2)}% | Spread: ${spreadCount} grid zones | Portal: ${(combinedProgress*100).toFixed(0)}%`);
 
   // Portal fully emerges only if both thresholds are met
-  if (coloredPercentage >= 1.37 && spreadCount >= 3) {
+  if (coloredPercentage >= 4.2 && spreadCount >= 5) {
     showMirrorLink();
     console.log('Mirror displayed: threshold met (authorship + spread).');
   }
