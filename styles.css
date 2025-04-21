@@ -232,10 +232,10 @@ html, body {
   top: 0; left: 0; right: 0; bottom: 0;
   /* No border-radius - use mask from parent element instead */
   background: radial-gradient(circle at 50% 50%,
-    #181818 65%, /* Matte black core */
-    rgba(24,24,24,0.85) 75%,
-    rgba(24,24,24,0.35) 82%,
-    rgba(24,24,24,0.12) 89%,
+    #444444 65%, /* Deep matte gray core */
+    rgba(68,68,68,0.82) 75%,
+    rgba(110,110,110,0.32) 82%,
+    rgba(160,160,160,0.11) 89%,
     transparent 100%
   );
   filter: blur(2.5px);
