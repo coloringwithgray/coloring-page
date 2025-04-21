@@ -281,18 +281,19 @@ html, body {
   border: none;
   filter: grayscale(1) blur(8px) brightness(0.94) contrast(0.92);
   opacity: 0;
-  transform: translate(-7.5%, -7.5%) scale(0.72) rotate(-7deg);
-  transition: opacity 1.2s cubic-bezier(.2,.8,.2,1), 
-              transform 1.2s cubic-bezier(.2,.8,.2,1), 
-              filter 1.2s cubic-bezier(.2,.8,.2,1);
-  transform-origin: center center;
+  /* Start retracted, visually inside the portal */
+  transform: translate(-7.5%, -7.5%) scale(0.72) rotate(-7deg) translateY(0px);
+  transition: opacity 1.15s cubic-bezier(.2,.8,.2,1),
+              transform 1.15s cubic-bezier(.2,.8,.2,1),
+              filter 1.15s cubic-bezier(.2,.8,.2,1);
+  transform-origin: center bottom;
   pointer-events: none;
   position: absolute;
   top: 0;
   left: 0;
   z-index: 5; /* Above the portal gradients */
   box-shadow: 0 0 40px 8px rgba(120,120,120,0.18);
-  /* Custom mask slightly different from portal mask */
+  /* No mask for billboard effect */
   -webkit-mask-image: var(--portal-mask-url, url('portal-mask.svg'));
   mask-image: var(--portal-mask-url, url('portal-mask.svg'));
 }
@@ -305,7 +306,8 @@ html, body {
 #mirror-link.active:focus #mirror-iframe,
 #mirror-link.active:hover #mirror-iframe {
   opacity: 1;
-  transform: translate(-7.5%, -7.5%) scale(1.08) rotate(0deg);
+  /* Emerge outward as a billboard, static, no parallax */
+  transform: translate(-7.5%, -7.5%) scale(1.08) rotate(0deg) translateY(-68px);
   filter: grayscale(1) blur(2.5px) brightness(0.97) contrast(0.95);
 }
 
