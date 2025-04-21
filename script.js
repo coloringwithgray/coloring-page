@@ -55,20 +55,28 @@ createDustCanvas();
 
 // --- Grand Prix: Dynamic, unique SVG mask for each portal emergence ---
 function generateIrregularPortalMask() {
-  // Larger, more elegant/analog path for grand portal
-  const cx = 200, cy = 200, rBase = 164, points = 22;
+  // Portal: torn, ruptured, never blobby
+  const cx = 200, cy = 200, rBase = 164, points = 28;
   let d = '';
   for (let i = 0; i < points; i++) {
     const angle = (2 * Math.PI * i) / points;
-    // More elegant, deeper irregularity
-    const r = rBase + Math.sin(i) * 18 + Math.random() * 54 - 27 + (i % 3 === 0 ? Math.random() * 32 : 0);
+    // Sharper, torn effect: more variance, random spikes
+    let r = rBase
+      + Math.sin(i * 2.4) * 36
+      + Math.cos(i * 1.3) * 22
+      + (i % 2 === 0 ? Math.random() * 44 - 22 : Math.random() * 18 - 9)
+      + (i % 5 === 0 ? Math.random() * 44 : 0)
+      + (i % 7 === 0 ? Math.random() * 64 - 32 : 0);
+    // Prevent any one point from being too close to center (avoid blobs)
+    r = Math.max(r, rBase * 0.72);
     const x = cx + Math.cos(angle) * r;
     const y = cy + Math.sin(angle) * r;
     d += (i === 0 ? 'M' : 'L') + x.toFixed(2) + ',' + y.toFixed(2) + ' ';
   }
   d += 'Z';
-  // SVG string with larger turbulence for analog movement
-  const svg = `<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><defs><filter id="turb"><feTurbulence type="turbulence" baseFrequency="0.07 0.17" numOctaves="2" seed="${Math.floor(Math.random()*1000)}" result="turb"/><feDisplacementMap in2="turb" in="SourceGraphic" scale="34" xChannelSelector="R" yChannelSelector="G"/></filter></defs><path d="${d}" fill="white" filter="url(#turb)"/></svg>`;
+  // SVG: stronger turbulence, more analog rupture
+  const svg = `<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"
+><defs><filter id="turb"><feTurbulence type="turbulence" baseFrequency="0.09 0.21" numOctaves="3" seed="${Math.floor(Math.random()*1000)}" result="turb"/><feDisplacementMap in2="turb" in="SourceGraphic" scale="54" xChannelSelector="R" yChannelSelector="G"/></filter></defs><path d="${d}" fill="white" filter="url(#turb)"/></svg>`;
   return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
 }
 
@@ -89,23 +97,48 @@ window.addEventListener('DOMContentLoaded', applyRandomPortalMask);
 
 // --- Portal progress-driven emergence (aesthetic, poetic) ---
 // progress: 0 (closed) ... 1 (fully open)
-window.setPortalProgress = function(progress) {
+// --- Animated Portal Progress for Poetic Emergence ---
+(function() {
   const mirror = document.getElementById('mirror');
-  // Clamp and ease
-  const p = Math.max(0, Math.min(1, progress));
-  // Nonlinear (ease-in-out) for organic feel
-  const ease = p < 0.5 ? 2*p*p : -1+(4-2*p)*p;
-  // Aesthetic bounds
-  const minScale = 0.13, maxScale = 1;
-  const minOpacity = 0.10, maxOpacity = 1;
-  const minBlur = 8, maxBlur = 2.5;
-  const scale = minScale + (maxScale - minScale) * ease;
-  const opacity = minOpacity + (maxOpacity - minOpacity) * ease;
-  const blur = minBlur + (maxBlur - minBlur) * ease;
-  mirror.style.transform = `scale(${scale})`;
-  mirror.style.opacity = opacity;
-  mirror.style.filter = `blur(${blur}px)`;
-};
+  let current = { scale: 0.13, opacity: 0.10, blur: 8 };
+  let target = { scale: 0.13, opacity: 0.10, blur: 8 };
+  let animating = false;
+
+  function animate() {
+    let changed = false;
+    for (const prop of ['scale','opacity','blur']) {
+      const diff = target[prop] - current[prop];
+      if (Math.abs(diff) > 0.002) {
+        current[prop] += diff * 0.19; // Smooth, slow approach
+        changed = true;
+      } else {
+        current[prop] = target[prop];
+      }
+    }
+    mirror.style.transform = `scale(${current.scale})`;
+    mirror.style.opacity = current.opacity;
+    mirror.style.filter = `blur(${current.blur}px)`;
+    if (changed) requestAnimationFrame(animate);
+    else animating = false;
+  }
+
+  window.setPortalProgress = function(progress) {
+    // Clamp and ease
+    const p = Math.max(0, Math.min(1, progress));
+    const ease = p < 0.5 ? 2*p*p : -1+(4-2*p)*p;
+    // Portal bounds
+    const minScale = 0.13, maxScale = 1;
+    const minOpacity = 0.10, maxOpacity = 1;
+    const minBlur = 8, maxBlur = 2.5;
+    target.scale = minScale + (maxScale - minScale) * ease;
+    target.opacity = minOpacity + (maxOpacity - minOpacity) * ease;
+    target.blur = minBlur + (maxBlur - minBlur) * ease;
+    if (!animating) {
+      animating = true;
+      animate();
+    }
+  };
+})();
 
 
 
