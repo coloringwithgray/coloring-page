@@ -54,40 +54,56 @@ window.addEventListener('resize', resizeDustCanvas);
 createDustCanvas();
 
 // --- Grand Prix: Dynamic, unique SVG mask for each portal emergence ---
+// Palais de Tokyo: Living Vortex Portal — Multi-layered, dimensional mask
 function generateIrregularPortalMask(timePhase = 0) {
-  // Palais de Tokyo x Grand Prix Cannes: Sculpted, poetic contour and restraint
-  const cx = 200, cy = 200, rBase = 164, points = 32;
-  let d = '';
-  for (let i = 0; i < points; i++) {
-    const angle = (2 * Math.PI * i) / points;
-    // Animate undulation phase for "living" edge
-    const phase = timePhase * 0.00012; // Slow evolution
-    let r = rBase
-      + Math.sin(i * 1.1 + phase + Math.cos(phase + i * 0.23) * 0.7) * 22
-      + Math.cos(i * 0.8 + Math.PI/8 + phase * 0.6) * 14
-      + Math.sin(phase + i * 0.51) * 3.4 // subtle additional breathing
-      + (i % 8 === 0 ? Math.sin(phase * 0.7 + i) * 7 : 0)
-      + (i % 3 === 0 ? Math.sin(phase * 1.1 + i) * 2 : 0);
-    r = Math.max(r, rBase * 0.82);
-    const x = cx + Math.cos(angle) * r;
-    const y = cy + Math.sin(angle) * r;
-    d += (i === 0 ? 'M' : 'L') + x.toFixed(2) + ',' + y.toFixed(2) + ' ';
+  // Parameters for poetic, sculpted depth
+  const cx = 200, cy = 200, points = 40;
+  const contourLayers = [
+    { r: 160, amp: 18, freq: 1.07, phase: 0,   opacity: 0.18, blur: 7 },   // outermost
+    { r: 144, amp: 13, freq: 1.18, phase: 0.9, opacity: 0.23, blur: 4 },   // mid-outer
+    { r: 128, amp: 9,  freq: 1.32, phase: 1.7, opacity: 0.28, blur: 2 },   // mid-inner
+    { r: 110, amp: 6,  freq: 1.55, phase: 2.6, opacity: 0.33, blur: 0 }    // innermost
+  ];
+  // Animate all phases for living effect
+  const phaseBase = timePhase * 0.00017;
+  // SVG header & defs
+  let svg = `<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="portalDepth" cx="50%" cy="50%" r="1.0">
+      <stop offset="0%" stop-color="#888" stop-opacity="0.80"/>
+      <stop offset="65%" stop-color="#444" stop-opacity="0.48"/>
+      <stop offset="100%" stop-color="#222" stop-opacity="0.07"/>
+    </radialGradient>
+    <filter id="softBlur" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+  </defs>
+  <g>
+    <ellipse cx="200" cy="200" rx="196" ry="196" fill="url(#portalDepth)" filter="url(#softBlur)" opacity="0.6"/>
+`;
+  // Generate undulating contours from outside in
+  for (let layer = 0; layer < contourLayers.length; layer++) {
+    const { r, amp, freq, phase, opacity, blur } = contourLayers[layer];
+    let d = '';
+    for (let i = 0; i < points; i++) {
+      const angle = (2 * Math.PI * i) / points;
+      // Each layer's undulation is offset in phase and frequency
+      const undulation = Math.sin(i * freq + phaseBase + phase) * amp
+        + Math.cos(i * freq * 0.7 + phaseBase * 0.8 + phase * 1.2) * (amp * 0.4)
+        + Math.sin(phaseBase * 0.7 + i * 0.19 + layer) * (amp * 0.13);
+      const rr = r + undulation;
+      const x = cx + Math.cos(angle) * rr;
+      const y = cy + Math.sin(angle) * rr;
+      d += (i === 0 ? 'M' : 'L') + x.toFixed(2) + ',' + y.toFixed(2) + ' ';
+    }
+    d += 'Z';
+    svg += `<path d="${d}" fill="white" opacity="${opacity}" ${blur ? `filter="url(#softBlur)"` : ''}/>`;
   }
-  d += 'Z';
-  const svg = `<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"
-><defs>
-  <filter id="turb"><feTurbulence type="turbulence" baseFrequency="0.07 0.14" numOctaves="2" seed="${Math.floor(Math.random()*1000)}" result="turb"/><feDisplacementMap in2="turb" in="SourceGraphic" scale="32" xChannelSelector="R" yChannelSelector="G"/></filter>
-  <radialGradient id="portalShadow" cx="50%" cy="50%" r="0.54">
-    <stop offset="80%" stop-color="#444" stop-opacity="0.20"/>
-    <stop offset="94%" stop-color="#222" stop-opacity="0.11"/>
-    <stop offset="100%" stop-color="#000" stop-opacity="0"/>
-  </radialGradient>
-</defs>
-<ellipse cx="200" cy="200" rx="196" ry="196" fill="url(#portalShadow)"/>
-<path d="${d}" fill="white" filter="url(#turb)"/>
-</svg>`;
+  svg += '</g></svg>';
   return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
 }
+// (All other portal and mask logic remains unchanged)
+
 
 
 function applyRandomPortalMask(timePhase = 0) {
