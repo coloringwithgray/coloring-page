@@ -201,13 +201,6 @@ html, body {
   pointer-events: auto;
 }
 
-@media (max-width: 600px) {
-  #mirror-link {
-    width: 60px;
-    height: 60px;
-  }
-}
-
 
 /* REMOVED DUPLICATE CIRCULAR MIRROR DEFINITION */
 
