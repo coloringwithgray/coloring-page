@@ -605,6 +605,10 @@ canvas.addEventListener('pointermove', throttledPointerMove);
 canvas.addEventListener('pointerup', handlePointerUp);
 canvas.addEventListener('pointercancel', handlePointerUp);
 
+// --- Crayon pickup: seamless on mobile and desktop ---
+const crayonEl = document.getElementById('crayon');
+crayonEl.addEventListener('pointerdown', e => { activateCrayon(); e.preventDefault(); });
+crayonEl.addEventListener('touchstart', e => { activateCrayon(); e.preventDefault(); }, { passive: false });
 // --- Mobile Safari: Touch event support for coloring & crayon ---
 canvas.addEventListener('touchstart', function(e) {
   if (e.touches.length > 0) {
