@@ -229,6 +229,18 @@ let portalShown = false; // Track if portal has popped up this activation
 
 // --- Palais de Tokyo: Fine Crayon Pattern ---
 let texturedPattern = null;
+
+// --- Fundamental: Track active drawing inputs for robust sound alignment ---
+let activeDrawInputs = 0; // Number of active touches/pointers
+function incrementDrawInputs() {
+  activeDrawInputs++;
+  if (activeDrawInputs === 1) playCrayonSound();
+}
+function decrementDrawInputs() {
+  if (activeDrawInputs > 0) activeDrawInputs--;
+  if (activeDrawInputs === 0) pauseCrayonSound();
+}
+
 function createAuthenticCrayonPattern() {
   // Palais de Tokyo: Material density and poetic grayscale rigor
   const size = 32;
@@ -423,7 +435,7 @@ function handlePointerDown(e) {
   lastX = e.clientX;
   lastY = e.clientY;
   // Don't show crayon element - use cursor instead
-  playCrayonSound();
+  incrementDrawInputs();
   console.log('Pointer down: drawing started.');
 }
 
@@ -442,7 +454,7 @@ function handlePointerMove(e) {
 function handlePointerUp() {
   if (!crayonActive) return;
   isDrawing = false;
-  pauseCrayonSound();
+  decrementDrawInputs();
   checkCanvasColored();
   console.log('Pointer up: drawing stopped.');
 }
@@ -607,11 +619,12 @@ canvas.addEventListener('pointercancel', handlePointerUp);
 
 // --- Mobile Safari: Touch event support for coloring & crayon ---
 canvas.addEventListener('touchstart', function(e) {
-  if (e.touches.length > 0) {
-    const t = e.touches[0];
+  // For each new touch, increment
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const t = e.changedTouches[i];
     handlePointerDown({ clientX: t.clientX, clientY: t.clientY, isTouch: true });
-    e.preventDefault();
   }
+  e.preventDefault();
 }, { passive: false });
 canvas.addEventListener('touchmove', function(e) {
   if (e.touches.length > 0) {
@@ -621,11 +634,17 @@ canvas.addEventListener('touchmove', function(e) {
   }
 }, { passive: false });
 canvas.addEventListener('touchend', function(e) {
-  handlePointerUp({ isTouch: true });
+  // For each ended touch, decrement
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    handlePointerUp({ isTouch: true });
+  }
   e.preventDefault();
 }, { passive: false });
 canvas.addEventListener('touchcancel', function(e) {
-  handlePointerUp({ isTouch: true });
+  // For each cancelled touch, decrement
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    handlePointerUp({ isTouch: true });
+  }
   e.preventDefault();
 }, { passive: false });
 
@@ -634,8 +653,8 @@ canvas.addEventListener('gesturestart', e => e.preventDefault());
 canvas.addEventListener('gesturechange', e => e.preventDefault());
 canvas.addEventListener('gestureend', e => e.preventDefault());
 // Also pause sound if window loses focus or pointer leaves canvas
-window.addEventListener('blur', pauseCrayonSound);
-canvas.addEventListener('pointerleave', pauseCrayonSound);
+window.addEventListener('blur', () => { activeDrawInputs = 0; pauseCrayonSound(); });
+canvas.addEventListener('pointerleave', () => { activeDrawInputs = 0; pauseCrayonSound(); });
 
 /*******************************
  *  Portal Ambient Hum
