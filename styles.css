@@ -116,8 +116,15 @@ html, body {
   /* JS now controls scale, opacity, blur */
   -webkit-mask-image: var(--portal-mask-url, url('portal-mask.svg'));
   mask-image: var(--portal-mask-url, url('portal-mask.svg'));
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
+  -webkit-mask-size: cover;
+  mask-size: cover;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   /* Initial state - JS will override */
   transform: scale(0.13);
   opacity: 0.10;

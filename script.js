@@ -604,6 +604,35 @@ canvas.addEventListener('pointerdown', handlePointerDown);
 canvas.addEventListener('pointermove', throttledPointerMove);
 canvas.addEventListener('pointerup', handlePointerUp);
 canvas.addEventListener('pointercancel', handlePointerUp);
+
+// --- Mobile Safari: Touch event support for coloring & crayon ---
+canvas.addEventListener('touchstart', function(e) {
+  if (e.touches.length > 0) {
+    const t = e.touches[0];
+    handlePointerDown({ clientX: t.clientX, clientY: t.clientY, isTouch: true });
+    e.preventDefault();
+  }
+}, { passive: false });
+canvas.addEventListener('touchmove', function(e) {
+  if (e.touches.length > 0) {
+    const t = e.touches[0];
+    throttledPointerMove({ clientX: t.clientX, clientY: t.clientY, isTouch: true });
+    e.preventDefault();
+  }
+}, { passive: false });
+canvas.addEventListener('touchend', function(e) {
+  handlePointerUp({ isTouch: true });
+  e.preventDefault();
+}, { passive: false });
+canvas.addEventListener('touchcancel', function(e) {
+  handlePointerUp({ isTouch: true });
+  e.preventDefault();
+}, { passive: false });
+
+// Prevent scrolling/zooming when drawing on canvas
+canvas.addEventListener('gesturestart', e => e.preventDefault());
+canvas.addEventListener('gesturechange', e => e.preventDefault());
+canvas.addEventListener('gestureend', e => e.preventDefault());
 // Also pause sound if window loses focus or pointer leaves canvas
 window.addEventListener('blur', pauseCrayonSound);
 canvas.addEventListener('pointerleave', pauseCrayonSound);
