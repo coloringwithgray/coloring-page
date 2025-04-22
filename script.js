@@ -6,6 +6,8 @@ const ctx = canvas.getContext('2d');
 const crayon = document.getElementById('crayon');
 const mirrorLink = document.getElementById('mirror-link');
 const mirrorDiv = document.getElementById('mirror');
+const mirrorLinkInstagram = document.getElementById('mirror-link-instagram');
+const mirrorInstagramDiv = document.getElementById('mirror-instagram');
 
 // --- Grand Prix: Dust/Ash Particle Canvas ---
 let dustCanvas, dustCtx, dustParticles = [];
@@ -524,64 +526,15 @@ function checkCanvasColored() {
   // Portal fully emerges only if both thresholds are met
   if (coloredPercentage >= 1.37 && spreadCount >= 3) {
     showMirrorLink();
-    console.log('Mirror displayed: threshold met (authorship + spread).');
   }
-}
-
-/*******************************
- *  Show Mirror Link with Scaling
- *******************************/
-function showMirrorLink() {
-  if (portalShown) return; // Only show once per activation
-  
-  // --- Palais de Tokyo: Portal Placement ---
-  // Rule of thirds intersection points (as percentages)
-  const thirds = [33.33, 66.66];
-  const intersections = [
-    { left: thirds[0], top: thirds[0] }, // (1/3, 1/3)
-    { left: thirds[0], top: thirds[1] }, // (1/3, 2/3)
-    { left: thirds[1], top: thirds[0] }, // (2/3, 1/3)
-    { left: thirds[1], top: thirds[1] }, // (2/3, 2/3)
-  ];
-
-  // Helper function for random position within an ellipse
-  function randomInEllipse(center, radiusX, radiusY) {
-    const angle = Math.random() * 2 * Math.PI;
-    const r = Math.sqrt(Math.random()); // Square root for uniform distribution
-    return {
-      left: center.left + r * radiusX * Math.cos(angle),
-      top: center.top + r * radiusY * Math.sin(angle)
-    };
+  if (!reflectionShown && firstPortal === 'instagram' && coloredPercentage >= reflectionThreshold && spreadCount >= 3) {
+    showPortal('reflection');
   }
-
-  // Choose a random rule-of-thirds intersection
-  const intersection = intersections[Math.floor(Math.random() * intersections.length)];
-  
-  // Place portal within an elliptical area around the intersection
-  const ellipseRadiusX = 13; // percent
-  const ellipseRadiusY = 13; // percent
-  const pos = randomInEllipse(intersection, ellipseRadiusX, ellipseRadiusY);
-
-  mirrorLink.style.left = `${pos.left}%`;
-  mirrorLink.style.top = `${pos.top}%`;
-
-  // Generate a new mask when threshold is reached
-  applyRandomPortalMask(Date.now());
-  startMaskEdgeAnimation();
-  
-  // Set portal to fully open
-  setPortalProgress(1.0);
-  
-  // Add the 'active' class to make it clickable
-  mirrorLink.classList.add('active');
-  
-  // Mark portal as shown
-  portalShown = true;
-  
-  // Enable pointer events
-  mirrorLink.style.pointerEvents = 'auto';
+  if (!instagramShown && firstPortal === 'reflection' && coloredPercentage >= instagramThreshold && spreadCount >= 3) {
+    showPortal('instagram');
+  }
+  // (Optional: add console logs for debugging)
 }
-
 
 /*******************************
  *  Move Crayon with Cursor
@@ -717,11 +670,36 @@ function fadeOutHum() {
 
 
 
-const mirrorLinkEl = document.getElementById('mirror-link');
-mirrorLinkEl.addEventListener('mouseenter', fadeInHum);
-mirrorLinkEl.addEventListener('mouseleave', fadeOutHum);
-mirrorLinkEl.addEventListener('focus', fadeInHum);
-mirrorLinkEl.addEventListener('blur', fadeOutHum);
+// --- Palais de Tokyo: Robust Dual Portal Sound/Interaction Logic ---
+function activatePortalInteractions(portalEl) {
+  portalEl.addEventListener('mouseenter', fadeInHum);
+  portalEl.addEventListener('mouseleave', fadeOutHum);
+  portalEl.addEventListener('focus', fadeInHum);
+  portalEl.addEventListener('blur', fadeOutHum);
+}
+activatePortalInteractions(mirrorLink);
+activatePortalInteractions(mirrorLinkInstagram);
+
+// Ensure both portals start hidden and only one is active at a time
+function deactivateAllPortals() {
+  mirrorLink.classList.remove('active');
+  mirrorLink.style.pointerEvents = 'none';
+  mirrorLink.setAttribute('aria-hidden', 'true');
+  mirrorLinkInstagram.classList.remove('active');
+  mirrorLinkInstagram.style.pointerEvents = 'none';
+  mirrorLinkInstagram.setAttribute('aria-hidden', 'true');
+}
+// Wrap showPortal to ensure only one portal is active and accessible at a time
+if (!showPortal._wrapped) {
+  const originalShowPortal = showPortal;
+  showPortal = function(which) {
+    deactivateAllPortals();
+    if (which === 'reflection') mirrorLink.setAttribute('aria-hidden', 'false');
+    if (which === 'instagram') mirrorLinkInstagram.setAttribute('aria-hidden', 'false');
+    originalShowPortal(which);
+  };
+  showPortal._wrapped = true;
+}
 
 // Dimensional parallax effect for hologram preview
 const mirrorIframe = document.getElementById('mirror-iframe');

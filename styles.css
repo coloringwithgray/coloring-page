@@ -103,6 +103,78 @@ html, body {
   background: transparent;
 }
 
+/* --- Palais de Tokyo: Instagram Portal Distinct Visuals --- */
+#mirror-link-instagram {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: block;
+  width: 340px;
+  height: 340px;
+  max-width: 90vw;
+  max-height: 90vh;
+  min-width: 180px;
+  min-height: 180px;
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0;
+  background: transparent;
+  /* Subtle fade-in for Instagram portal, conceptually restrained */
+  transition: opacity 0.9s cubic-bezier(.4,0,.2,1);
+}
+
+#mirror-link-instagram.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Visually hidden label for accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+
+#mirror-instagram {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 50%, #888888 62%, #cccccc 80%, #ededed 100%);
+  border-radius: 50%;
+  border: 2.5px dashed #888;
+  box-shadow: 0 18px 48px 0 rgba(120,120,120,0.11), 0 0 0 1.5px rgba(180,180,180,0.09) inset;
+  position: relative;
+  /* Faint Instagram glyph overlay, conceptually restrained */
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(0,0,0,0.03) 55%, transparent 100%),
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><circle cx="40" cy="40" r="24" fill="none" stroke="%23888" stroke-width="4" opacity="0.14"/><rect x="22" y="22" width="36" height="36" rx="8" fill="none" stroke="%23888" stroke-width="3" opacity="0.13"/><circle cx="57" cy="23" r="3.5" fill="%23888" opacity="0.09"/></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 44% 44%;
+  /* Subtle analog blur for depth */
+  filter: blur(0.5px);
+}
+
+@media (max-width: 600px) {
+  #mirror-link-instagram {
+    width: min(90vw, 90vh);
+    height: min(90vw, 90vh);
+    min-width: 96px;
+    min-height: 96px;
+    max-width: 98vw;
+    max-height: 98vh;
+  }
+}
+
+
 @media (max-width: 600px) {
   /* Palais de Tokyo: Portal must remain fully visible, centered, and never clipped on mobile. 
      Use min(90vw, 90vh) for both width and height to adapt to all orientations. 
