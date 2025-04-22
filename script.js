@@ -55,28 +55,37 @@ createDustCanvas();
 
 // --- Grand Prix: Dynamic, unique SVG mask for each portal emergence ---
 function generateIrregularPortalMask() {
-  // Portal: torn, ruptured, never blobby
-  const cx = 200, cy = 200, rBase = 164, points = 28;
+  // Palais de Tokyo x Grand Prix Cannes: Sculpted, poetic contour and restraint
+  const cx = 200, cy = 200, rBase = 164, points = 32;
   let d = '';
   for (let i = 0; i < points; i++) {
     const angle = (2 * Math.PI * i) / points;
-    // Sharper, torn effect: more variance, random spikes
+    // More restraint: less random, more sculpted undulation
     let r = rBase
-      + Math.sin(i * 2.4) * 36
-      + Math.cos(i * 1.3) * 22
-      + (i % 2 === 0 ? Math.random() * 44 - 22 : Math.random() * 18 - 9)
-      + (i % 5 === 0 ? Math.random() * 44 : 0)
-      + (i % 7 === 0 ? Math.random() * 64 - 32 : 0);
-    // Prevent any one point from being too close to center (avoid blobs)
-    r = Math.max(r, rBase * 0.72);
+      + Math.sin(i * 1.1) * 22 // gentle undulation
+      + Math.cos(i * 0.8 + Math.PI/8) * 14 // subtle asymmetry
+      + (i % 8 === 0 ? Math.random() * 30 - 15 : 0) // rare accent
+      + (i % 3 === 0 ? Math.random() * 10 - 5 : 0); // slight analog
+    // Contour: avoid jagged rupture, evoke hand-cut negative space
+    r = Math.max(r, rBase * 0.82);
     const x = cx + Math.cos(angle) * r;
     const y = cy + Math.sin(angle) * r;
     d += (i === 0 ? 'M' : 'L') + x.toFixed(2) + ',' + y.toFixed(2) + ' ';
   }
   d += 'Z';
-  // SVG: stronger turbulence, more analog rupture
+  // SVG: add subtle shadowing for atmospheric depth
   const svg = `<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"
-><defs><filter id="turb"><feTurbulence type="turbulence" baseFrequency="0.09 0.21" numOctaves="3" seed="${Math.floor(Math.random()*1000)}" result="turb"/><feDisplacementMap in2="turb" in="SourceGraphic" scale="54" xChannelSelector="R" yChannelSelector="G"/></filter></defs><path d="${d}" fill="white" filter="url(#turb)"/></svg>`;
+><defs>
+  <filter id="turb"><feTurbulence type="turbulence" baseFrequency="0.07 0.14" numOctaves="2" seed="${Math.floor(Math.random()*1000)}" result="turb"/><feDisplacementMap in2="turb" in="SourceGraphic" scale="32" xChannelSelector="R" yChannelSelector="G"/></filter>
+  <radialGradient id="portalShadow" cx="50%" cy="50%" r="0.54">
+    <stop offset="80%" stop-color="#444" stop-opacity="0.20"/>
+    <stop offset="94%" stop-color="#222" stop-opacity="0.11"/>
+    <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+<ellipse cx="200" cy="200" rx="196" ry="196" fill="url(#portalShadow)"/>
+<path d="${d}" fill="white" filter="url(#turb)"/>
+</svg>`;
   return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
 }
 
@@ -181,6 +190,7 @@ let portalShown = false; // Track if portal has popped up this activation
 // --- Palais de Tokyo: Fine Crayon Pattern ---
 let texturedPattern = null;
 function createAuthenticCrayonPattern() {
+  // Palais de Tokyo: Material density and poetic grayscale rigor
   const size = 32;
   const offCanvas = document.createElement('canvas');
   offCanvas.width = size;
@@ -188,29 +198,29 @@ function createAuthenticCrayonPattern() {
   const offCtx = offCanvas.getContext('2d');
   offCtx.clearRect(0, 0, size, size);
 
-  // Pigment dots: varied gray, size, and opacity
-  for (let i = 0; i < 65; i++) {
+  // Intensify pigment density for a more materially rich, less digital texture
+  for (let i = 0; i < 170; i++) { // Increased from 65 for greater fill
     const x = Math.random() * size;
     const y = Math.random() * size;
-    const radius = 0.9 + Math.random() * 1.8;
-    // Use a range of grays for more depth
-    const gray = 95 + Math.floor(Math.random() * 70); // 95–165
-    const alpha = 0.22 + Math.random() * 0.18;
+    const radius = 0.8 + Math.random() * 2.2;
+    // Poetic grayscale: subtle matte range
+    const gray = 80 + Math.floor(Math.random() * 85); // 80–165
+    const alpha = 0.18 + Math.random() * 0.20;
     offCtx.beginPath();
     offCtx.arc(x, y, radius, 0, 2 * Math.PI);
     offCtx.fillStyle = `rgba(${gray},${gray},${gray},${alpha})`;
     offCtx.fill();
   }
-  // Irregular, expressive streaks
-  for (let i = 0; i < 7; i++) {
+  // More streaks, with analog variation
+  for (let i = 0; i < 16; i++) { // Increased from 7 for more layering
     const x1 = Math.random() * size;
     const y1 = Math.random() * size;
-    const x2 = x1 + (Math.random() - 0.5) * 12;
-    const y2 = y1 + (Math.random() - 0.5) * 12;
-    const gray = 85 + Math.floor(Math.random() * 90); // 85–175
-    const alpha = 0.17 + Math.random() * 0.13;
+    const x2 = x1 + (Math.random() - 0.5) * 14;
+    const y2 = y1 + (Math.random() - 0.5) * 14;
+    const gray = 75 + Math.floor(Math.random() * 95); // 75–170
+    const alpha = 0.13 + Math.random() * 0.16;
     offCtx.strokeStyle = `rgba(${gray},${gray},${gray},${alpha})`;
-    offCtx.lineWidth = 1.2 + Math.random() * 2.8;
+    offCtx.lineWidth = 1.0 + Math.random() * 3.2;
     offCtx.beginPath();
     offCtx.moveTo(x1, y1);
     offCtx.lineTo(x2, y2);
@@ -336,7 +346,9 @@ function drawLine(x, y, fromX, fromY) {
   const jitterX = x + (seededJitter(x + now) - 0.5) * 2 * wiggle;
   const jitterY = y + (seededJitter(y + now) - 0.5) * 2 * wiggle;
 
-  ctx.globalCompositeOperation = 'source-over';
+  // Palais de Tokyo: Enable pigment accumulation—each gesture deepens presence
+  ctx.save();
+  ctx.globalCompositeOperation = 'multiply'; // Layer pigment for analog buildup
   ctx.strokeStyle = texturedPattern || '#888888';
 
   // Slight imperfection in width for humanistic quality
@@ -348,6 +360,7 @@ function drawLine(x, y, fromX, fromY) {
   ctx.moveTo(fromX, fromY);
   ctx.lineTo(jitterX, jitterY);
   ctx.stroke();
+  ctx.restore();
 
   lastDrawTimestamp = now;
 }
@@ -410,26 +423,34 @@ function checkCanvasColored() {
   const gridCols = 3;
   const gridTouched = new Array(gridRows * gridCols).fill(false);
 
+  // Palais de Tokyo: Use visual difference from white, not just alpha, for poetic rigor
   for (let i = 0; i < imageData.length; i += 4) {
-    // Check if pixel is colored (not white/transparent)
-    if (imageData[i + 3] > 10) { // Alpha > 10 (not transparent)
+    const r = imageData[i];
+    const g = imageData[i + 1];
+    const b = imageData[i + 2];
+    const a = imageData[i + 3];
+    // Luminance difference from white (perceptual):
+    const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    const diffFromWhite = 255 - luminance;
+    // Count as colored if alpha > 10 OR pixel is not almost white
+    if (a > 10 && diffFromWhite > 8) {
       coloredPixels++;
-
       // Track which grid cell this pixel belongs to
       const pixelIndex = i / 4;
       const x = pixelIndex % canvas.width;
       const y = Math.floor(pixelIndex / canvas.width);
-
       // Calculate grid cell
       const gridCol = Math.floor(x / (canvas.width / gridCols));
       const gridRow = Math.floor(y / (canvas.height / gridRows));
       const gridIndex = gridRow * gridCols + gridCol;
-
       if (gridIndex >= 0 && gridIndex < gridTouched.length) {
         gridTouched[gridIndex] = true;
       }
     }
   }
+  // Debug: log gridTouched array for curatorial tuning
+  console.log('Grid zones touched:', gridTouched.map((v,i)=>v?i:null).filter(v=>v!==null));
+  console.log('Colored pixels:', coloredPixels, 'of', canvas.width * canvas.height, '| Percentage:', ((coloredPixels / (canvas.width * canvas.height))*100).toFixed(2));
 
   const coloredPercentage = (coloredPixels / (canvas.width * canvas.height)) * 100;
   const spreadCount = gridTouched.filter(Boolean).length;
@@ -449,7 +470,7 @@ function checkCanvasColored() {
   console.log(`Colored: ${coloredPercentage.toFixed(2)}% | Spread: ${spreadCount} grid zones | Portal: ${(combinedProgress*100).toFixed(0)}%`);
 
   // Portal fully emerges only if both thresholds are met
-  if (coloredPercentage >= 4.2 && spreadCount >= 5) {
+  if (coloredPercentage >= 1.37 && spreadCount >= 3) {
     showMirrorLink();
     console.log('Mirror displayed: threshold met (authorship + spread).');
   }
