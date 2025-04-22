@@ -76,9 +76,9 @@ html, body {
 
 @media (max-width: 600px) {
   #crayon {
-    max-width: 70px;
-    max-height: 70px;
-    transform: translate(-50%, -50%) scale(0.4);
+    max-width: 110px;
+    max-height: 110px;
+    transform: translate(-50%, -50%) scale(0.68);
   }
 }
 
