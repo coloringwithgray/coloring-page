@@ -587,27 +587,28 @@ function showMirrorLink() {
  *  Move Crayon with Cursor
  *******************************/
 function moveCrayon(x, y) {
-  // Position crayon so its tip aligns with cursor position for authentic drawing
-  crayon.style.position = 'fixed'; // Use fixed to follow cursor precisely
-  
-  // Position with slight offset to align the tip with the cursor
+  // Position crayon so its tip aligns with cursor/touch for authentic drawing
+  crayon.style.position = 'fixed';
   crayon.style.left = `${x}px`;
   crayon.style.top = `${y - 15}px`; // Offset for drawing tip alignment
-  
+
   // Add subtle tilt based on movement to enhance the physical tool feeling
   if (lastX && lastY) {
     const deltaX = x - lastX;
     // Slight tilt angle based on horizontal movement (5 degrees max)
     const tiltAngle = Math.min(Math.max(deltaX * 0.2, -5), 5);
-    crayon.style.transform = `translate(-50%, -50%) rotate(${tiltAngle}deg) scale(0.5)`;
+    // Slightly increase scale on mobile for clarity
+    const isMobile = window.matchMedia && window.matchMedia('(max-width: 600px)').matches;
+    const scale = isMobile ? 0.8 : 0.5;
+    crayon.style.transform = `translate(-50%, -50%) rotate(${tiltAngle}deg) scale(${scale})`;
   }
-  
+
   // Prevent crayon from blocking interactions with canvas
   crayon.style.pointerEvents = 'none';
-  
   // Make sure crayon is above other elements
   crayon.style.zIndex = 1000;
 }
+
 
 /*******************************
  *  Register Pointer Events
@@ -618,18 +619,31 @@ canvas.addEventListener('pointerup', handlePointerUp);
 canvas.addEventListener('pointercancel', handlePointerUp);
 
 // --- Mobile Safari: Touch event support for coloring & crayon ---
+// --- Palais de Tokyo: Unified Touch Handling for Crayon ---
 canvas.addEventListener('touchstart', function(e) {
-  // For each new touch, increment
-  for (let i = 0; i < e.changedTouches.length; i++) {
-    const t = e.changedTouches[i];
+  // Use the first touch as the primary drawing point
+  if (e.touches.length > 0) {
+    const t = e.touches[0];
+    // Update lastX/lastY for crayon alignment
+    lastX = t.clientX;
+    lastY = t.clientY;
     handlePointerDown({ clientX: t.clientX, clientY: t.clientY, isTouch: true });
+    // Move the crayon visually to the touch point
+    moveCrayon(t.clientX, t.clientY);
   }
   e.preventDefault();
 }, { passive: false });
 canvas.addEventListener('touchmove', function(e) {
+  // Use the first active touch for crayon and drawing
   if (e.touches.length > 0) {
     const t = e.touches[0];
-    throttledPointerMove({ clientX: t.clientX, clientY: t.clientY, isTouch: true });
+    // Draw and move crayon with the finger
+    if (isDrawing) {
+      drawLine(t.clientX, t.clientY, lastX, lastY);
+      lastX = t.clientX;
+      lastY = t.clientY;
+    }
+    moveCrayon(t.clientX, t.clientY);
     e.preventDefault();
   }
 }, { passive: false });

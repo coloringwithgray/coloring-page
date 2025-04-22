@@ -104,15 +104,19 @@ html, body {
 }
 
 @media (max-width: 600px) {
+  /* Palais de Tokyo: Portal must remain fully visible, centered, and never clipped on mobile. 
+     Use min(90vw, 90vh) for both width and height to adapt to all orientations. 
+     All sizing is conceptually restrained—no digital excess, only essential presence. */
   #mirror-link {
-    width: 90vw;
-    height: 90vw;
-    min-width: 120px;
-    min-height: 120px;
+    width: min(90vw, 90vh);
+    height: min(90vw, 90vh);
+    min-width: 96px;
+    min-height: 96px;
     max-width: 98vw;
-    max-height: 98vw;
+    max-height: 98vh;
   }
 }
+
 
 /* The portal itself - controlled by JS for user-input-driven emergence */
 #mirror {
