@@ -706,25 +706,15 @@ function fadeInHum() {
 }
 
 function fadeOutHum() {
-  // If already fading out or at zero, do nothing
-  if (portalHumFadeState === 'out') return;
+  // --- Palais de Tokyo: Immediate, Decisive Portal Hum Exit ---
+  // On exit, sound is off instantly (no fade), always resets.
   portalHumFadeState = 'out';
-  let v = portalHum.volume;
-  const step = 0.03;
-  function down() {
-    // If fade-in is triggered, abort fade-out
-    if (portalHumFadeState !== 'out') return;
-    if (v > 0) {
-      v = Math.max(0, v - step);
-      portalHum.volume = v;
-      requestAnimationFrame(down);
-    } else {
-      portalHum.pause();
-      portalHumFadeState = null;
-    }
-  }
-  down();
+  portalHum.pause();
+  portalHum.currentTime = 0;
+  portalHum.volume = 0;
+  portalHumFadeState = null;
 }
+
 
 
 const mirrorLinkEl = document.getElementById('mirror-link');
