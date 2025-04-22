@@ -54,26 +54,26 @@ window.addEventListener('resize', resizeDustCanvas);
 createDustCanvas();
 
 // --- Grand Prix: Dynamic, unique SVG mask for each portal emergence ---
-function generateIrregularPortalMask() {
+function generateIrregularPortalMask(timePhase = 0) {
   // Palais de Tokyo x Grand Prix Cannes: Sculpted, poetic contour and restraint
   const cx = 200, cy = 200, rBase = 164, points = 32;
   let d = '';
   for (let i = 0; i < points; i++) {
     const angle = (2 * Math.PI * i) / points;
-    // More restraint: less random, more sculpted undulation
+    // Animate undulation phase for "living" edge
+    const phase = timePhase * 0.00012; // Slow evolution
     let r = rBase
-      + Math.sin(i * 1.1) * 22 // gentle undulation
-      + Math.cos(i * 0.8 + Math.PI/8) * 14 // subtle asymmetry
-      + (i % 8 === 0 ? Math.random() * 30 - 15 : 0) // rare accent
-      + (i % 3 === 0 ? Math.random() * 10 - 5 : 0); // slight analog
-    // Contour: avoid jagged rupture, evoke hand-cut negative space
+      + Math.sin(i * 1.1 + phase + Math.cos(phase + i * 0.23) * 0.7) * 22
+      + Math.cos(i * 0.8 + Math.PI/8 + phase * 0.6) * 14
+      + Math.sin(phase + i * 0.51) * 3.4 // subtle additional breathing
+      + (i % 8 === 0 ? Math.sin(phase * 0.7 + i) * 7 : 0)
+      + (i % 3 === 0 ? Math.sin(phase * 1.1 + i) * 2 : 0);
     r = Math.max(r, rBase * 0.82);
     const x = cx + Math.cos(angle) * r;
     const y = cy + Math.sin(angle) * r;
     d += (i === 0 ? 'M' : 'L') + x.toFixed(2) + ',' + y.toFixed(2) + ' ';
   }
   d += 'Z';
-  // SVG: add subtle shadowing for atmospheric depth
   const svg = `<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"
 ><defs>
   <filter id="turb"><feTurbulence type="turbulence" baseFrequency="0.07 0.14" numOctaves="2" seed="${Math.floor(Math.random()*1000)}" result="turb"/><feDisplacementMap in2="turb" in="SourceGraphic" scale="32" xChannelSelector="R" yChannelSelector="G"/></filter>
@@ -89,14 +89,38 @@ function generateIrregularPortalMask() {
   return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
 }
 
-function applyRandomPortalMask() {
-  const url = generateIrregularPortalMask();
+
+function applyRandomPortalMask(timePhase = 0) {
+  const url = generateIrregularPortalMask(timePhase);
   const mirror = document.getElementById('mirror');
   mirror.style.webkitMaskImage = `url('${url}')`;
   mirror.style.maskImage = `url('${url}')`;
-  // Also apply to ::before and ::after for analog shadow/gradient
   mirror.style.setProperty('--portal-mask-url', `url('${url}')`);
 }
+
+// Animate mask edge only when portal is visible
+let maskEdgeAnimationId = null;
+function startMaskEdgeAnimation() {
+  if (maskEdgeAnimationId) return;
+  function animateMaskEdge() {
+    // Only animate if portal is visible
+    if (mirrorLink.classList.contains('active')) {
+      applyRandomPortalMask(Date.now());
+      maskEdgeAnimationId = requestAnimationFrame(animateMaskEdge);
+    } else {
+      maskEdgeAnimationId = null;
+    }
+  }
+  animateMaskEdge();
+}
+// Ensure animation stops when portal is hidden
+function stopMaskEdgeAnimation() {
+  if (maskEdgeAnimationId) {
+    cancelAnimationFrame(maskEdgeAnimationId);
+    maskEdgeAnimationId = null;
+  }
+}
+
 
 // Call this function whenever the portal emerges (e.g., threshold met)
 window.applyRandomPortalMask = applyRandomPortalMask;
@@ -514,7 +538,8 @@ function showMirrorLink() {
   mirrorLink.style.top = `${pos.top}%`;
 
   // Generate a new mask when threshold is reached
-  applyRandomPortalMask();
+  applyRandomPortalMask(Date.now());
+  startMaskEdgeAnimation();
   
   // Set portal to fully open
   setPortalProgress(1.0);
