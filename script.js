@@ -229,10 +229,6 @@ let lastY = 0;
 let crayonActive = false;
 let portalShown = false; // Track if portal has popped up this activation
 
-// --- Dual Portal State ---
-let reflectionShown = false;
-let instagramShown = false;
-
 // --- Palais de Tokyo: Fine Crayon Pattern ---
 let texturedPattern = null;
 
@@ -295,9 +291,6 @@ window.addEventListener('load', ensureCrayonPattern);
 function activateCrayon() {
   crayonActive = true;
   portalShown = false; // Reset portal state
-  // Reset portal states for new drawing session
-  reflectionShown = false;
-  instagramShown = false;
   ensureCrayonPattern();
   
   // Hide the actual cursor, we'll use the crayon image element instead
@@ -345,10 +338,7 @@ function initializeCanvas() {
   canvas.height = window.innerHeight;
   ctx.fillStyle = 'white';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  // Reset portal state on new canvas
-  reflectionShown = false;
-  instagramShown = false;
-  console.log('Canvas initialized. Portal states reset.');
+  console.log('Canvas initialized.');
 }
 
 window.addEventListener('resize', initializeCanvas);
@@ -475,9 +465,6 @@ function handlePointerUp() {
  *  Check How Much is Colored
  *******************************/
 function checkCanvasColored() {
-  // Debug: Show thresholds and state
-  // (remove or comment out in production)
-  // console.log('Checking canvas colored...');
   // --- Palais de Tokyo Level: Portal Emergence Threshold ---
   // 1. Pixel threshold: at least 1.37% of canvas colored (more demanding creative engagement)
   // 2. Spread threshold: marks in at least 3 distinct regions of a 3x3 grid
@@ -538,18 +525,13 @@ function checkCanvasColored() {
 
   // Portal fully emerges only if both thresholds are met
   if (coloredPercentage >= 1.37 && spreadCount >= 3) {
-    console.log('Threshold met: showMirrorLink');
     showMirrorLink();
   }
   if (!reflectionShown && firstPortal === 'instagram' && coloredPercentage >= reflectionThreshold && spreadCount >= 3) {
-    console.log('Threshold met: showPortal(reflection)');
     showPortal('reflection');
-    reflectionShown = true;
   }
   if (!instagramShown && firstPortal === 'reflection' && coloredPercentage >= instagramThreshold && spreadCount >= 3) {
-    console.log('Threshold met: showPortal(instagram)');
     showPortal('instagram');
-    instagramShown = true;
   }
   // (Optional: add console logs for debugging)
 }
@@ -702,22 +684,15 @@ activatePortalInteractions(mirrorLinkInstagram);
 function deactivateAllPortals() {
   mirrorLink.classList.remove('active');
   mirrorLink.style.pointerEvents = 'none';
-  mirrorLink.setAttribute('aria-hidden', 'true');
   mirrorLinkInstagram.classList.remove('active');
   mirrorLinkInstagram.style.pointerEvents = 'none';
-  mirrorLinkInstagram.setAttribute('aria-hidden', 'true');
 }
-// Wrap showPortal to ensure only one portal is active and accessible at a time
-if (!showPortal._wrapped) {
-  const originalShowPortal = showPortal;
-  showPortal = function(which) {
-    deactivateAllPortals();
-    if (which === 'reflection') mirrorLink.setAttribute('aria-hidden', 'false');
-    if (which === 'instagram') mirrorLinkInstagram.setAttribute('aria-hidden', 'false');
-    originalShowPortal(which);
-  };
-  showPortal._wrapped = true;
-}
+// Modify showPortal to always deactivate the other portal
+const originalShowPortal = showPortal;
+showPortal = function(which) {
+  deactivateAllPortals();
+  originalShowPortal(which);
+};
 
 // Dimensional parallax effect for hologram preview
 const mirrorIframe = document.getElementById('mirror-iframe');

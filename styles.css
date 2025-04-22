@@ -120,7 +120,28 @@ html, body {
   z-index: 4;
   opacity: 0;
   background: transparent;
+  /* Subtle fade-in for Instagram portal, conceptually restrained */
+  transition: opacity 0.9s cubic-bezier(.4,0,.2,1);
 }
+
+#mirror-link-instagram.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Visually hidden label for accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
 
 #mirror-instagram {
   width: 100%;
@@ -138,7 +159,6 @@ html, body {
   background-repeat: no-repeat;
   background-position: center;
   background-size: 44% 44%;
-
   /* Subtle analog blur for depth */
   filter: blur(0.5px);
 }
