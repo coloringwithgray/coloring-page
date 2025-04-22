@@ -679,42 +679,53 @@ portalHum.preload = 'auto';
 portalHum.volume = 0;
 let portalHumFading = false;
 
+// --- Palais de Tokyo: Robust Portal Hum Fade Logic ---
+let portalHumFadeState = null; // 'in' | 'out' | null
+
 function fadeInHum() {
-  if (portalHumFading) return;
-  portalHumFading = true;
+  // If already fading in or at target, do nothing
+  if (portalHumFadeState === 'in') return;
+  portalHumFadeState = 'in';
   portalHum.currentTime = 0;
   portalHum.play().catch(() => {});
   let v = portalHum.volume;
   const target = 0.23;
   const step = 0.03;
   function up() {
+    // If fade-out is triggered, abort fade-in
+    if (portalHumFadeState !== 'in') return;
     if (v < target) {
       v = Math.min(target, v + step);
       portalHum.volume = v;
       requestAnimationFrame(up);
     } else {
-      portalHumFading = false;
+      portalHumFadeState = null;
     }
   }
   up();
 }
+
 function fadeOutHum() {
-  if (portalHumFading) return;
-  portalHumFading = true;
+  // If already fading out or at zero, do nothing
+  if (portalHumFadeState === 'out') return;
+  portalHumFadeState = 'out';
   let v = portalHum.volume;
   const step = 0.03;
   function down() {
+    // If fade-in is triggered, abort fade-out
+    if (portalHumFadeState !== 'out') return;
     if (v > 0) {
       v = Math.max(0, v - step);
       portalHum.volume = v;
       requestAnimationFrame(down);
     } else {
       portalHum.pause();
-      portalHumFading = false;
+      portalHumFadeState = null;
     }
   }
   down();
 }
+
 
 const mirrorLinkEl = document.getElementById('mirror-link');
 mirrorLinkEl.addEventListener('mouseenter', fadeInHum);
