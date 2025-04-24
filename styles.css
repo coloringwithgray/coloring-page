@@ -3,7 +3,7 @@
  *******************************/
 .hide-cursor {
   /* Use same crayon-optimized.png for cursor to maintain visual consistency */
-  cursor: url('crayon-optimized.png') 32 90, auto !important;
+  cursor: url('assets/crayon-optimized.png') 32 90, auto !important;
   /* Ensure cursor properties apply to all elements */
   * {
     cursor: inherit !important;
@@ -126,8 +126,8 @@ html, body {
   background: none;
   position: relative;
   /* JS now controls scale, opacity, blur */
-  -webkit-mask-image: var(--portal-mask-url, url('portal-mask.svg'));
-  mask-image: var(--portal-mask-url, url('portal-mask.svg'));
+  -webkit-mask-image: var(--portal-mask-url, url('assets/portal-mask.svg'));
+  mask-image: var(--portal-mask-url, url('assets/portal-mask.svg'));
   -webkit-mask-size: cover;
   mask-size: cover;
   -webkit-mask-repeat: no-repeat;

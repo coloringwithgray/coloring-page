@@ -309,7 +309,7 @@ function activateCrayon() {
 
 
 // Crayon sound effect
-const crayonSound = new Audio('11L-1_singular_slow_cray-1745020327208.mp3');
+const crayonSound = new Audio('assets/11L-1_singular_slow_cray-1745020327208.mp3');
 crayonSound.loop = true;
 crayonSound.preload = 'auto';
 crayonSound.volume = 0.4; // adjust as needed
@@ -673,7 +673,7 @@ canvas.addEventListener('pointerleave', () => { activeDrawInputs = 0; pauseCrayo
 /*******************************
  *  Portal Ambient Hum
  *******************************/
-const portalHum = new Audio('low-hum-14645.mp3');
+const portalHum = new Audio('assets/low-hum-14645.mp3');
 portalHum.loop = true;
 portalHum.preload = 'auto';
 portalHum.volume = 0;

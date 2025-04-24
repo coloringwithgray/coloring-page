@@ -2,23 +2,31 @@
 <html lang="en">
 <head>
   <!-- Responsive, non-zoomable viewport for mobile, required for iOS Safari -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Coloring with Gray</title>
-  
-  <!-- Google Font -->
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap"
-  />
-  
-  <!-- Local stylesheet -->
-  <link rel="stylesheet" href="styles.css" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+<title>Coloring with Gray</title>
 
-  <!-- Your script file, loaded with "defer" so it runs after the HTML is parsed -->
-  <script src="script.js" defer></script>
+<!-- Meta description for Palais de Tokyo submission and SEO -->
+<meta name="description" content="Coloring with Gray: a meditative, interactive portal exploring absence, memory, and emergence. Palais de Tokyo digital submission.">
+<!-- Open Graph for social sharing -->
+<meta property="og:title" content="Coloring with Gray" />
+<meta property="og:description" content="A meditative, interactive portal exploring absence, memory, and emergence. Palais de Tokyo digital submission." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="assets/Gray+Crayon.png" />
+<meta property="og:url" content="https://your-vercel-domain.vercel.app/" />
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Coloring with Gray" />
+<meta name="twitter:description" content="A meditative, interactive portal exploring absence, memory, and emergence." />
+<meta name="twitter:image" content="assets/Gray+Crayon.png" />
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="assets/Gray+Crayon.png" />
+<!-- Google Font -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap" />
+<!-- Local stylesheet -->
+<link rel="stylesheet" href="styles.css" />
+<!-- Main script -->
+<script src="script.js" defer></script>
 </head>
 
 <body>
@@ -29,7 +37,7 @@
     <!-- Crayon image (click to activate drawing) -->
     <img
       id="crayon"
-      src="crayon-optimized.png"
+      src="assets/crayon-optimized.png"
       alt="Crayon"
       onclick="activateCrayon()"
     />
