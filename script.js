@@ -241,6 +241,23 @@ let portalShown = false; // Track if portal has popped up this activation
 let texturedPattern = null;
 
 // --- Fundamental: Track active drawing inputs for robust sound alignment ---
+
+// Palais de Tokyo: IG icon fade-in with portal
+const igIcon = document.getElementById('ig-icon');
+function syncIgIconWithPortal() {
+  // If #mirror-link has .active, show IG icon
+  if (mirrorLink.classList.contains('active')) {
+    igIcon.classList.add('active');
+  } else {
+    igIcon.classList.remove('active');
+  }
+}
+// Observe class changes on #mirror-link for conceptual restraint
+const observer = new MutationObserver(syncIgIconWithPortal);
+observer.observe(mirrorLink, { attributes: true, attributeFilter: ['class'] });
+// Initial sync
+syncIgIconWithPortal();
+
 let activeDrawInputs = 0; // Number of active touches/pointers
 function incrementDrawInputs() {
   activeDrawInputs++;
@@ -751,3 +768,173 @@ let parallaxActive = false;
 // Only show/hide logic remains.
 
 console.log('Script loaded.');
+
+// Wait for the DOM to be fully loaded before adding event listeners
+document.addEventListener('DOMContentLoaded', () => {
+  // Get icon and text elements
+  const igLink = document.getElementById('ig-link');
+  const igIcon = document.getElementById('ig-icon');
+  const igHoverText = document.getElementById('ig-hover-text');
+  const mailLink = document.getElementById('mail-link');
+  const mailIcon = document.getElementById('mail-icon');
+  const mailHoverText = document.getElementById('mail-hover-text');
+
+  // --- State Variables --- 
+  let igHoverTimeoutId = null;
+  let mailHoverTimeoutId = null;
+
+  // --- Helper: Remove animation classes on completion --- 
+  function handleAnimationEnd(event) {
+    // Remove all potential animation classes to clean up
+    event.target.classList.remove('trembling', 'pulsing', 'shuddering', 'flickering');
+  }
+  igIcon.addEventListener('animationend', handleAnimationEnd);
+  mailIcon.addEventListener('animationend', handleAnimationEnd);
+
+
+  // --- Instagram Icon Logic --- 
+  igLink.addEventListener('mouseenter', () => {
+    if (igHoverTimeoutId) clearTimeout(igHoverTimeoutId); // Clear previous timer if hovering again quickly
+    
+    // Only add pulsing if not already animating (prevents re-triggering mid-pulse)
+    if (!igIcon.classList.contains('pulsing')) {
+        igIcon.classList.add('pulsing');
+    }
+    
+    igHoverText.classList.add('visible');
+    
+    // Set timer to hide text after a delay, regardless of continued hover
+    igHoverTimeoutId = setTimeout(() => {
+      igHoverText.classList.remove('visible');
+      igHoverTimeoutId = null;
+    }, 3000); // Text stays visible for 3 seconds
+  });
+
+  igLink.addEventListener('mouseleave', () => {
+    // Let the animation finish naturally via animationend listener
+    // Let the text fade out naturally via its timer
+    igIcon.classList.remove('pulsing');
+    clearTimeout(igHoverTimeoutId); // Clear fade-out timer
+    igHoverText.classList.remove('visible'); // Stop writing animation immediately
+  });
+
+  igLink.addEventListener('click', (event) => {
+    event.preventDefault(); // Stop browser from navigating immediately
+    
+    if (!igIcon.classList.contains('flickering')) {
+        igIcon.classList.add('flickering');
+    }
+    
+    // Wait for flicker animation to roughly complete, then navigate
+    setTimeout(() => {
+        // Add fading trace effect
+        igIcon.classList.add('fading-trace');
+        // Set short timeout to remove trace class, triggering CSS fade
+        setTimeout(() => { 
+          igIcon.classList.remove('fading-trace');
+        }, 100); // Start the 1s fade-out quickly after trace appears
+
+        window.open(igLink.href, '_blank'); // Open in new tab
+    }, 500); // Slightly longer pause (was 350ms)
+  });
+
+  // Clean up animation classes
+  igIcon.addEventListener('animationend', () => {
+    igIcon.classList.remove('pulsing', 'flickering');
+  });
+
+  // --- Mail Icon Logic --- 
+  mailLink.addEventListener('mouseenter', () => {
+    if (mailHoverTimeoutId) clearTimeout(mailHoverTimeoutId);
+    
+    if (!mailIcon.classList.contains('trembling')) {
+        mailIcon.classList.add('trembling');
+    }
+    
+    mailHoverText.classList.add('visible');
+    
+    mailHoverTimeoutId = setTimeout(() => {
+      mailHoverText.classList.remove('visible');
+      mailHoverTimeoutId = null;
+    }, 3000);
+  });
+
+  mailLink.addEventListener('mouseleave', () => {
+     // Let animations/text fade finish naturally
+     mailIcon.classList.remove('trembling');
+     clearTimeout(mailHoverTimeoutId); // Clear fade-out timer
+     mailHoverText.classList.remove('visible'); // Stop writing animation immediately
+  });
+
+  mailLink.addEventListener('click', (event) => {
+    event.preventDefault();
+    
+    if (!mailIcon.classList.contains('shuddering')) {
+        mailIcon.classList.add('shuddering');
+    }
+    
+    // TODO: Implement 'note sliding in' visual effect (likely needs SVG or different structure)
+    // TODO: Implement 'SENT' text flash overlay
+
+    // Wait for shudder animation, then navigate
+    setTimeout(() => {
+         // Add fading trace effect
+        mailIcon.classList.add('fading-trace');
+         // Set short timeout to remove trace class, triggering CSS fade
+        setTimeout(() => { 
+          mailIcon.classList.remove('fading-trace');
+        }, 100); // Start the 1s fade-out quickly after trace appears
+
+        window.location.href = mailLink.href;
+    }, 700); // Slightly longer pause (was 500ms)
+  });
+
+  // Clean up animation classes
+  mailIcon.addEventListener('animationend', () => {
+    mailIcon.classList.remove('trembling', 'shuddering');
+  });
+
+});
+
+// --- Time-Based Aesthetic Adjustments --- //
+function applyTimeBasedStyles() {
+  const hour = new Date().getHours();
+  const rootStyle = document.documentElement.style;
+
+  let brightness = 0.96;
+  let shadowOpacity = 0.08;
+  let portalShadowOpacity = 0.16;
+  let textColor = '#666'; // Default gray
+
+  if (hour < 6 || hour >= 20) { // Night (8 PM - 5:59 AM)
+    brightness = 0.92;
+    shadowOpacity = 0.06;
+    portalShadowOpacity = 0.12;
+    textColor = '#555'; // Slightly darker
+  } else if (hour >= 6 && hour < 9) { // Morning (6 AM - 8:59 AM)
+    brightness = 0.98;
+    shadowOpacity = 0.09;
+    portalShadowOpacity = 0.17;
+    textColor = '#6a6a6a'; // Slightly lighter
+  } else if (hour >= 9 && hour < 18) { // Daytime (9 AM - 5:59 PM)
+    brightness = 1.0; // Slightly brighter icons
+    shadowOpacity = 0.10;
+    portalShadowOpacity = 0.18;
+    textColor = '#707070'; // Lighter text
+  } else { // Evening (6 PM - 7:59 PM)
+    brightness = 0.95;
+    shadowOpacity = 0.07;
+    portalShadowOpacity = 0.15;
+    textColor = '#606060';
+  }
+
+  rootStyle.setProperty('--icon-brightness', brightness);
+  rootStyle.setProperty('--shadow-opacity-base', shadowOpacity);
+  rootStyle.setProperty('--portal-shadow-opacity', portalShadowOpacity);
+  rootStyle.setProperty('--text-color', textColor);
+}
+
+// --- Initialization --- //
+document.addEventListener('DOMContentLoaded', () => {
+  applyTimeBasedStyles(); // Apply styles based on current time
+});
