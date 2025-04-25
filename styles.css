@@ -70,15 +70,7 @@ html, body {
   #crayon {
     max-width: 110px;
     max-height: 110px;
-    transform: translate(-50%, -50%) scale(0.62); /* Larger on mobile too */
-  }
-}
-
-@media (max-width: 600px) {
-  #crayon {
-    max-width: 110px;
-    max-height: 110px;
-    transform: translate(-50%, -50%) scale(0.68);
+    transform: translate(-50%, -50%) scale(0.68); /* Larger on mobile too */
   }
 }
 
@@ -177,15 +169,6 @@ html, body {
   pointer-events: none;
   z-index: 10;
 }
-
-@keyframes portal-quiver {
-  0% { transform: scale(0.98) rotate(-1deg); }
-  25% { transform: scale(1.01) rotate(0.4deg); }
-  50% { transform: scale(1.01) rotate(-0.7deg); }
-  75% { transform: scale(0.99) rotate(0.8deg); }
-  100% { transform: scale(1) rotate(-0.3deg); }
-}
-
 
 #mirror-link.active {
   opacity: 1;
