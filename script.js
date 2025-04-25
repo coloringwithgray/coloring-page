@@ -128,14 +128,12 @@ function startMaskEdgeAnimation() {
 
   // Update mask periodically (e.g., every 1 second) for a 'living' effect
   maskUpdateIntervalId = setInterval(() => {
-    // Only update if portal is still visible
-    if (mirrorLink.classList.contains('active')) {
-      applyRandomPortalMask(Date.now());
-    } else {
-      // If portal became hidden, stop the interval
-      stopMaskEdgeAnimation(); 
+    // Interval check: If portal is NOT active, stop the interval.
+    // This handles cases where hideMirrorLink might not have been called.
+    if (!mirrorLink.classList.contains('active')) {
+        stopMaskEdgeAnimation();
     }
-  }, 1000); // Update every 1000ms (1 second)
+  }, 1000); // Interval still runs, but does nothing except check if portal closed.
 }
 
 // Ensure animation stops when portal is hidden
