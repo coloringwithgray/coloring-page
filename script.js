@@ -252,7 +252,7 @@ function decrementDrawInputs() {
 }
 
 function createAuthenticCrayonPattern() {
-  // Palais de Tokyo: Material density and poetic grayscale rigor
+  // Palais de Tokyo: Material density and poetic grayscale rigor (refined)
   const size = 32;
   const offCanvas = document.createElement('canvas');
   offCanvas.width = size;
@@ -260,36 +260,46 @@ function createAuthenticCrayonPattern() {
   const offCtx = offCanvas.getContext('2d');
   offCtx.clearRect(0, 0, size, size);
 
-  // Intensify pigment density for a more materially rich, less digital texture
-  for (let i = 0; i < 170; i++) { // Increased from 65 for greater fill
+  // Intensified pigment density for fuller, analog texture
+  for (let i = 0; i < 260; i++) { // More dots for richer fill
     const x = Math.random() * size;
     const y = Math.random() * size;
-    const radius = 0.8 + Math.random() * 2.2;
-    // Poetic grayscale: subtle matte range
-    const gray = 80 + Math.floor(Math.random() * 85); // 80–165
-    const alpha = 0.18 + Math.random() * 0.20;
+    const radius = 0.7 + Math.random() * 1.8;
+    // Lighter, poetic matte gray (never black)
+    const gray = 145 + Math.floor(Math.random() * 65); // 145–210
+    const alpha = 0.18 + Math.random() * 0.19; // More presence, still soft
     offCtx.beginPath();
     offCtx.arc(x, y, radius, 0, 2 * Math.PI);
     offCtx.fillStyle = `rgba(${gray},${gray},${gray},${alpha})`;
     offCtx.fill();
   }
-  // More streaks, with analog variation
-  for (let i = 0; i < 16; i++) { // Increased from 7 for more layering
+  // More streaks, increased layering and width variation
+  for (let i = 0; i < 28; i++) {
     const x1 = Math.random() * size;
     const y1 = Math.random() * size;
-    const x2 = x1 + (Math.random() - 0.5) * 14;
-    const y2 = y1 + (Math.random() - 0.5) * 14;
-    const gray = 75 + Math.floor(Math.random() * 95); // 75–170
-    const alpha = 0.13 + Math.random() * 0.16;
+    const x2 = x1 + (Math.random() - 0.5) * 15;
+    const y2 = y1 + (Math.random() - 0.5) * 15;
+    const gray = 145 + Math.floor(Math.random() * 65); // 145–210
+    const alpha = 0.14 + Math.random() * 0.15;
     offCtx.strokeStyle = `rgba(${gray},${gray},${gray},${alpha})`;
-    offCtx.lineWidth = 1.0 + Math.random() * 3.2;
+    offCtx.lineWidth = 1.2 + Math.random() * 3.8;
     offCtx.beginPath();
     offCtx.moveTo(x1, y1);
     offCtx.lineTo(x2, y2);
     offCtx.stroke();
   }
+  // Optional: subtle noise for analog richness
+  for (let i = 0; i < 48; i++) {
+    const x = Math.random() * size;
+    const y = Math.random() * size;
+    const gray = 160 + Math.floor(Math.random() * 40); // Mid-gray
+    const alpha = 0.08 + Math.random() * 0.09;
+    offCtx.fillStyle = `rgba(${gray},${gray},${gray},${alpha})`;
+    offCtx.fillRect(x, y, 1, 1);
+  }
   return ctx.createPattern(offCanvas, 'repeat');
 }
+
 
 function ensureCrayonPattern() {
   if (!texturedPattern) texturedPattern = createAuthenticCrayonPattern();
