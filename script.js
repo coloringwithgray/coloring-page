@@ -115,25 +115,34 @@ function applyRandomPortalMask(timePhase = 0) {
 }
 
 // Animate mask edge only when portal is visible
-let maskEdgeAnimationId = null;
+let maskUpdateIntervalId = null; // Use Interval ID
+
 function startMaskEdgeAnimation() {
-  if (maskEdgeAnimationId) return;
-  function animateMaskEdge() {
-    // Only animate if portal is visible
+  // Ensure previous interval is cleared if somehow called again
+  if (maskUpdateIntervalId) clearInterval(maskUpdateIntervalId);
+
+  // Apply mask immediately when starting
+  if (mirrorLink.classList.contains('active')) {
+    applyRandomPortalMask(Date.now());
+  }
+
+  // Update mask periodically (e.g., every 1 second) for a 'living' effect
+  maskUpdateIntervalId = setInterval(() => {
+    // Only update if portal is still visible
     if (mirrorLink.classList.contains('active')) {
       applyRandomPortalMask(Date.now());
-      maskEdgeAnimationId = requestAnimationFrame(animateMaskEdge);
     } else {
-      maskEdgeAnimationId = null;
+      // If portal became hidden, stop the interval
+      stopMaskEdgeAnimation(); 
     }
-  }
-  animateMaskEdge();
+  }, 1000); // Update every 1000ms (1 second)
 }
+
 // Ensure animation stops when portal is hidden
 function stopMaskEdgeAnimation() {
-  if (maskEdgeAnimationId) {
-    cancelAnimationFrame(maskEdgeAnimationId);
-    maskEdgeAnimationId = null;
+  if (maskUpdateIntervalId) {
+    clearInterval(maskUpdateIntervalId);
+    maskUpdateIntervalId = null;
   }
 }
 
@@ -142,7 +151,7 @@ function stopMaskEdgeAnimation() {
 window.applyRandomPortalMask = applyRandomPortalMask;
 
 // Optionally, apply once on load for preview
-window.addEventListener('DOMContentLoaded', applyRandomPortalMask);
+// window.addEventListener('DOMContentLoaded', applyRandomPortalMask);
 
 // --- Portal progress-driven emergence (aesthetic, poetic) ---
 // progress: 0 (closed) ... 1 (fully open)
@@ -673,7 +682,7 @@ canvas.addEventListener('pointerleave', () => { activeDrawInputs = 0; pauseCrayo
 /*******************************
  *  Portal Ambient Hum
  *******************************/
-const portalHum = new Audio('assets/low-hum-14645.mp3');
+const portalHum = new Audio('assets/low hum.mp3');
 portalHum.loop = true;
 portalHum.preload = 'auto';
 portalHum.volume = 0;
