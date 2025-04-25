@@ -80,9 +80,8 @@ html, body {
 
 @media (max-width: 600px) {
   #crayon {
-    max-width: 80px;
-    max-height: 80px;
-    transform: translate(-50%, -50%) scale(1);
+    max-width: 90px;  /* Reduce crayon size on mobile */
+    max-height: 90px; /* Reduce crayon size on mobile */
   }
 }
 
@@ -108,7 +107,7 @@ html, body {
 }
 
 @media (max-width: 600px) {
-  #mirror-link {
+  #mirror-link { /* Mobile size */
     width: min(50vw, 50vh);
     height: min(50vw, 50vh);
     min-width: 60px;
@@ -117,24 +116,22 @@ html, body {
     max-height: 60vw;
   }
 
-  .container {
-    transform: translateX(3%); /* Subtle asymmetry on mobile */
+  .container { /* Mobile centering */
+    /* transform: translateX(3%); /* Removed transform for centering */ */
   }
 
-  #crayon {
-    max-width: 90px;  /* Reduce crayon size on mobile */
-    max-height: 90px; /* Reduce crayon size on mobile */
-  }
-
+  /* Combined icon styles for mobile */
   #ig-icon, #mail-icon {
-    width: 32px;
+    width: 32px; /* Keep smaller size for mobile */
+    height: 32px; /* Ensure height matches width */
     bottom: 20px;
   }
   #ig-icon {
-    left: calc(50% - 24px);
+    left: 20px; /* Position near left edge */
   }
   #mail-icon {
-    left: calc(50% + 24px);
+    right: 20px; /* Position near right edge */
+    left: auto; /* Override any inherited left */
   }
 }
 
@@ -220,17 +217,6 @@ html, body {
               filter 1.15s cubic-bezier(.2,.8,.2,1);
 }
 
-@media (max-width: 600px) {
-  #mirror-iframe {
-    width: 45vw;
-    height: 25.3125vw;
-    min-width: 90px;
-    min-height: 50px;
-    border-width: 2vw;
-    border-radius: 8px;
-  }
-}
-
 /************************************
  *    PORTAL HOVER
  ************************************/
@@ -275,20 +261,6 @@ html, body {
 #mail-icon {
   left: calc(50% + 170px); /* Increased spacing for 160px width + gap */
   transition-delay: 0.18s; /* Slightly later fade */
-}
-
-@media (max-width: 600px) {
-  #ig-icon, #mail-icon {
-    width: 128px; /* 4x mobile size */
-    height: 128px; /* 4x mobile size */
-    bottom: 20px;
-  }
-  #ig-icon {
-    left: calc(50% - 136px); /* Increased mobile spacing for 128px width + gap */
-  }
-  #mail-icon {
-    left: calc(50% + 136px); /* Increased mobile spacing for 128px width + gap */
-  }
 }
 
 /************************************
