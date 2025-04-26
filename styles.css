@@ -292,16 +292,16 @@ html, body {
   }
   
   .ig-icon-wrapper {
-    left: calc(28% - 35px); /* Repositioned for smaller screens */
+    left: calc(25% - 105px); /* Adjusted for much larger icon size */
   }
   
   .email-icon-wrapper {
-    left: calc(72% + 35px); /* Repositioned for smaller screens */
+    left: calc(75% + 105px); /* Adjusted for much larger icon size */
   }
   
   .email-icon, .ig-icon {
-    width: 140px; /* Increased size for better visibility */
-    height: 140px;
+    width: 420px; /* 3x size for vertical orientation */
+    height: 420px;
     transition: width 0.5s ease, height 0.5s ease, transform 0.5s cubic-bezier(0.17, 0.67, 0.35, 0.97),
                 filter 0.8s cubic-bezier(0.17, 0.67, 0.35, 0.97); /* Smooth size changes */
   }
