@@ -120,8 +120,7 @@ html, body {
 
   /* Combined icon styles for mobile */
   #ig-icon, #mail-icon {
-    width: 28px; /* Refined smaller size for mobile */
-    height: 28px; /* Ensure height matches width */
+    position: fixed;
     /* Common bottom position using safe area */
     bottom: calc(20px + env(safe-area-inset-bottom)); 
     /* Remove horizontal centering */
@@ -292,11 +291,11 @@ html, body {
   }
   
   .ig-icon-wrapper {
-    left: calc(25% - 105px); /* Adjusted for much larger icon size */
+    left: 30px; /* Position from left edge */
   }
   
   .email-icon-wrapper {
-    left: calc(75% + 105px); /* Adjusted for much larger icon size */
+    right: 30px; /* Position from right edge */
   }
   
   .email-icon, .ig-icon {
