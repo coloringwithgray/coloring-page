@@ -211,12 +211,12 @@ html, body {
   position: fixed;
   left: 50%;
   top: 50%;
-  width: 30vw;
-  height: 16.875vw; /* 16:9 aspect ratio */
-  max-width: 45vw;
-  max-height: 25.3125vw;
-  min-width: 160px;
-  min-height: 90px;
+  width: 37.2vw; /* Increased from 30vw by 24% */
+  height: 20.925vw; /* Increased 16:9 aspect ratio (37.2 / 16 * 9) */
+  max-width: 55.8vw; /* Increased from 45vw by 24% */
+  max-height: 31.3875vw; /* Increased from 25.3125vw by 24% */
+  min-width: 198px; /* Increased from 160px by 24% */
+  min-height: 111px; /* Increased from 90px by 24% */
   transform: translate(-50%, -50%) scale(0.92);
   opacity: 0;
   background: #181818;
