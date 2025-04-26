@@ -282,28 +282,34 @@ html, body {
 /* Mobile responsive styles - portrait orientation */
 @media (max-width: 767px) {
   .email-icon-wrapper, .ig-icon-wrapper {
-    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
     transform: translateY(10px); /* Slightly smaller initial position adjustment */
     transition: opacity 1.6s cubic-bezier(0.19, 1, 0.22, 1),
                 transform 1.4s cubic-bezier(0.19, 1, 0.22, 1),
                 left 0.5s ease, bottom 0.5s ease; /* Smooth orientation changes */
-    padding: 10px; /* Create larger touch target */
-    margin: -10px; /* Offset padding to maintain visual position */
+    padding: 12px; /* Create larger touch target */
+    margin: -12px; /* Offset padding to maintain visual position */
   }
   
   .ig-icon-wrapper {
-    left: calc(30% - 30px); /* Repositioned for smaller screens */
+    left: calc(28% - 35px); /* Repositioned for smaller screens */
   }
   
   .email-icon-wrapper {
-    left: calc(70% + 30px); /* Repositioned for smaller screens */
+    left: calc(72% + 35px); /* Repositioned for smaller screens */
   }
   
   .email-icon, .ig-icon {
-    width: 110px; /* Smaller on mobile */
-    height: 110px;
+    width: 140px; /* Increased size for better visibility */
+    height: 140px;
     transition: width 0.5s ease, height 0.5s ease, transform 0.5s cubic-bezier(0.17, 0.67, 0.35, 0.97),
                 filter 0.8s cubic-bezier(0.17, 0.67, 0.35, 0.97); /* Smooth size changes */
+  }
+  
+  /* Ensure spacing is adequate between icons */
+  body:has(#mirror-link.active) .email-icon-wrapper,
+  body:has(#mirror-link.active) .ig-icon-wrapper {
+    transform: translateY(0);
   }
 }
 
