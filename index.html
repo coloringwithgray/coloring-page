@@ -44,11 +44,16 @@
 
     <!-- Mirror link (initially hidden; revealed after threshold is met) -->
     <a
-      id="mirror-link"
-      href="https://coloringwithgray.github.io/reflection/"
-    >
+      id="mirror-link">
+
       <div id="mirror" aria-label="Portal to reflection site"></div>
-      <iframe id="mirror-iframe" src="https://coloringwithgray.github.io/reflection/" tabindex="-1" aria-hidden="true"></iframe>
+      <iframe id="mirror-iframe" src="https://player.vimeo.com/video/1078880939?h=43345ed787&badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&muted=1&background=1" width="640" height="564" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" allowfullscreen tabindex="-1" aria-hidden="true" title="Portal video preview"></iframe>
+    </a>
+    <!-- Modal for fullscreen Vimeo -->
+    <div id="vimeo-modal" class="modal" aria-modal="true" aria-hidden="true" tabindex="-1" style="display:none;">
+      <button id="modal-close" class="modal-close" aria-label="Close video">&times;</button>
+      <iframe id="vimeo-modal-iframe" src="https://player.vimeo.com/video/1078880939?h=43345ed787&badge=0&autopause=0&player_id=0&app_id=58479" width="90%" height="90%" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" allowfullscreen title="Fullscreen portal video"></iframe>
+    </div>
     </a>
     <!-- Instagram Icon Block - Memory Spiral -->
     <a href="https://instagram.com/coloringwithgray" id="ig-link" class="ig-icon-wrapper" target="_blank" rel="noopener" aria-label="Instagram">
@@ -64,5 +69,7 @@
       <div id="mail-gone-text" class="emotional-text">It's gone now</div>
     </a>
   </div>
+  <script src="script.js"></script>
+  <script src="https://player.vimeo.com/api/player.js"></script>
 </body>
 </html>

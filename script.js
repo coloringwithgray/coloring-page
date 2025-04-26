@@ -916,9 +916,6 @@ document.addEventListener('DOMContentLoaded', () => {
         mailIcon.classList.add('shuddering');
     }
     
-    // TODO: Implement 'note sliding in' visual effect (likely needs SVG or different structure)
-    // TODO: Implement 'SENT' text flash overlay
-
     // Wait for shudder animation, then navigate
     setTimeout(() => {
          // Add fading trace effect
@@ -1060,7 +1057,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Ensure icons maintain dimensional coherence with the portal's rotation
   function setupPortalSyncedIconBehavior() {
     // Get references to elements
-    const mirrorLink = document.getElementById('mirror-link');
     const icons = document.querySelectorAll('.email-icon, .ig-icon');
     
     // Create a subtle sync with portal rotation (completes a cycle every 120s)
@@ -1069,7 +1065,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function updateIconsBasedOnPortalPhase() {
       // Only run if portal is active
-      if (!mirrorLink || !mirrorLink.classList.contains('active')) {
+      if (!mirrorLink.classList.contains('active')) {
         requestAnimationFrame(updateIconsBasedOnPortalPhase);
         return;
       }
@@ -1098,7 +1094,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Start the subtle animation sync when portal is active
-    if (mirrorLink && mirrorLink.classList.contains('active')) {
+    if (mirrorLink.classList.contains('active')) {
       updateIconsBasedOnPortalPhase();
     } else {
       // Wait for portal to become active
@@ -1116,6 +1112,120 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   }
+});
+
+// Wait for the DOM to be fully loaded before adding event listeners
+document.addEventListener('DOMContentLoaded', () => {
+  applyTimeBasedStyles(); // Apply styles based on current time
+
+  // --- Vimeo Modal on Portal Click --- //
+  const modalIframe = document.getElementById('vimeo-modal-iframe');
+  const modal = document.getElementById('vimeo-modal'); // Get the modal element
+  const modalClose = document.getElementById('modal-close'); // Get the close button
+
+  if (modalIframe && modal && modalClose) { // Ensure all elements exist
+    try {
+      const player = new Vimeo.Player(modalIframe);
+
+      // Portal Click Logic
+      mirrorLink.addEventListener('click', (event) => {
+        console.log('>>> Portal link click event fired!'); // Add this line for diagnostics
+        event.preventDefault(); // Prevent default link behavior
+
+        // Fade out the portal hum sound
+        if (typeof fadeOutHum === 'function') {
+          fadeOutHum();
+        } else {
+          console.warn('fadeOutHum function not found, cannot mute hum.');
+        }
+
+        // Show the modal
+        modal.style.display = 'flex'; // Use flex for centering
+        modal.setAttribute('aria-hidden', 'false');
+        modal.style.opacity = '1'; // Start fade-in (assuming CSS transition)
+        document.body.style.overflow = 'hidden'; // Prevent background scroll
+
+        // Seek to beginning and play
+        player.setCurrentTime(0).then(() => {
+          console.log('Vimeo video time set to 0.');
+          // Ensure video is unmuted (autoplay param should handle this, but be sure)
+          return player.setVolume(1); 
+        }).then(() => {
+           return player.play();
+        }).then(() => {
+          console.log('Vimeo video started playing.');
+        }).catch((error) => {
+          console.error('Error seeking to 0, setting volume, or playing video:', error);
+        });
+      });
+
+      // Modal Close Button Logic
+      modalClose.addEventListener('click', () => {
+        modal.style.opacity = '0'; // Start fade-out
+        // Wait for fade-out transition before hiding and pausing
+        setTimeout(() => {
+           modal.style.display = 'none';
+           modal.setAttribute('aria-hidden', 'true');
+           player.pause(); // Pause video when closing modal
+           document.body.style.overflow = ''; // Restore background scroll
+        }, 500); // Adjust timing to match CSS transition duration
+      });
+
+    } catch (error) {
+      console.error('Error initializing Vimeo Player or setting up modal:', error);
+    }
+  } else {
+    console.error('Required elements for Vimeo modal interaction not found (portalLink, modalIframe, modal, or modalClose).');
+  }
+  // --- End Vimeo Modal Logic --- //
+});
+
+// Wait for the DOM to be fully loaded before adding event listeners
+document.addEventListener('DOMContentLoaded', () => {
+  applyTimeBasedStyles(); // Apply styles based on current time
+
+  // --- Time-Based Aesthetic Adjustments --- //
+  function applyTimeBasedStyles() {
+    const hour = new Date().getHours();
+    const rootStyle = document.documentElement.style;
+
+    let brightness = 0.96;
+    let shadowOpacity = 0.08;
+    let portalShadowOpacity = 0.16;
+    let textColor = '#666'; // Default gray
+
+    if (hour < 6 || hour >= 20) { // Night (8 PM - 5:59 AM)
+      brightness = 0.92;
+      shadowOpacity = 0.06;
+      portalShadowOpacity = 0.12;
+      textColor = '#555'; // Slightly darker
+    } else if (hour >= 6 && hour < 9) { // Morning (6 AM - 8:59 AM)
+      brightness = 0.98;
+      shadowOpacity = 0.09;
+      portalShadowOpacity = 0.17;
+      textColor = '#6a6a6a'; // Slightly lighter
+    } else if (hour >= 9 && hour < 18) { // Daytime (9 AM - 5:59 PM)
+      brightness = 1.0; // Slightly brighter icons
+      shadowOpacity = 0.10;
+      portalShadowOpacity = 0.18;
+      textColor = '#707070'; // Lighter text
+    } else { // Evening (6 PM - 7:59 PM)
+      brightness = 0.95;
+      shadowOpacity = 0.07;
+      portalShadowOpacity = 0.15;
+      textColor = '#606060';
+    }
+
+    rootStyle.setProperty('--icon-brightness', brightness);
+    rootStyle.setProperty('--shadow-opacity-base', shadowOpacity);
+    rootStyle.setProperty('--portal-shadow-opacity', portalShadowOpacity);
+    rootStyle.setProperty('--text-color', textColor);
+  }
+
+  // --- Initialization --- //
+  document.addEventListener('DOMContentLoaded', () => {
+    applyTimeBasedStyles(); // Apply styles based on current time
+  });
 });
 
 // --- Time-Based Aesthetic Adjustments --- //
@@ -1156,7 +1266,69 @@ function applyTimeBasedStyles() {
   rootStyle.setProperty('--text-color', textColor);
 }
 
-// --- Initialization --- //
+// Wait for the DOM to be fully loaded before adding event listeners
 document.addEventListener('DOMContentLoaded', () => {
   applyTimeBasedStyles(); // Apply styles based on current time
+
+  // --- Vimeo Modal on Portal Click --- //
+  const portalLink = document.getElementById('mirror-link');
+  const modalIframe = document.getElementById('vimeo-modal-iframe');
+  const modal = document.getElementById('vimeo-modal'); // Get the modal element
+  const modalClose = document.getElementById('modal-close'); // Get the close button
+
+  if (portalLink && modalIframe && modal && modalClose) { // Ensure all elements exist
+    try {
+      const player = new Vimeo.Player(modalIframe);
+
+      // Portal Click Logic
+      portalLink.addEventListener('click', (event) => {
+        console.log('>>> Portal link click event fired!'); // Add this line for diagnostics
+        event.preventDefault(); // Prevent default link behavior
+
+        // Fade out the portal hum sound
+        if (typeof fadeOutHum === 'function') {
+          fadeOutHum();
+        } else {
+          console.warn('fadeOutHum function not found, cannot mute hum.');
+        }
+
+        // Show the modal
+        modal.style.display = 'flex'; // Use flex for centering
+        modal.setAttribute('aria-hidden', 'false');
+        modal.style.opacity = '1'; // Start fade-in (assuming CSS transition)
+        document.body.style.overflow = 'hidden'; // Prevent background scroll
+
+        // Seek to beginning and play
+        player.setCurrentTime(0).then(() => {
+          console.log('Vimeo video time set to 0.');
+          // Ensure video is unmuted (autoplay param should handle this, but be sure)
+          return player.setVolume(1); 
+        }).then(() => {
+           return player.play();
+        }).then(() => {
+          console.log('Vimeo video started playing.');
+        }).catch((error) => {
+          console.error('Error seeking to 0, setting volume, or playing video:', error);
+        });
+      });
+
+      // Modal Close Button Logic
+      modalClose.addEventListener('click', () => {
+        modal.style.opacity = '0'; // Start fade-out
+        // Wait for fade-out transition before hiding and pausing
+        setTimeout(() => {
+           modal.style.display = 'none';
+           modal.setAttribute('aria-hidden', 'true');
+           player.pause(); // Pause video when closing modal
+           document.body.style.overflow = ''; // Restore background scroll
+        }, 500); // Adjust timing to match CSS transition duration
+      });
+
+    } catch (error) {
+      console.error('Error initializing Vimeo Player or setting up modal:', error);
+    }
+  } else {
+    console.error('Required elements for Vimeo modal interaction not found (portalLink, modalIframe, modal, or modalClose).');
+  }
+  // --- End Vimeo Modal Logic --- //
 });
