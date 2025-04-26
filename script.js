@@ -242,21 +242,81 @@ let texturedPattern = null;
 
 // --- Fundamental: Track active drawing inputs for robust sound alignment ---
 
-// Palais de Tokyo: IG icon fade-in with portal
+// Palais de Tokyo: Sequential emergence of icons after portal activation
 const igIcon = document.getElementById('ig-icon');
-function syncIgIconWithPortal() {
-  // If #mirror-link has .active, show IG icon
+const mailIcon = document.getElementById('mail-icon');
+const igLink = document.getElementById('ig-link');
+const mailLink = document.getElementById('mail-link');
+
+// Store timers for sequential appearance
+let iconTimers = [];
+
+function syncIconsWithPortal() {
+  console.log('Portal state changed - active:', mirrorLink.classList.contains('active'));
+  console.log('Icon elements found:', {
+    igIcon: !!igIcon,
+    mailIcon: !!mailIcon,
+    igLink: !!igLink,
+    mailLink: !!mailLink
+  });
+  
+  // Clear any existing timers
+  iconTimers.forEach(timer => clearTimeout(timer));
+  iconTimers = [];
+  
+  // If portal is active, show icons sequentially
   if (mirrorLink.classList.contains('active')) {
-    igIcon.classList.add('active');
+    console.log('Portal is active - scheduling icon appearance');
+    
+    // Instagram appears first after 750ms
+    iconTimers.push(setTimeout(() => {
+      console.log('Showing Instagram icon NOW');
+      if (igIcon) {
+        igIcon.style.opacity = '1';
+        igIcon.style.transform = 'translateY(0)';
+        igIcon.style.pointerEvents = 'auto';
+      }
+      if (igLink) {
+        igLink.style.opacity = '1';
+        igLink.style.pointerEvents = 'auto';
+      }
+    }, 750));
+    
+    // Mail icon appears after 1500ms
+    iconTimers.push(setTimeout(() => {
+      console.log('Showing Mail icon NOW');
+      if (mailIcon) {
+        mailIcon.style.opacity = '1';
+        mailIcon.style.transform = 'translateY(0)';
+        mailIcon.style.pointerEvents = 'auto';
+      }
+      if (mailLink) {
+        mailLink.style.opacity = '1';
+        mailLink.style.pointerEvents = 'auto';
+      }
+    }, 1500));
   } else {
-    igIcon.classList.remove('active');
+    console.log('Portal inactive - hiding icons');
+    // Immediately hide all icons when portal is inactive
+    if (igIcon) {
+      igIcon.style.opacity = '0';
+      igIcon.style.transform = 'translateY(15px)';
+      igIcon.style.pointerEvents = 'none';
+    }
+    if (mailIcon) {
+      mailIcon.style.opacity = '0';
+      mailIcon.style.transform = 'translateY(15px)';
+      mailIcon.style.pointerEvents = 'none';
+    }
+    if (igLink) igLink.style.opacity = '0';
+    if (mailLink) mailLink.style.opacity = '0';
   }
 }
 // Observe class changes on #mirror-link for conceptual restraint
-const observer = new MutationObserver(syncIgIconWithPortal);
+const observer = new MutationObserver(syncIconsWithPortal);
 observer.observe(mirrorLink, { attributes: true, attributeFilter: ['class'] });
 // Initial sync
-syncIgIconWithPortal();
+syncIconsWithPortal();
 
 let activeDrawInputs = 0; // Number of active touches/pointers
 function incrementDrawInputs() {
@@ -378,23 +438,6 @@ function initializeCanvas() {
 
 window.addEventListener('resize', initializeCanvas);
 initializeCanvas();
-
-/*******************************
- *  Activate Crayon
- *******************************/
-function activateCrayon() {
-  crayonActive = true;
-  portalShown = false; // Reset portal state
-  
-  // Hide the actual cursor, we'll use the crayon image element instead
-  document.body.style.cursor = 'none';
-  canvas.style.cursor = 'none';
-  
-  // Make sure crayon is visible and following the cursor
-  crayon.style.display = 'block';
-  
-  console.log('Crayon activated.');
-}
 
 /*******************************
  *  Draw Helper
@@ -894,6 +937,185 @@ document.addEventListener('DOMContentLoaded', () => {
     mailIcon.classList.remove('trembling', 'shuddering');
   });
 
+});
+
+// Wait for the DOM to be fully loaded before setting up hover text
+document.addEventListener('DOMContentLoaded', () => {
+  // --- Hover Text Visibility --- //
+  // No longer needed - CSS handles the typewriter animation directly
+  function setupHoverText(linkId, textId) {
+    // Hover text now handled by CSS animations directly
+    console.log('Using CSS-based hover text animations instead');
+  }
+
+    // Setup icon interactions that feel like memories surfacing and vanishing
+  setupIconInteractions();
+  
+  function setupIconInteractions() {
+    // Create interaction counters to track memory variation
+    let igInteractionCount = 0;
+    let mailInteractionCount = 0;
+    
+    // Reference icons
+    const igWrapper = document.getElementById('ig-link');
+    const mailWrapper = document.getElementById('mail-link');
+    const igIcon = igWrapper.querySelector('.ig-icon');
+    const mailIcon = mailWrapper.querySelector('.email-icon');
+    
+    // Handle Instagram icon hover with subtle variations
+    igWrapper.addEventListener('mouseenter', function() {
+      // Create slight variations in animation timing based on interaction count
+      // This creates the effect of imperfect memory recall
+      const variationFactor = 1 + (Math.random() * 0.08 - 0.04); // ±4% variation
+      const baseDelay = 0.08 * variationFactor;
+      const animDuration = 1.2 * variationFactor;
+      
+      // Apply custom animation properties with slightly different timing each time
+      igIcon.style.animationDelay = `${baseDelay}s`;
+      igIcon.style.animationDuration = `${animDuration}s`;
+      
+      igInteractionCount++;
+    });
+    
+    // Handle Mailbox icon hover with subtle variations
+    mailWrapper.addEventListener('mouseenter', function() {
+      // Different variation for mailbox to ensure unique memory patterns
+      const variationFactor = 1 + (Math.random() * 0.09 - 0.03); // +6%/-3% variation
+      const baseDelay = 0.08 * variationFactor;
+      const animDuration = 1.5 * variationFactor;
+      
+      // Apply custom animation properties
+      mailIcon.style.animationDelay = `${baseDelay}s`;
+      mailIcon.style.animationDuration = `${animDuration}s`;
+      
+      mailInteractionCount++;
+    });
+    
+    // Hover interactions for text residue
+    [igWrapper, mailWrapper].forEach(wrapper => {
+      wrapper.addEventListener('mouseleave', function() {
+        // Add text residue class after hover text fades
+        setTimeout(() => {
+          wrapper.classList.add('text-residue');
+          
+          // Remove residue class after it lingers
+          setTimeout(() => {
+            wrapper.classList.remove('text-residue');
+          }, 1200); // Residue lingers briefly
+        }, 3000); // After hover text animation completes
+      });
+    });
+    
+    // Set up portal sync for dimensional coherence
+    setupPortalSyncedIconBehavior();
+  
+    // Handle Instagram icon click - spiral unwinds then navigates
+    igWrapper.addEventListener('click', function(e) {
+      // Only if browser doesn't prefer reduced motion
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        e.preventDefault(); // Prevent immediate navigation
+        igWrapper.classList.add('active'); // Trigger spiral unwind animation
+        
+        // Create micro-variation in timing for the navigation delay
+        const memoryPauseVariation = 1500 + (Math.random() * 200 - 100); // ±100ms
+        
+        // Simulate memory flickering
+        setTimeout(() => {
+          // Navigate after animation completes
+          window.open('https://instagram.com/coloringwithgray', '_blank');
+          
+          // Reset animation state after navigation
+          setTimeout(() => {
+            igWrapper.classList.remove('active');
+          }, 500);
+        }, memoryPauseVariation); // Variable timing for memory-like quality
+      }
+      // If reduced motion is preferred, link works normally without delay
+    });
+    
+    // Handle Mail icon click - mailbox shudders and note slides in
+    mailWrapper.addEventListener('click', function(e) {
+      // Only if browser doesn't prefer reduced motion
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        e.preventDefault(); // Prevent immediate opening of mailto
+        mailWrapper.classList.add('active'); // Trigger mailbox shudder animation
+        
+        // Create micro-variation in timing
+        const memoryPauseVariation = 1000 + (Math.random() * 150 - 75); // ±75ms
+        
+        // Open mailto after animation completes
+        setTimeout(() => {
+          window.location.href = 'mailto:coloringwithgray@gmail.com';
+          
+          // Reset animation state after a delay
+          setTimeout(() => {
+            mailWrapper.classList.remove('active');
+          }, 500);
+        }, memoryPauseVariation); // Variable timing
+      }
+      // If reduced motion is preferred, mailto works normally without delay
+    });
+  }
+  
+  // Ensure icons maintain dimensional coherence with the portal's rotation
+  function setupPortalSyncedIconBehavior() {
+    // Get references to elements
+    const mirrorLink = document.getElementById('mirror-link');
+    const icons = document.querySelectorAll('.email-icon, .ig-icon');
+    
+    // Create a subtle sync with portal rotation (completes a cycle every 120s)
+    let lastTime = Date.now();
+    let portalPhase = 0; // 0-1 representing position in 120s cycle
+    
+    function updateIconsBasedOnPortalPhase() {
+      // Only run if portal is active
+      if (!mirrorLink || !mirrorLink.classList.contains('active')) {
+        requestAnimationFrame(updateIconsBasedOnPortalPhase);
+        return;
+      }
+      
+      // Update phase based on 120s rotation
+      const now = Date.now();
+      const elapsed = (now - lastTime) / 1000; // seconds
+      lastTime = now;
+      
+      // Update phase (0-1 representing position in cycle)
+      portalPhase = (portalPhase + elapsed/120) % 1;
+      
+      // Apply subtle brightness shift based on portal phase
+      // Maximum variation of ±2% brightness
+      const brightnessShift = Math.sin(portalPhase * Math.PI * 2) * 0.02;
+      
+      // Apply to icons with extremely subtle transitions
+      icons.forEach(icon => {
+        const baseVal = parseFloat(getComputedStyle(document.documentElement)
+          .getPropertyValue('--icon-brightness').trim() || 0.96);
+        const newVal = baseVal + brightnessShift;
+        icon.style.filter = `grayscale(1) brightness(${newVal}) drop-shadow(0 2px 6px rgba(90,90,90, var(--shadow-opacity-base)))`;
+      });
+      
+      requestAnimationFrame(updateIconsBasedOnPortalPhase);
+    }
+    
+    // Start the subtle animation sync when portal is active
+    if (mirrorLink && mirrorLink.classList.contains('active')) {
+      updateIconsBasedOnPortalPhase();
+    } else {
+      // Wait for portal to become active
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.target.classList.contains('active')) {
+            updateIconsBasedOnPortalPhase();
+            observer.disconnect();
+          }
+        });
+      });
+      
+      if (mirrorLink) {
+        observer.observe(mirrorLink, { attributes: true, attributeFilter: ['class'] });
+      }
+    }
+  }
 });
 
 // --- Time-Based Aesthetic Adjustments --- //

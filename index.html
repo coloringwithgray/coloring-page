@@ -3,7 +3,7 @@
 <head>
   <!-- Responsive, non-zoomable viewport for mobile, required for iOS Safari -->
   <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
 <title>Coloring with Gray</title>
 
 <!-- Meta description for Palais de Tokyo submission and SEO -->
@@ -50,13 +50,18 @@
       <div id="mirror" aria-label="Portal to reflection site"></div>
       <iframe id="mirror-iframe" src="https://coloringwithgray.github.io/reflection/" tabindex="-1" aria-hidden="true"></iframe>
     </a>
-    <a href="https://instagram.com/coloringwithgray" id="ig-link" target="_blank" rel="noopener" aria-label="Instagram">
-      <img id="ig-icon" src="assets/ig.PNG" alt="Instagram" />
-      <span id="ig-hover-text" class="hover-text">A version of a memory.</span>
+    <!-- Instagram Icon Block - Memory Spiral -->
+    <a href="https://instagram.com/coloringwithgray" id="ig-link" class="ig-icon-wrapper" target="_blank" rel="noopener" aria-label="Instagram">
+      <img id="ig-icon" class="ig-icon" src="assets/ig.PNG" alt="Memory spiral Instagram icon" />
+      <div id="ig-hover-text" class="ig-hover-text">A version of a memory.</div>
+      <div id="ig-gone-text" class="emotional-text">This is not how it happened</div>
     </a>
-    <a href="mailto:contact@coloringwithgray.com" id="mail-link" aria-label="Email">
-      <img id="mail-icon" src="assets/mail.PNG" alt="Email" />
-      <span id="mail-hover-text" class="hover-text">Say it if you still want to.</span>
+    
+    <!-- Email Icon Block - Fractured Mailbox -->
+    <a href="mailto:coloringwithgray@gmail.com" id="mail-link" class="email-icon-wrapper" aria-label="Email">
+      <img id="mail-icon" class="email-icon" src="assets/mail.PNG" alt="Fractured mailbox with unsent note" />
+      <div id="mail-hover-text" class="email-hover-text">Say it if you still want to.</div>
+      <div id="mail-gone-text" class="emotional-text">It's gone now</div>
     </a>
   </div>
 </body>

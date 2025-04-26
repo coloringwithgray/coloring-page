@@ -116,22 +116,37 @@ html, body {
     max-height: 60vw;
   }
 
-  .container { /* Mobile centering */
-    /* transform: translateX(3%); /* Removed transform for centering */ */
-  }
+  /* Mobile container adjustments removed - now handled by standard flexbox */
 
   /* Combined icon styles for mobile */
   #ig-icon, #mail-icon {
-    width: 32px; /* Keep smaller size for mobile */
-    height: 32px; /* Ensure height matches width */
-    bottom: 20px;
+    width: 28px; /* Refined smaller size for mobile */
+    height: 28px; /* Ensure height matches width */
+    /* Common bottom position using safe area */
+    bottom: calc(20px + env(safe-area-inset-bottom)); 
+    /* Remove horizontal centering */
+    /* left: 50%; */
+    /* transform: translateX(-50%); */ 
   }
   #ig-icon {
-    left: 20px; /* Position near left edge */
+    /* Position near left edge, accounting for safe area */
+    left: calc(20px + env(safe-area-inset-left)); 
+    /* Remove explicit bottom */
+    /* bottom: calc(20px + env(safe-area-inset-bottom)); */
   }
   #mail-icon {
-    right: 20px; /* Position near right edge */
-    left: auto; /* Override any inherited left */
+    /* Position near right edge, accounting for safe area */
+    right: calc(20px + env(safe-area-inset-right)); 
+    left: auto; /* Ensure right positioning takes precedence */
+    /* Remove explicit bottom */
+    /* bottom: calc(60px + env(safe-area-inset-bottom)); */
+  }
+  /* Mobile overrides for portal preview */
+  #mirror-iframe {
+    position: absolute; /* Position relative to parent container */
+    filter: grayscale(1) blur(6px) brightness(0.94) contrast(0.92); /* Slightly less blur */
+    border-width: 1.5vw; /* Slightly thinner border */
+    /* Note: vw sizing for width/height might be sufficient, adjust if needed */
   }
 }
 
@@ -240,45 +255,156 @@ html, body {
 /************************************
  *    ICONS
  ************************************/
-#ig-icon, #mail-icon {
+/* Shared wrapper setup */
+.email-icon-wrapper, .ig-icon-wrapper {
   position: fixed;
   bottom: 28px;
+  display: inline-block;
+  text-decoration: none;
+  z-index: 4;
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateY(15px); /* Start slightly below final position */
+  transition: opacity 1.6s cubic-bezier(0.19, 1, 0.22, 1),
+              transform 1.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.ig-icon-wrapper {
+  left: calc(50% - 170px);
+  transition-delay: 0.75s; /* Appear after portal */
+}
+
+.email-icon-wrapper {
+  left: calc(50% + 170px);
+  transition-delay: 1.5s; /* Appear after Instagram icon */
+}
+
+/* Mobile responsive styles - portrait orientation */
+@media (max-width: 767px) {
+  .email-icon-wrapper, .ig-icon-wrapper {
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    transform: translateY(10px); /* Slightly smaller initial position adjustment */
+    transition: opacity 1.6s cubic-bezier(0.19, 1, 0.22, 1),
+                transform 1.4s cubic-bezier(0.19, 1, 0.22, 1),
+                left 0.5s ease, bottom 0.5s ease; /* Smooth orientation changes */
+    padding: 10px; /* Create larger touch target */
+    margin: -10px; /* Offset padding to maintain visual position */
+  }
+  
+  .ig-icon-wrapper {
+    left: calc(30% - 30px); /* Repositioned for smaller screens */
+  }
+  
+  .email-icon-wrapper {
+    left: calc(70% + 30px); /* Repositioned for smaller screens */
+  }
+  
+  .email-icon, .ig-icon {
+    width: 110px; /* Smaller on mobile */
+    height: 110px;
+    transition: width 0.5s ease, height 0.5s ease, transform 0.5s cubic-bezier(0.17, 0.67, 0.35, 0.97),
+                filter 0.8s cubic-bezier(0.17, 0.67, 0.35, 0.97); /* Smooth size changes */
+  }
+}
+
+/* Mobile responsive styles - landscape orientation */
+@media (max-height: 500px) and (orientation: landscape) {
+  .email-icon-wrapper, .ig-icon-wrapper {
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+  
+  .ig-icon-wrapper {
+    left: calc(25% - 20px); /* Further apart in landscape to avoid center space */
+  }
+  
+  .email-icon-wrapper {
+    left: calc(75% + 20px); /* Further apart in landscape to avoid center space */
+  }
+  
+  .email-icon, .ig-icon {
+    width: 90px; /* Even smaller in landscape */
+    height: 90px;
+  }
+}
+
+/* Base icons */
+.email-icon, .ig-icon {
+  display: block;
   width: 160px; /* 4x size */
   height: 160px; /* 4x size */
   object-fit: contain; /* Prevent distortion */
-  opacity: 0;
   filter: grayscale(1) brightness(var(--icon-brightness)) drop-shadow(0 2px 6px rgba(90,90,90, var(--shadow-opacity-base)));
-  transition: opacity 0.85s cubic-bezier(.2,.8,.2,1) 0.1s,
-              filter 0.4s ease;
+  transform-origin: center center; /* Ensure rotations appear natural */
+  transition: transform 0.5s cubic-bezier(0.17, 0.67, 0.35, 0.97),
+              filter 0.8s cubic-bezier(0.17, 0.67, 0.35, 0.97);
+}
+
+/* Icon animation states */
+.email-icon-wrapper.active .email-icon {
+  animation: mailboxShudder 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+}
+
+.ig-icon-wrapper.active .ig-icon {
+  animation: spiralUnwind 2.2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+/* Pre-animation pause and analog hesitation for icons */
+.email-icon-wrapper:hover .email-icon {
+  animation: trembleFlag 1.5s cubic-bezier(0.42, 0, 0.58, 1) 0.08s forwards; /* Tiny natural pause */
+  transform: translateY(2px); /* Note shifts slightly inward */
+}
+
+.ig-icon-wrapper:hover .ig-icon {
+  animation: spiralFlicker 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) 0.08s forwards; /* Tiny natural pause */
+}
+
+/* Graphite dust aura effect - enhanced texture */
+.email-icon-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  width: 90%;
+  height: 90%;
+  background: 
+    radial-gradient(circle at 30% 40%, rgba(100,100,100,0.06) 0%, rgba(120,120,120,0.03) 30%, transparent 70%),
+    radial-gradient(circle at 70% 60%, rgba(100,100,100,0.04) 0%, rgba(120,120,120,0.02) 40%, transparent 70%);
+  background-size: 100% 100%, 80% 80%;
+  opacity: 0;
   pointer-events: none;
-  z-index: 110;
+  transition: opacity 0.6s cubic-bezier(0.17, 0.67, 0.35, 0.97);
 }
 
-#ig-icon {
-  left: calc(50% - 170px); /* Increased spacing for 160px width + gap */
+/* Enhanced texture for high-density displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .email-icon-wrapper::after {
+    background: 
+      radial-gradient(circle at 30% 40%, rgba(100,100,100,0.08) 0%, rgba(120,120,120,0.04) 30%, transparent 70%),
+      radial-gradient(circle at 70% 60%, rgba(100,100,100,0.06) 0%, rgba(120,120,120,0.03) 40%, transparent 70%);
+  }
 }
 
-#mail-icon {
-  left: calc(50% + 170px); /* Increased spacing for 160px width + gap */
-  transition-delay: 0.18s; /* Slightly later fade */
+.email-icon-wrapper:hover::after {
+  opacity: 1;
+}
+
+/* Show icons when portal is active */
+body:has(#mirror-link.active) .email-icon-wrapper,
+body:has(#mirror-link.active) .ig-icon-wrapper {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /************************************
  *    ICON HOVER
  ************************************/
-#mirror-link.active ~ #ig-icon,
-#mirror-link.active ~ #mail-icon {
+/* When icons have .visible class (added via JS) */
+#ig-icon.visible,
+#mail-icon.visible,
+#ig-link.visible,
+#mail-link.visible {
   opacity: 1;
-  pointer-events: auto;
-}
-
-#mirror-link.active ~ #ig-link > #ig-icon,
-#mirror-link.active ~ #mail-link > #mail-icon,
-#mirror-link.active + #ig-link > #ig-icon,
-#mirror-link.active + #ig-link + #mail-link > #mail-icon,
-#mirror-link.active ~ #ig-link,
-#mirror-link.active ~ #mail-link {
-  opacity: 1;
+  transform: translateY(0); /* Settle into final position */
   pointer-events: auto;
 }
 
@@ -303,39 +429,180 @@ html, body {
 /************************************
  *    HOVER TEXT
  ************************************/
-.hover-text {
+/* Hover text styling */
+.ig-hover-text, .email-hover-text {
   position: absolute;
-  bottom: -30px; /* Adjust slightly for typing animation */
+  bottom: -15px;
   left: 50%;
   transform: translateX(-50%);
+  width: 160px;
+  text-align: center;
+  
+  /* Text styling */
   font-family: 'lvvvdy', cursive, sans-serif;
-  font-size: 20px;
-  color: var(--text-color, #666);
-  opacity: 0; /* Start fully transparent */
-  transition: opacity 1.5s ease;
-  white-space: nowrap;
+  font-size: 18px; /* Subtle, intimate font size */
+  line-height: 1.25;
+  color: var(--text-color, #555);
+  letter-spacing: 0.02em;
+  font-weight: 400;
+  
+  /* Visibility */
+  opacity: 0;
   pointer-events: none;
+  z-index: 10;
+  white-space: normal;
+  padding-top: 8px;
+  
+  /* Typewriter effect setup */
+  clip-path: inset(0 100% 0 0); /* Initially hidden */
+  transition: clip-path 0s;
 }
 
-.hover-text.visible {
-  opacity: 0.7;
+/* Mobile responsive text styles */
+@media (max-width: 767px) {
+  .ig-hover-text, .email-hover-text {
+    width: 120px;
+    font-size: 16px;
+    bottom: -14px;
+  }
+  
+  .emotional-text {
+    font-size: 14px;
+  }
+}
+
+/* Extra small screen text legibility */
+@media (max-width: 350px) {
+  .ig-hover-text, .email-hover-text {
+    width: 100px;
+    font-size: 14px;
+    line-height: 1.2;
+  }
+  
+  .emotional-text {
+    font-size: 12px;
+  }
+}
+
+/* Landscape orientation text adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+  .ig-hover-text, .email-hover-text {
+    width: 100px;
+    font-size: 14px;
+    bottom: -12px;
+  }
+  
+  /* Alternative placement for emotional text in landscape mode */
+  #mail-gone-text {
+    right: -10px;
+  }
+
+  #ig-gone-text {
+    bottom: -6px;
+  }
+}
+
+/* Typewriter animation applied by hover */
+.ig-icon-wrapper:hover .ig-hover-text,
+.email-icon-wrapper:hover .email-hover-text {
+  animation: textTypewriter 3.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+  animation-delay: 0.85s; /* Delayed appearance */
+}
+
+/* Emotional text that appears after click */
+.emotional-text {
+  position: absolute;
+  font-family: 'lvvvdy', cursive, sans-serif;
+  font-size: 16px;
+  color: var(--text-color, #666);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9;
+  transition: opacity 0.3s;
+}
+
+/* Positioning emotional text */
+#ig-gone-text {
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%) rotate(180deg);
+  opacity: 0;
+}
+
+#mail-gone-text {
+  right: -15px;
+  top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+  opacity: 0;
+}
+
+/* Emotional text animations */
+.ig-icon-wrapper.active #ig-gone-text {
+  animation: invertedTextFlash 2.2s cubic-bezier(0.17, 0.67, 0.35, 0.97) forwards;
+}
+
+.email-icon-wrapper.active #mail-gone-text {
+  animation: textTypewriter 2s cubic-bezier(0.17, 0.67, 0.35, 0.97) forwards;
+}
+
+/* Text residue - subtle darkening that lingers after text fades */
+.ig-icon-wrapper::before,
+.email-icon-wrapper::before {
+  content: "";
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 15px;
+  background: rgba(100,100,100,0.03);
+  opacity: 0;
+  transition: opacity 1.5s ease;
+}
+
+.ig-icon-wrapper.text-residue::before,
+.email-icon-wrapper.text-residue::before {
+  opacity: 0.15; /* Slightly stronger for better visibility */
+  transition: opacity 0.2s ease;
+}
+
+/* Adjust text residue size on small screens */
+@media (max-width: 350px) {
+  .ig-icon-wrapper::before,
+  .email-icon-wrapper::before {
+    width: 80px;
+    height: 12px;
+    bottom: -12px;
+  }
+}
+
+#ig-hover-text {
+  /* left: 28px; */ /* Incorrect - this put it at screen edge */
+  left: calc(50% - 170px); /* Match ig-icon centered positioning */
+}
+
+#mail-hover-text {
+  /* right: 28px; */ /* Incorrect - this put it at screen edge */
+  left: calc(50% + 170px); /* Match mail-icon centered positioning */
+}
+
+/* Word-by-word sequential reveal styling */
+.hover-word {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.55s ease, transform 0.6s ease;
+  display: inline-block;
+}
+
+.hover-text.visible .hover-word {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /************************************
- *    ICON HOVER EFFECTS
+ *    ICON LINKS (GENERAL STYLING)
  ************************************/
-#ig-link:hover,
-#mail-link:hover {
-  cursor: url('assets/graphite-dot.cur'), auto; /* Placeholder cursor */
-  /* Placeholder graphite dust - subtle expanding shadow */
-  /* We might need pseudo-elements for a better dust texture */
-}
-
-#ig-link:hover #ig-icon,
-#mail-link:hover #mail-icon {
-   box-shadow: 0 0 15px 5px rgba(100, 100, 100, calc(var(--shadow-opacity-base) + 0.05)); 
-   transition: box-shadow 0.6s ease-out;
-}
+/* No special styles needed for links - positioning handled by hover-text */
 
 /************************************
  *    FONT FACE
@@ -351,52 +618,122 @@ html, body {
 /************************************
  *    ANIMATIONS
  ************************************/
+/* Memory-based icon animations */
 @keyframes fadeInSlow {
-  from { opacity: 0; }
-  to { opacity: 0.7; }
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
-@keyframes fadeOutSlow {
-  from { opacity: 0.7; }
-  to { opacity: 0; }
+/* Mail icon animations - refined for analog memory feeling */
+@keyframes trembleFlag {
+  0% { transform: rotate(0deg) translateY(0); }
+  10% { transform: rotate(0deg) translateY(0); } /* Initial hesitation */
+  13% { transform: rotate(0.2deg) translateY(0.5px); } /* Initial subtle movement */
+  25% { transform: rotate(1deg) translateY(1px); } /* Note shifts slightly */
+  38% { transform: rotate(-1.2deg) translateY(1.8px); } /* Deepening movement */
+  40% { transform: rotate(-1.5deg) translateY(2px); } /* Peak trembling */
+  60% { transform: rotate(0.8deg) translateY(2.5px); } /* Flag trembles, note shifts */
+  75% { transform: rotate(-0.3deg) translateY(2.2px); } /* Settling phase begins */
+  90% { transform: rotate(0.1deg) translateY(2px); } /* Almost settled */
+  100% { transform: rotate(0deg) translateY(2px); } /* Gentle resting position */
 }
 
-@keyframes tremble {
-  0%, 100% { transform: translate(0, 0) rotate(0); }
-  25% { transform: translate(1px, 0) rotate(1deg); }
-  75% { transform: translate(-1px, 0) rotate(-1deg); }
+@keyframes mailboxShudder {
+  0% { transform: rotate(0deg) translateY(2px); }
+  20% { transform: rotate(-1deg) translateY(3px); } /* Mail slides further in */
+  40% { transform: rotate(1.5deg) translateY(3px); }
+  60% { transform: rotate(-1deg) translateY(2.5px); }
+  80% { transform: rotate(0.5deg) translateY(2px); }
+  100% { transform: rotate(0deg) translateY(2px); }
 }
 
-@keyframes pulseOutward {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.03); }
+/* Instagram icon animations - refined for memory surface/vanish */
+@keyframes spiralFlicker {
+  0% { transform: scale(1) rotate(0deg); filter: grayscale(1) brightness(var(--icon-brightness)); }
+  5% { transform: scale(1) rotate(0deg); } /* Initial hesitation pause */
+  15% { transform: scale(0.995) rotate(-0.5deg); } /* Subtle rotation */
+  40% { transform: scale(0.98) rotate(-0.8deg); filter: grayscale(1) brightness(calc(var(--icon-brightness) + 0.05)); }
+  65% { transform: scale(0.988) rotate(-0.3deg); filter: grayscale(1) brightness(calc(var(--icon-brightness) + 0.02)); }
+  85% { transform: scale(0.995) rotate(0deg); filter: grayscale(1) brightness(var(--icon-brightness)); }
+  100% { transform: scale(1) rotate(0deg); filter: grayscale(1) brightness(var(--icon-brightness)); }
 }
 
-@keyframes shudder {
-  0%, 100% { transform: translate(0, 0); }
-  20% { transform: translate(-2px, 1px); }
-  40% { transform: translate(2px, -1px); }
-  60% { transform: translate(-1px, 1px); }
-  80% { transform: translate(1px, -1px); }
+@keyframes spiralUnwind {
+  0% { transform: rotate(0deg) scale(1); }
+  15% { transform: rotate(-30deg) scale(0.98); } /* Initial unwinding */
+  40% { transform: rotate(-120deg) scale(1.03); } /* Expanded state */
+  75% { transform: rotate(-20deg) scale(0.98); } /* Rewinding */
+  100% { transform: rotate(0deg) scale(1); } /* Return to original state */
 }
 
-@keyframes flicker {
-  0%, 100% { opacity: 1; filter: brightness(1); }
-  50% { opacity: 0.9; filter: brightness(1.1); }
+/* Shared text animations - with micro-pauses */
+@keyframes textTypewriter {
+  0% { opacity: 0; clip-path: inset(0 100% 0 0); }
+  10% { opacity: 0; clip-path: inset(0 100% 0 0); } /* Initial delay */
+  12% { opacity: 0.05; clip-path: inset(0 95% 0 0); } /* First character hint */
+  15% { opacity: 0.2; clip-path: inset(0 85% 0 0); } /* First few characters */
+  18% { opacity: 0.3; clip-path: inset(0 80% 0 0); } /* Micro-pause in typing */
+  30% { opacity: 0.85; clip-path: inset(0 30% 0 0); } /* Substantial reveal */
+  32% { opacity: 0.85; clip-path: inset(0 30% 0 0); } /* Slight typing hesitation */
+  40% { opacity: 0.85; clip-path: inset(0 0 0 0); } /* Fully revealed */
+  70% { opacity: 0.85; clip-path: inset(0 0 0 0); } /* Hold visible */
+  85% { opacity: 0.4; clip-path: inset(0 0 0 0); } /* Start fading */
+  100% { opacity: 0; clip-path: inset(0 0 0 0); } /* Completely faded */
 }
 
-#mail-icon.trembling {
-  animation: tremble 0.2s ease-in-out 1;
+/* Accessibility - respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .email-icon, .ig-icon,
+  .email-hover-text, .ig-hover-text,
+  .emotional-text {
+    transition-duration: 0.1s !important;
+    animation-duration: 0.1s !important;
+  }
+  
+  @keyframes textTypewriter {
+    0% { opacity: 0; }
+    40% { opacity: 0.85; }
+    70% { opacity: 0.85; }
+    100% { opacity: 0; }
+  }
+  
+  @keyframes trembleFlag {
+    0% { transform: none; }
+    100% { transform: none; }
+  }
+  
+  @keyframes spiralFlicker {
+    0% { transform: none; }
+    100% { transform: none; }
+  }
+  
+  @keyframes mailboxShudder {
+    0% { transform: none; }
+    100% { transform: none; }
+  }
+  
+  @keyframes spiralUnwind {
+    0% { transform: none; }
+    100% { transform: none; }
+  }
+  
+  @keyframes invertedTextFlash {
+    0% { transform: none; }
+    100% { transform: none; }
+  }
 }
 
-#ig-icon.pulsing {
-   animation: pulseOutward 0.5s ease-out 1;
+@keyframes invertedTextFlash {
+  0% { opacity: 0; transform: rotate(180deg) translateY(-5px); }
+  10% { opacity: 0; transform: rotate(180deg) translateY(-5px); } /* Initial delay */
+  30% { opacity: 0.65; transform: rotate(180deg) translateY(-8px); } /* Flash up */
+  80% { opacity: 0; transform: rotate(180deg) translateY(-10px); } /* Extended fade */
+  100% { opacity: 0; transform: rotate(180deg) translateY(-10px); }
 }
 
-#mail-icon.shuddering {
-  animation: shudder 0.3s linear 1;
-}
-
-#ig-icon.flickering {
-  animation: flicker 0.15s linear 2;
+/* Fingerprint ghost effect - extremely subtle */
+@keyframes fingerprintFade {
+  0% { opacity: 0; }
+  50% { opacity: 0.15; } /* Peak at very low opacity */
+  100% { opacity: 0; }
 }
