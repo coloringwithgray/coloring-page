@@ -51,7 +51,8 @@ function animateDust() {
   requestAnimationFrame(animateDust);
 }
 window.addEventListener('resize', resizeDustCanvas);
-createDustCanvas();
+// Don't create dust canvas until portal appears - performance optimization
+// createDustCanvas();
 
 // --- Grand Prix: Dynamic, unique SVG mask for each portal emergence ---
 // Palais de Tokyo: Living Vortex Portal — Multi-layered, dimensional mask
@@ -201,7 +202,13 @@ window.applyRandomPortalMask = applyRandomPortalMask;
       // Always update transform to keep portal alive
       mirror.style.transform =
         `scale(${current.scale}) rotate(${vortexAngle + vortexWobble}deg)`;
-      requestAnimationFrame(vortexFrame);
+      
+      // Only continue animation if portal is actually active
+      if (mirrorLink.classList.contains('active')) {
+        requestAnimationFrame(vortexFrame);
+      } else {
+        vortexAnimating = false;
+      }
     }
     requestAnimationFrame(vortexFrame);
   }
@@ -222,8 +229,8 @@ window.applyRandomPortalMask = applyRandomPortalMask;
       animate();
     }
   };
-  // Start vortex on load for living effect (even before fully emerged)
-  startVortex();
+  // Don't start vortex until needed - major performance optimization
+  // startVortex();
 })();
 
 
@@ -405,21 +412,29 @@ function activateCrayon() {
 
 
 
-// Crayon sound effect
-const crayonSound = new Audio('assets/11L-1_singular_slow_cray-1745020327208.mp3');
-crayonSound.loop = true;
-crayonSound.preload = 'auto';
-crayonSound.volume = 0.4; // adjust as needed
+// Crayon sound effect - lazy loaded for better initial performance
+let crayonSound = null;
+
+function initCrayonSound() {
+  if (!crayonSound) {
+    crayonSound = new Audio('assets/11L-1_singular_slow_cray-1745020327208.mp3');
+    crayonSound.loop = true;
+    crayonSound.preload = 'auto';
+    crayonSound.volume = 0.4;
+  }
+  return crayonSound;
+}
 
 function playCrayonSound() {
-  if (crayonSound.paused) {
-    crayonSound.currentTime = 0;
-    crayonSound.play().catch(() => {}); // ignore autoplay errors
+  const audio = initCrayonSound();
+  if (audio.paused) {
+    audio.currentTime = 0;
+    audio.play().catch(() => {}); // ignore autoplay errors
   }
 }
 
 function pauseCrayonSound() {
-  if (!crayonSound.paused) {
+  if (crayonSound && !crayonSound.paused) {
     crayonSound.pause();
     crayonSound.currentTime = 0;
   }
@@ -500,11 +515,11 @@ function drawLine(x, y, fromX, fromY) {
 /*******************************
  *  Pointer Handlers
  *******************************/
-// Throttle pointer move events (~30 FPS)
+// Throttle pointer move events (reduce to 20 FPS for better performance, still smooth)
 let lastMoveTime = 0;
 function throttledPointerMove(e) {
   const now = Date.now();
-  if (now - lastMoveTime < 33) return;
+  if (now - lastMoveTime < 50) return; // 50ms = 20fps (was 33ms = 30fps)
   lastMoveTime = now;
   handlePointerMove(e);
 }
@@ -542,7 +557,18 @@ function handlePointerUp() {
 /*******************************
  *  Check How Much is Colored
  *******************************/
+// Performance cache - only do expensive pixel check every few strokes
+let checkCounter = 0;
+let lastCheckResult = { percentage: 0, spreadCount: 0 };
+
 function checkCanvasColored() {
+  // Smart caching: only do full pixel scan every 3 strokes
+  // But always check when getting close to threshold
+  checkCounter++;
+  if (checkCounter < 3 && lastCheckResult.percentage < 1.0) {
+    return; // Skip expensive check
+  }
+  checkCounter = 0;
   // --- Palais de Tokyo Level: Portal Emergence Threshold ---
   // 1. Pixel threshold: at least 1.37% of canvas colored (more demanding creative engagement)
   // 2. Spread threshold: marks in at least 3 distinct regions of a 3x3 grid
@@ -586,6 +612,9 @@ function checkCanvasColored() {
 
   const coloredPercentage = (coloredPixels / (canvas.width * canvas.height)) * 100;
   const spreadCount = gridTouched.filter(Boolean).length;
+  
+  // Cache results for performance
+  lastCheckResult = { percentage: coloredPercentage, spreadCount };
   
   // --- Palais de Tokyo: Portal grows in direct response to user input ---
   // Calculate progress as a combination of colored percentage and spread
@@ -648,6 +677,12 @@ function showMirrorLink() {
   // Generate a new mask when threshold is reached
   applyRandomPortalMask(Date.now());
   startMaskEdgeAnimation();
+  
+  // Start animations when portal appears (performance optimization)
+  createDustCanvas();
+  if (!vortexAnimating) {
+    startVortex();
+  }
   
   // Set portal to fully open
   setPortalProgress(1.0);
@@ -753,24 +788,32 @@ canvas.addEventListener('pointerleave', () => { activeDrawInputs = 0; pauseCrayo
 /*******************************
  *  Portal Ambient Hum
  *******************************/
-const portalHum = new Audio('assets/low hum.mp3');
-portalHum.loop = true;
-portalHum.preload = 'auto';
-portalHum.volume = 0;
+let portalHum = null;
 let portalHumFading = false;
+
+function initPortalHum() {
+  if (!portalHum) {
+    portalHum = new Audio('assets/low hum.mp3');
+    portalHum.loop = true;
+    portalHum.preload = 'auto';
+    portalHum.volume = 0;
+  }
+  return portalHum;
+}
 
 function fadeInHum() {
   if (portalHumFading) return;
   portalHumFading = true;
-  portalHum.currentTime = 0;
-  portalHum.play().catch(() => {});
-  let v = portalHum.volume;
+  const hum = initPortalHum();
+  hum.currentTime = 0;
+  hum.play().catch(() => {});
+  let v = hum.volume;
   const target = 0.23;
   const step = 0.03;
   function up() {
     if (v < target) {
       v = Math.min(target, v + step);
-      portalHum.volume = v;
+      hum.volume = v;
       requestAnimationFrame(up);
     } else {
       portalHumFading = false;
@@ -779,7 +822,7 @@ function fadeInHum() {
   up();
 }
 function fadeOutHum() {
-  if (portalHumFading) return;
+  if (portalHumFading || !portalHum) return;
   portalHumFading = true;
   let v = portalHum.volume;
   const step = 0.03;
@@ -1064,10 +1107,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let portalPhase = 0; // 0-1 representing position in 120s cycle
     
     function updateIconsBasedOnPortalPhase() {
-      // Only run if portal is active
+      // Only run if portal is active - stop animation if not active
       if (!mirrorLink.classList.contains('active')) {
-        requestAnimationFrame(updateIconsBasedOnPortalPhase);
-        return;
+        return; // Stop the animation loop when portal not active
       }
       
       // Update phase based on 120s rotation
