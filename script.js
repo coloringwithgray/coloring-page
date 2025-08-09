@@ -127,14 +127,17 @@ function startMaskEdgeAnimation() {
     applyRandomPortalMask(Date.now());
   }
 
-  // Update mask periodically (e.g., every 1 second) for a 'living' effect
+  // Update mask less frequently for better performance (every 3 seconds still looks good)
   maskUpdateIntervalId = setInterval(() => {
     // Interval check: If portal is NOT active, stop the interval.
     // This handles cases where hideMirrorLink might not have been called.
     if (!mirrorLink.classList.contains('active')) {
         stopMaskEdgeAnimation();
+    } else {
+      // Only regenerate mask occasionally to reduce CPU load
+      applyRandomPortalMask(Date.now());
     }
-  }, 1000); // Interval still runs, but does nothing except check if portal closed.
+  }, 3000); // Reduced frequency: 3s instead of 1s for better performance
 }
 
 // Ensure animation stops when portal is hidden
@@ -482,19 +485,16 @@ function drawLine(x, y, fromX, fromY) {
   const speedClamp = Math.min(speed, 2.5); // Clamp for wild gestures
   const wiggle = minWiggle + (maxWiggle - minWiggle) * (speedClamp / 2.5);
 
-  // Unique per-stroke seed for subtle individuality
-  if (dt > 100) lastDrawSeed = Math.random() * 10000; // New seed if pause between segments
-  function seededJitter(val) {
-    // Simple pseudo-random with seed
-    return (
-      Math.sin(val * 12.9898 + lastDrawSeed) * 43758.5453 -
-      Math.floor(Math.sin(val * 12.9898 + lastDrawSeed) * 43758.5453)
-    );
-  }
+  // Fast pseudo-random jitter (much cheaper than sin calculations)
+  if (dt > 100) lastDrawSeed = Math.random() * 1000; // New seed if pause between segments
+  
+  // Ultra-fast jitter using simple hash function (no expensive trigonometry)
+  const fastRandom1 = ((lastDrawSeed * 9301 + x * 49297) % 233280) / 233280 - 0.5;
+  const fastRandom2 = ((lastDrawSeed * 9301 + y * 49297) % 233280) / 233280 - 0.5;
 
   // Apply jitter
-  const jitterX = x + (seededJitter(x + now) - 0.5) * 2 * wiggle;
-  const jitterY = y + (seededJitter(y + now) - 0.5) * 2 * wiggle;
+  const jitterX = x + fastRandom1 * wiggle;
+  const jitterY = y + fastRandom2 * wiggle;
 
   // Palais de Tokyo: Enable pigment accumulation—each gesture deepens presence
   ctx.save();
@@ -704,7 +704,15 @@ function showMirrorLink() {
 /*******************************
  *  Move Crayon with Cursor
  *******************************/
+// Throttle crayon movement for better performance
+let lastCrayonMoveTime = 0;
+
 function moveCrayon(x, y) {
+  // Throttle crayon updates to improve performance
+  const now = Date.now();
+  if (now - lastCrayonMoveTime < 32) return; // ~30fps for crayon movement
+  lastCrayonMoveTime = now;
+  
   // Position crayon so its tip aligns with cursor/touch for authentic drawing
   crayon.style.position = 'fixed';
   crayon.style.left = `${x}px`;
@@ -1126,13 +1134,15 @@ document.addEventListener('DOMContentLoaded', () => {
       // Maximum variation of ±2% brightness
       const brightnessShift = Math.sin(portalPhase * Math.PI * 2) * 0.02;
       
-      // Apply to icons with extremely subtle transitions
-      icons.forEach(icon => {
-        const baseVal = parseFloat(getComputedStyle(document.documentElement)
-          .getPropertyValue('--icon-brightness').trim() || 0.96);
-        const newVal = baseVal + brightnessShift;
-        icon.style.filter = `grayscale(1) brightness(${newVal}) drop-shadow(0 2px 6px rgba(90,90,90, var(--shadow-opacity-base)))`;
-      });
+      // Apply to icons with extremely subtle transitions (less frequently for performance)
+      if (Math.floor(now / 1000) % 2 === 0) { // Only every 2 seconds
+        icons.forEach(icon => {
+          const baseVal = parseFloat(getComputedStyle(document.documentElement)
+            .getPropertyValue('--icon-brightness').trim() || 0.96);
+          const newVal = baseVal + brightnessShift;
+          icon.style.filter = `grayscale(1) brightness(${newVal}) drop-shadow(0 2px 6px rgba(90,90,90, var(--shadow-opacity-base)))`;
+        });
+      }
       
       requestAnimationFrame(updateIconsBasedOnPortalPhase);
     }
