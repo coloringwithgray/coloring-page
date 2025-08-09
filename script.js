@@ -155,12 +155,15 @@ window.applyRandomPortalMask = applyRandomPortalMask;
 // --- Portal progress-driven emergence (aesthetic, poetic) ---
 // progress: 0 (closed) ... 1 (fully open)
 // --- Animated Living Vortex Portal ---
+// Global variables for portal animations
+let vortexAnimating = false;
+let startVortex;
+
 (function() {
   const mirror = document.getElementById('mirror');
   let current = { scale: 0.13, opacity: 0.10, blur: 8 };
   let target = { scale: 0.13, opacity: 0.10, blur: 8 };
   let animating = false;
-  let vortexAnimating = false;
   let vortexAngle = 0;
   let lastVortexTime = performance.now();
   let vortexWobble = 0;
@@ -186,7 +189,7 @@ window.applyRandomPortalMask = applyRandomPortalMask;
     else animating = false;
   }
 
-  function startVortex() {
+  startVortex = function() {
     vortexAnimating = true;
     function vortexFrame(now) {
       // Animate slow, analog vortex with subtle oscillation
@@ -211,7 +214,7 @@ window.applyRandomPortalMask = applyRandomPortalMask;
       }
     }
     requestAnimationFrame(vortexFrame);
-  }
+  };
 
   window.setPortalProgress = function(progress) {
     // Clamp and ease
@@ -839,11 +842,10 @@ function fadeOutHum() {
   down();
 }
 
-const mirrorLinkEl = document.getElementById('mirror-link');
-mirrorLinkEl.addEventListener('mouseenter', fadeInHum);
-mirrorLinkEl.addEventListener('mouseleave', fadeOutHum);
-mirrorLinkEl.addEventListener('focus', fadeInHum);
-mirrorLinkEl.addEventListener('blur', fadeOutHum);
+mirrorLink.addEventListener('mouseenter', fadeInHum);
+mirrorLink.addEventListener('mouseleave', fadeOutHum);
+mirrorLink.addEventListener('focus', fadeInHum);
+mirrorLink.addEventListener('blur', fadeOutHum);
 
 // Dimensional parallax effect for hologram preview
 const mirrorIframe = document.getElementById('mirror-iframe');
