@@ -442,6 +442,9 @@ function activateCrayon() {
   console.log('Crayon activated.');
 }
 
+// Make activateCrayon globally available for HTML onclick
+window.activateCrayon = activateCrayon;
+
 
 
 
@@ -893,8 +896,13 @@ let parallaxActive = false;
 
 console.log('Script loaded.');
 
+// Prevent multiple initialization on reload
+let isPageInitialized = false;
+
 // Wait for the DOM to be fully loaded before adding event listeners
 document.addEventListener('DOMContentLoaded', () => {
+  if (isPageInitialized) return;
+  isPageInitialized = true;
   // Get icon and text elements
   const igLink = document.getElementById('ig-link');
   const igIcon = document.getElementById('ig-icon');
