@@ -16,7 +16,7 @@ function createDustCanvas() {
   mirrorDiv.appendChild(dustCanvas);
   dustCtx = dustCanvas.getContext('2d');
   resizeDustCanvas();
-  for (let i = 0; i < 38; i++) {
+  for (let i = 0; i < 18; i++) {
     dustParticles.push({
       x: Math.random(),
       y: Math.random(),
@@ -33,8 +33,23 @@ function resizeDustCanvas() {
   dustCanvas.width = mirrorDiv.offsetWidth;
   dustCanvas.height = mirrorDiv.offsetHeight;
 }
+let dustFrameCount = 0;
 function animateDust() {
   if (!dustCtx || !dustCanvas) return;
+  
+  // Reduce to 30fps for better performance
+  dustFrameCount++;
+  if (dustFrameCount % 2 !== 0) {
+    requestAnimationFrame(animateDust);
+    return;
+  }
+  
+  // Check if tab is visible - pause when not visible
+  if (document.hidden) {
+    requestAnimationFrame(animateDust);
+    return;
+  }
+  
   dustCtx.clearRect(0, 0, dustCanvas.width, dustCanvas.height);
   for (const p of dustParticles) {
     p.x += p.dx + (Math.random() - 0.5) * 0.0002;
@@ -127,7 +142,7 @@ function startMaskEdgeAnimation() {
     applyRandomPortalMask(Date.now());
   }
 
-  // Update mask less frequently for better performance (every 3 seconds still looks good)
+  // Update mask less frequently for better performance (every 6 seconds for Intel MacBook compatibility)
   maskUpdateIntervalId = setInterval(() => {
     // Interval check: If portal is NOT active, stop the interval.
     // This handles cases where hideMirrorLink might not have been called.
@@ -135,9 +150,12 @@ function startMaskEdgeAnimation() {
         stopMaskEdgeAnimation();
     } else {
       // Only regenerate mask occasionally to reduce CPU load
-      applyRandomPortalMask(Date.now());
+      // Skip if tab is hidden to save CPU
+      if (!document.hidden) {
+        applyRandomPortalMask(Date.now());
+      }
     }
-  }, 3000); // Reduced frequency: 3s instead of 1s for better performance
+  }, 6000); // Further reduced frequency: 6s for Intel MacBook performance
 }
 
 // Ensure animation stops when portal is hidden
@@ -195,6 +213,16 @@ let startVortex;
   startVortex = function() {
     vortexAnimating = true;
     function vortexFrame(now) {
+      // Skip animation if tab is hidden to save CPU
+      if (document.hidden) {
+        if (mirrorLink.classList.contains('active')) {
+          requestAnimationFrame(vortexFrame);
+        } else {
+          vortexAnimating = false;
+        }
+        return;
+      }
+      
       // Animate slow, analog vortex with subtle oscillation
       const elapsed = (now - lastVortexTime) / 1000;
       lastVortexTime = now;
