@@ -56,6 +56,8 @@ html, body {
   top: 0;
   left: 0;
   z-index: 1; /* Canvas behind other elements */
+  will-change: contents; /* GPU acceleration for drawing */
+  transform: translateZ(0); /* Force GPU layer */
 }
 
 /************************************
@@ -76,6 +78,8 @@ html, body {
   transform-origin: 50% 90%;
   transition: transform 0.27s cubic-bezier(.3,0,.2,1);
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.10));
+  will-change: transform; /* GPU acceleration for movement */
+  backface-visibility: hidden; /* Prevent flickering */
 }
 
 @media (max-width: 600px) {
@@ -174,6 +178,8 @@ html, body {
   transform: scale(0.13);
   opacity: 0.10;
   filter: blur(8px);
+  will-change: transform, opacity, filter; /* GPU acceleration for portal animations */
+  transform-style: preserve-3d; /* Enable 3D transforms */
 }
 
 #mirror-link.active #mirror {

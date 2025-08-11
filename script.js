@@ -16,7 +16,11 @@ function createDustCanvas() {
   mirrorDiv.appendChild(dustCanvas);
   dustCtx = dustCanvas.getContext('2d');
   resizeDustCanvas();
-  for (let i = 0; i < 18; i++) {
+  // Adaptive particle count based on performance
+  const particleCount = performanceLevel === 'low' ? 8 : 
+                       performanceLevel === 'medium' ? 12 : 18;
+  
+  for (let i = 0; i < particleCount; i++) {
     dustParticles.push({
       x: Math.random(),
       y: Math.random(),
@@ -37,12 +41,17 @@ let dustFrameCount = 0;
 function animateDust() {
   if (!dustCtx || !dustCanvas) return;
   
-  // Reduce to 30fps for better performance
+  // Adaptive frame rate based on performance
   dustFrameCount++;
-  if (dustFrameCount % 2 !== 0) {
+  const skipFrames = performanceLevel === 'low' ? 4 : 
+                    performanceLevel === 'medium' ? 3 : 2;
+  
+  if (dustFrameCount % skipFrames !== 0) {
     requestAnimationFrame(animateDust);
     return;
   }
+  
+  checkPerformance(); // Monitor performance during animation
   
   // Check if tab is visible - pause when not visible
   if (document.hidden) {
@@ -494,11 +503,35 @@ initializeCanvas();
 /*******************************
  *  Draw Helper
  *******************************/
-// --- Grand Prix Level: Dynamic Wiggle ---
+// --- Grand Prix Level: Dynamic Wiggle + Batching ---
 let lastDrawTimestamp = Date.now();
 let lastDrawSeed = Math.random() * 10000;
+let pendingDrawOps = [];
+let drawAnimationId = null;
+
+function batchedDraw() {
+  if (pendingDrawOps.length === 0) {
+    drawAnimationId = null;
+    return;
+  }
+  
+  for (const op of pendingDrawOps) {
+    drawLineImmediate(op.x, op.y, op.fromX, op.fromY);
+  }
+  pendingDrawOps = [];
+  drawAnimationId = null;
+}
 
 function drawLine(x, y, fromX, fromY) {
+  // Batch multiple draw calls into single animation frame
+  pendingDrawOps.push({ x, y, fromX, fromY });
+  
+  if (!drawAnimationId) {
+    drawAnimationId = requestAnimationFrame(batchedDraw);
+  }
+}
+
+function drawLineImmediate(x, y, fromX, fromY) {
   ensureCrayonPattern();
 
   // Calculate speed (pixels per millisecond)
@@ -549,11 +582,17 @@ function drawLine(x, y, fromX, fromY) {
 /*******************************
  *  Pointer Handlers
  *******************************/
-// Throttle pointer move events (reduce to 20 FPS for better performance, still smooth)
+// Adaptive pointer throttling based on performance
 let lastMoveTime = 0;
 function throttledPointerMove(e) {
   const now = Date.now();
-  if (now - lastMoveTime < 50) return; // 50ms = 20fps (was 33ms = 30fps)
+  
+  // Adaptive throttling: lower performance = more throttling
+  const throttleMs = performanceLevel === 'low' ? 80 :     // 12.5fps
+                     performanceLevel === 'medium' ? 60 :  // 16.7fps
+                     40; // 25fps for high performance
+  
+  if (now - lastMoveTime < throttleMs) return;
   lastMoveTime = now;
   handlePointerMove(e);
 }
@@ -739,9 +778,13 @@ function showMirrorLink() {
 let lastCrayonMoveTime = 0;
 
 function moveCrayon(x, y) {
-  // Throttle crayon updates to improve performance
+  // Adaptive crayon movement throttling
   const now = Date.now();
-  if (now - lastCrayonMoveTime < 32) return; // ~30fps for crayon movement
+  const crayonThrottle = performanceLevel === 'low' ? 50 :    // 20fps
+                        performanceLevel === 'medium' ? 40 :  // 25fps  
+                        32; // 30fps for high performance
+                        
+  if (now - lastCrayonMoveTime < crayonThrottle) return;
   lastCrayonMoveTime = now;
   
   // Position crayon so its tip aligns with cursor/touch for authentic drawing
@@ -898,6 +941,31 @@ console.log('Script loaded.');
 
 // Prevent multiple initialization on reload
 let isPageInitialized = false;
+
+// Adaptive performance system
+let performanceLevel = 'high'; // high, medium, low
+let frameCount = 0;
+let lastFPSCheck = Date.now();
+
+function checkPerformance() {
+  frameCount++;
+  const now = Date.now();
+  if (now - lastFPSCheck > 2000) { // Check every 2 seconds
+    const fps = (frameCount * 1000) / (now - lastFPSCheck);
+    frameCount = 0;
+    lastFPSCheck = now;
+    
+    if (fps < 40) {
+      performanceLevel = 'low';
+      console.log('Performance: LOW - reducing quality');
+    } else if (fps < 55) {
+      performanceLevel = 'medium';
+      console.log('Performance: MEDIUM');
+    } else {
+      performanceLevel = 'high';
+    }
+  }
+}
 
 // Wait for the DOM to be fully loaded before adding event listeners
 document.addEventListener('DOMContentLoaded', () => {
