@@ -350,7 +350,7 @@ body {
 }
 
 #close-cart-btn {
-  position: absolute;
+  position: fixed;
   top: 20px;
   right: 20px;
   width: 40px;
@@ -360,6 +360,8 @@ body {
   cursor: pointer;
   font-size: 0;
   /* Hide the × text */
+  z-index: 101;
+  /* Above cart container */
 }
 
 #close-cart-btn::before,
@@ -455,9 +457,9 @@ body {
 }
 
 #video-close-btn {
-  position: absolute;
-  top: -60px;
-  right: 0;
+  position: fixed;
+  top: 20px;
+  right: 20px;
   width: 40px;
   height: 40px;
   background: none;

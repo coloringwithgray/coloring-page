@@ -663,6 +663,14 @@ videoCloseBtn.addEventListener('click', () => {
   closeVideoModal();
 });
 
+// Close video modal when clicking outside (on the backdrop)
+videoModal.addEventListener('click', (e) => {
+  // Only close if clicking directly on the container (not on its children)
+  if (e.target === videoModal) {
+    closeVideoModal();
+  }
+});
+
 function closeVideoModal() {
   videoModal.classList.remove('visible');
 
@@ -877,6 +885,14 @@ function setPaymentLoading(isLoading) {
  *******************************/
 closeCartBtn.addEventListener('click', () => {
   closeCart();
+});
+
+// Close cart when clicking outside (on the backdrop)
+bottleCartContainer.addEventListener('click', (e) => {
+  // Only close if clicking directly on the container (not on its children)
+  if (e.target === bottleCartContainer) {
+    closeCart();
+  }
 });
 
 function closeCart() {
