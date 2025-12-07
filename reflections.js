@@ -599,6 +599,9 @@ function showBottleCart() {
   bottleCartContainer.offsetHeight;
   bottleCartContainer.classList.add('visible');
 
+  // Prevent body scroll
+  document.body.style.overflow = 'hidden';
+
   // Focus management - focus close button
   setTimeout(() => {
     closeCartBtn.focus();
@@ -618,6 +621,9 @@ function openVideoModal() {
   videoModal.offsetHeight;
   videoModal.classList.add('visible');
 
+  // Prevent body scroll
+  document.body.style.overflow = 'hidden';
+
   // Focus management - focus close button
   setTimeout(() => {
     videoCloseBtn.focus();
@@ -630,6 +636,10 @@ videoCloseBtn.addEventListener('click', () => {
 
 function closeVideoModal() {
   videoModal.classList.remove('visible');
+
+  // Restore body scroll
+  document.body.style.overflow = '';
+
   setTimeout(() => {
     videoModal.style.display = 'none';
     videoIframe.src = ''; // Stop video
@@ -842,6 +852,9 @@ closeCartBtn.addEventListener('click', () => {
 
 function closeCart() {
   bottleCartContainer.classList.remove('visible');
+
+  // Restore body scroll
+  document.body.style.overflow = '';
 
   // Hide payment form and show initial buttons again
   document.getElementById('payment-form-container').style.display = 'none';
