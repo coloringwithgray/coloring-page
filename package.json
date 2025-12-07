@@ -17,7 +17,7 @@
   "author": "Coloring with Gray",
   "license": "ISC",
   "dependencies": {
-    "stripe": "^14.10.0"
+    "stripe": "^20.0.0"
   },
   "devDependencies": {},
   "engines": {

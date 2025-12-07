@@ -42,7 +42,7 @@ const glassShatterAudio = document.getElementById('glass-shatter-audio');
 lightHumAudio.volume = 0.6;
 glassShatterAudio.volume = 0.8;
 
-// Debug audio loading and prime audio for instant playback
+// Prime audio when loaded (runs after lazy load is triggered)
 lightHumAudio.addEventListener('canplaythrough', () => {
   console.log('Light hum audio loaded and ready');
   // Prime the audio by playing and immediately pausing - eliminates delay
@@ -50,14 +50,12 @@ lightHumAudio.addEventListener('canplaythrough', () => {
     lightHumAudio.pause();
     lightHumAudio.currentTime = 0;
   }).catch(err => console.log('Audio priming prevented (normal on some browsers):', err));
-  assetsLoaded.audioHum = true;
-  checkAllAssetsLoaded();
-});
+}, { once: true }); // Only fire once
+
 lightHumAudio.addEventListener('error', (e) => {
   console.error('Light hum audio failed to load:', e);
-  assetsLoaded.audioHum = true; // Continue anyway
-  checkAllAssetsLoaded();
-});
+}, { once: true });
+
 glassShatterAudio.addEventListener('canplaythrough', () => {
   console.log('Glass shatter audio loaded and ready');
   // Prime the audio by playing and immediately pausing - eliminates delay
@@ -65,14 +63,11 @@ glassShatterAudio.addEventListener('canplaythrough', () => {
     glassShatterAudio.pause();
     glassShatterAudio.currentTime = 0;
   }).catch(err => console.log('Audio priming prevented (normal on some browsers):', err));
-  assetsLoaded.audioShatter = true;
-  checkAllAssetsLoaded();
-});
+}, { once: true }); // Only fire once
+
 glassShatterAudio.addEventListener('error', (e) => {
   console.error('Glass shatter audio failed to load:', e);
-  assetsLoaded.audioShatter = true; // Continue anyway
-  checkAllAssetsLoaded();
-});
+}, { once: true });
 
 // Canvas setup with error checking
 let ctx;
@@ -155,8 +150,8 @@ window.addEventListener('resize', resizeCanvas);
 // Asset loading management
 let assetsLoaded = {
   image: false,
-  audioHum: false,
-  audioShatter: false
+  audioHum: true, // Don't block page load on audio (lazy loaded)
+  audioShatter: true // Don't block page load on audio (lazy loaded)
 };
 
 function checkAllAssetsLoaded() {
