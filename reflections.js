@@ -753,9 +753,33 @@ async function initializePayment() {
 
     elements = stripe.elements({ appearance, clientSecret });
 
-    // Create and mount Payment Element
-    paymentElement = elements.create('payment');
+    // Create and mount Payment Element with shipping address collection
+    paymentElement = elements.create('payment', {
+      fields: {
+        billingDetails: {
+          address: 'auto'
+        }
+      }
+    });
+
+    // Create Address Element for shipping
+    const addressElement = elements.create('address', {
+      mode: 'shipping',
+      defaultValues: {
+        name: '',
+        address: {
+          line1: '',
+          line2: '',
+          city: '',
+          state: '',
+          postal_code: '',
+          country: 'US'
+        }
+      }
+    });
+
     paymentElement.mount('#payment-element');
+    addressElement.mount('#address-element');
 
     // Setup Payment Request Button (Apple Pay / Google Pay)
     setupPaymentRequest();

@@ -749,6 +749,10 @@ body {
   margin-top: 20px;
 }
 
+#address-element {
+  margin-bottom: 20px;
+}
+
 #payment-element {
   margin-bottom: 20px;
 }
