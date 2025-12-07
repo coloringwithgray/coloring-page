@@ -189,7 +189,7 @@ body {
  *    BOTTLE CART CONTAINER
  ************************************/
 #bottle-cart-container {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -201,6 +201,7 @@ body {
   justify-content: center;
   opacity: 0;
   transition: opacity 0.8s ease;
+  overflow-y: auto;
 }
 
 #bottle-cart-container.visible {
@@ -401,7 +402,7 @@ body {
  *    VIDEO MODAL
  ************************************/
 #video-modal {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -413,6 +414,7 @@ body {
   justify-content: center;
   opacity: 0;
   transition: opacity 0.8s ease;
+  overflow-y: auto;
 }
 
 #video-modal.visible {
