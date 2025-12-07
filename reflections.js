@@ -185,6 +185,13 @@ setTimeout(() => {
   }
 }, 8000);
 
+// Load audio after page is visible (saves ~244KB on initial load)
+function loadAudioLazy() {
+  console.log('Loading audio files...');
+  lightHumAudio.load();
+  glassShatterAudio.load();
+}
+
 // Cache image on page load
 window.addEventListener('load', () => {
   // Check if reflection image loaded successfully
@@ -194,16 +201,20 @@ window.addEventListener('load', () => {
       assetsLoaded.image = true;
       console.log('Reflection image cached successfully');
       checkAllAssetsLoaded();
+      // Load audio after main image is ready
+      setTimeout(loadAudioLazy, 500);
     }).catch(err => {
       console.error('Failed to cache reflection image:', err);
       assetsLoaded.image = true; // Continue anyway
       checkAllAssetsLoaded();
+      setTimeout(loadAudioLazy, 500);
     });
   } else {
     console.error('Reflection image failed to load');
     reflectionImage.addEventListener('error', () => {
       assetsLoaded.image = true; // Continue anyway
       checkAllAssetsLoaded();
+      setTimeout(loadAudioLazy, 500);
     });
   }
 
@@ -607,6 +618,14 @@ function animateShatter() {
 }
 
 function showBottleCart() {
+  // Load bottle image now (only when user clicks - saves 2.2MB on initial load)
+  const bottleImg = document.getElementById('emerged-bottle');
+  if (bottleImg && bottleImg.hasAttribute('data-src')) {
+    console.log('Loading bottle image...');
+    bottleImg.src = bottleImg.getAttribute('data-src');
+    bottleImg.removeAttribute('data-src');
+  }
+
   bottleCartContainer.style.display = 'flex';
   // Trigger reflow for transition
   bottleCartContainer.offsetHeight;
