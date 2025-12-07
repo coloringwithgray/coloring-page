@@ -319,15 +319,10 @@ html, body {
   }
 
   .email-icon, .ig-icon, .photo-icon {
-    width: 100px; /* Smaller size for mobile */
-    height: 100px;
+    width: 80px; /* Smaller size for mobile to prevent overlap */
+    height: 80px;
     transition: width 0.5s ease, height 0.5s ease, transform 0.5s cubic-bezier(0.17, 0.67, 0.35, 0.97),
                 filter 0.8s cubic-bezier(0.17, 0.67, 0.35, 0.97); /* Smooth size changes */
-  }
-
-  .photo-icon {
-    width: 75px; /* Even smaller in center for mobile */
-    height: 75px;
   }
 
   /* Ensure spacing is adequate between icons */
@@ -362,13 +357,8 @@ html, body {
   }
 
   .email-icon, .ig-icon, .photo-icon {
-    width: 70px; /* Even smaller in landscape */
-    height: 70px;
-  }
-
-  .photo-icon {
-    width: 55px; /* Smallest in center for landscape */
-    height: 55px;
+    width: 60px; /* Smaller in landscape to prevent overlap */
+    height: 60px;
   }
 }
 
@@ -384,11 +374,6 @@ html, body {
               filter 0.8s cubic-bezier(0.17, 0.67, 0.35, 0.97);
 }
 
-/* Photo icon is smaller to balance the center position */
-.photo-icon {
-  width: 120px;
-  height: 120px;
-}
 
 /* Icon animation states */
 .email-icon-wrapper.active .email-icon {
