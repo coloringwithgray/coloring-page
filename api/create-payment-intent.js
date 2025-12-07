@@ -1,7 +1,17 @@
 // Vercel Serverless Function - Create Stripe Payment Intent
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 module.exports = async (req, res) => {
+  // Check if Stripe secret key is available
+  if (!process.env.STRIPE_SECRET_KEY) {
+    console.error('STRIPE_SECRET_KEY environment variable is not set');
+    res.status(500).json({
+      error: 'Stripe configuration error',
+      details: 'STRIPE_SECRET_KEY environment variable is not set'
+    });
+    return;
+  }
+
+  const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -52,6 +62,10 @@ module.exports = async (req, res) => {
     });
   } catch (error) {
     console.error('Error creating payment intent:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      error: error.message,
+      type: error.type || 'unknown',
+      details: error.raw ? error.raw.message : 'No additional details'
+    });
   }
 };

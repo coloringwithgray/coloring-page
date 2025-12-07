@@ -676,7 +676,9 @@ async function initializePayment() {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to create payment intent');
+      const errorData = await response.json();
+      console.error('Payment intent error details:', errorData);
+      throw new Error(errorData.details || errorData.error || 'Failed to create payment intent');
     }
 
     const data = await response.json();
