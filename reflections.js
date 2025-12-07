@@ -901,7 +901,7 @@ addToCartBtn.addEventListener('click', async (e) => {
   document.getElementById('payment-form-container').style.display = 'block';
 });
 
-// Apple Pay button - directly triggers Apple Pay
+// Apple Pay button - triggers express checkout (Apple Pay/Google Pay/Link)
 const applePayBtn = document.getElementById('apple-pay-btn');
 applePayBtn.addEventListener('click', async (e) => {
   console.log('Apple Pay button clicked!');
@@ -917,26 +917,26 @@ applePayBtn.addEventListener('click', async (e) => {
     console.log('Payment initialized successfully');
   }
 
-  // Check if Apple Pay is available and trigger it directly
-  if (paymentRequest) {
-    console.log('Checking Apple Pay availability...');
-    const result = await paymentRequest.canMakePayment();
-    console.log('Apple Pay availability:', result);
+  // Show the payment form
+  document.getElementById('initial-buttons').style.display = 'none';
+  document.getElementById('payment-form-container').style.display = 'block';
 
-    if (result && result.applePay) {
-      // Trigger Apple Pay directly
-      console.log('Triggering Apple Pay sheet');
-      paymentRequest.show();
+  // Try to trigger the Stripe payment request button (Apple Pay/Google Pay) if available
+  setTimeout(() => {
+    const paymentRequestButton = document.querySelector('#payment-request-button button');
+    if (paymentRequestButton && paymentRequestButton.offsetParent !== null) {
+      // Payment request button is visible (Apple Pay or Google Pay available)
+      console.log('Triggering Stripe payment request button');
+      paymentRequestButton.click();
     } else {
-      // If Apple Pay not available, show the payment form instead
-      console.log('Apple Pay not available, showing payment form');
-      document.getElementById('initial-buttons').style.display = 'none';
-      document.getElementById('payment-form-container').style.display = 'block';
-      showPaymentMessage('Apple Pay is not available on this device. Please use card payment.', 'error');
+      // No express payment available, scroll to Link button or show message
+      console.log('No express payment method available, showing form');
+      const linkButton = document.querySelector('[data-testid="payment-method-Link"]');
+      if (linkButton) {
+        linkButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     }
-  } else {
-    console.error('Payment request not initialized');
-  }
+  }, 100);
 });
 
 /*******************************
