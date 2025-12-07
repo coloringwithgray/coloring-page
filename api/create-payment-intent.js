@@ -62,10 +62,23 @@ module.exports = async (req, res) => {
     });
   } catch (error) {
     console.error('Error creating payment intent:', error);
+
+    // Check if it's a Stripe authentication error
+    if (error.type === 'StripeAuthenticationError' || error.statusCode === 401) {
+      res.status(401).json({
+        error: 'Stripe authentication failed',
+        type: 'authentication_error',
+        details: 'Invalid API key. Make sure STRIPE_SECRET_KEY in Vercel matches your live publishable key (pk_live_...)',
+        hint: 'Go to Stripe Dashboard > API Keys and copy the correct live secret key'
+      });
+      return;
+    }
+
     res.status(500).json({
       error: error.message,
       type: error.type || 'unknown',
-      details: error.raw ? error.raw.message : 'No additional details'
+      details: error.raw ? error.raw.message : 'No additional details',
+      statusCode: error.statusCode
     });
   }
 };
