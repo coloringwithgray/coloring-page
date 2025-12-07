@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1600" height="2000" viewBox="0 0 1600 2000" xmlns="http://www.w3.org/2000/svg">
+  <!-- Transparent background (no rect) -->
+  <defs>
+    <!-- Glass highlight gradient - more prominent -->
+    <linearGradient id="glassHighlight" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.6"/>
+      <stop offset="30%" stop-color="#FFFFFF" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.00"/>
+    </linearGradient>
+
+    <!-- Bottle stroke gradient - lighter, more transparent glass -->
+    <linearGradient id="bottleStroke" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8E8E8" stop-opacity="0.5"/>
+      <stop offset="40%" stop-color="#C0C0C0" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#888888" stop-opacity="0.5"/>
+    </linearGradient>
+
+    <!-- Inner edge subtle shadow - lighter -->
+    <linearGradient id="innerEdge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.08"/>
+      <stop offset="40%" stop-color="#000000" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.06"/>
+    </linearGradient>
+
+    <!-- Cap radial highlight -->
+    <radialGradient id="capHighlight" cx="50%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="1"/>
+    </radialGradient>
+
+    <!-- fingerprint clip (inner glass area) -->
+    <clipPath id="glassArea">
+      <rect x="360" y="630" width="880" height="1000" rx="140" ry="140"/>
+    </clipPath>
+  </defs>
+
+  <!-- Bottle body outer -->
+  <rect x="260" y="560" width="1080" height="1180" rx="120" ry="120"
+        fill="none" stroke="url(#bottleStroke)" stroke-width="16"/>
+
+  <!-- Inner glass boundary -->
+  <rect x="360" y="630" width="880" height="1000" rx="140" ry="140"
+        fill="none" stroke="url(#innerEdge)" stroke-width="10"/>
+
+  <!-- Subtle diagonal highlight strip -->
+  <path d="M 420 680 L 520 620 L 1180 1460 L 1080 1520 Z"
+        fill="url(#glassHighlight)"/>
+
+  <!-- Additional glass reflections for photorealism -->
+  <rect x="340" y="650" width="60" height="900" rx="30" ry="30"
+        fill="#FFFFFF" opacity="0.15"/>
+  <rect x="1200" y="700" width="40" height="800" rx="20" ry="20"
+        fill="#FFFFFF" opacity="0.08"/>
+
+  <!-- Cap -->
+  <g>
+    <!-- Cap body -->
+    <rect x="580" y="380" width="440" height="220" rx="50" ry="50"
+          fill="url(#capHighlight)"/>
+    <!-- Cap top ellipse edge -->
+    <ellipse cx="800" cy="380" rx="220" ry="28" fill="#111111"/>
+  </g>
+
+  <!-- Neck ring (subtle) -->
+  <rect x="560" y="560" width="480" height="34" rx="12" ry="12"
+        fill="#1a1a1a" opacity="0.45"/>
+
+  <!-- Fingerprint: concentric ellipses rotated -45°, clipped to glass - lighter and more subtle -->
+  <g clip-path="url(#glassArea)" transform="translate(800,1130) rotate(-45)">
+    <!-- Build rings from small to large -->
+    <!-- Center whorl -->
+    <ellipse cx="0" cy="0" rx="22" ry="16" fill="none" stroke="#B8BABC" stroke-width="2" opacity="0.5"/>
+    <!-- Rings - lighter and more transparent -->
+    <ellipse cx="0" cy="0" rx="40" ry="28" fill="none" stroke="#B8BABC" stroke-width="2" opacity="0.48"/>
+    <ellipse cx="0" cy="0" rx="58" ry="40" fill="none" stroke="#B8BABC" stroke-width="2" opacity="0.46"/>
+    <ellipse cx="0" cy="0" rx="76" ry="52" fill="none" stroke="#B8BABC" stroke-width="2" opacity="0.44"/>
+    <ellipse cx="0" cy="0" rx="94" ry="64" fill="none" stroke="#B8BABC" stroke-width="2" opacity="0.42"/>
+    <ellipse cx="0" cy="0" rx="112" ry="76" fill="none" stroke="#B8BABC" stroke-width="2" opacity="0.40"/>
+    <ellipse cx="0" cy="0" rx="130" ry="88" fill="none" stroke="#B8BABC" stroke-width="2" opacity="0.38"/>
+    <ellipse cx="0" cy="0" rx="148" ry="100" fill="none" stroke="#B8BABC" stroke-width="2" opacity="0.36"/>
+    <ellipse cx="0" cy="0" rx="166" ry="112" fill="none" stroke="#B8BABC" stroke-width="2" opacity="0.34"/>
+    <ellipse cx="0" cy="0" rx="184" ry="124" fill="none" stroke="#B8BABC" stroke-width="2" opacity="0.32"/>
+    <ellipse cx="0" cy="0" rx="202" ry="136" fill="none" stroke="#B8BABC" stroke-width="2" opacity="0.30"/>
+    <ellipse cx="0" cy="0" rx="220" ry="148" fill="none" stroke="#B8BABC" stroke-width="2" opacity="0.28"/>
+  </g>
+
+</svg>

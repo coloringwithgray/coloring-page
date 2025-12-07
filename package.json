@@ -1,0 +1,26 @@
+{
+  "name": "coloring-with-gray",
+  "version": "1.0.0",
+  "description": "Coloring with Gray - Interactive art portal",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build step required'",
+    "deploy": "vercel --prod"
+  },
+  "keywords": [
+    "art",
+    "interactive",
+    "portal",
+    "palais-de-tokyo"
+  ],
+  "author": "Coloring with Gray",
+  "license": "ISC",
+  "dependencies": {
+    "stripe": "^14.10.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

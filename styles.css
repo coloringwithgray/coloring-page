@@ -216,16 +216,17 @@ html, body {
   position: fixed;
   left: 50%;
   top: 50%;
-  width: 37.2vw; /* Increased from 30vw by 24% */
-  height: 20.925vw; /* Increased 16:9 aspect ratio (37.2 / 16 * 9) */
-  max-width: 55.8vw; /* Increased from 45vw by 24% */
-  max-height: 31.3875vw; /* Increased from 25.3125vw by 24% */
-  min-width: 198px; /* Increased from 160px by 24% */
-  min-height: 111px; /* Increased from 90px by 24% */
+  width: 25vw; /* Portrait width */
+  height: 37.5vw; /* Portrait height - 3:2 aspect ratio */
+  object-fit: cover; /* Prevent stretching, maintain aspect ratio */
+  max-width: 35vw; /* Portrait max width */
+  max-height: 52.5vw; /* Portrait max height */
+  min-width: 140px; /* Portrait min width */
+  min-height: 210px; /* Portrait min height */
   transform: translate(-50%, -50%) scale(0.92);
   opacity: 0;
   background: #181818;
-  border: 1.75vw solid #111; /* Letterbox bars for cinematic effect */
+  border: 1.75vw solid #111; /* Frame border */
   box-sizing: border-box;
   box-shadow: 0 0 32px 6px rgba(80,80,80, var(--portal-shadow-opacity, 0.16)), 0 0 0 1px rgba(160,160,160,0.13);
   border-radius: 12px;
@@ -262,7 +263,7 @@ html, body {
  *    ICONS
  ************************************/
 /* Shared wrapper setup */
-.email-icon-wrapper, .ig-icon-wrapper {
+.email-icon-wrapper, .ig-icon-wrapper, .photo-icon-wrapper {
   position: fixed;
   bottom: 28px;
   display: inline-block;
@@ -276,18 +277,23 @@ html, body {
 }
 
 .ig-icon-wrapper {
-  left: calc(50% - 170px);
+  left: calc(50% - 240px);
   transition-delay: 0.75s; /* Appear after portal */
 }
 
+.photo-icon-wrapper {
+  left: calc(50% - 0px);
+  transition-delay: 1.125s; /* Appear between Instagram and Email */
+}
+
 .email-icon-wrapper {
-  left: calc(50% + 170px);
-  transition-delay: 1.5s; /* Appear after Instagram icon */
+  left: calc(50% + 240px);
+  transition-delay: 1.5s; /* Appear after photo icon */
 }
 
 /* Mobile responsive styles - portrait orientation */
 @media (max-width: 767px) {
-  .email-icon-wrapper, .ig-icon-wrapper {
+  .email-icon-wrapper, .ig-icon-wrapper, .photo-icon-wrapper {
     bottom: calc(24px + env(safe-area-inset-bottom, 0px));
     transform: translateY(10px); /* Slightly smaller initial position adjustment */
     transition: opacity 1.6s cubic-bezier(0.19, 1, 0.22, 1),
@@ -296,51 +302,67 @@ html, body {
     padding: 12px; /* Create larger touch target */
     margin: -12px; /* Offset padding to maintain visual position */
   }
-  
+
   .ig-icon-wrapper {
-    left: 30px; /* Position from left edge */
+    left: 20px; /* Position from left edge */
   }
-  
+
+  .photo-icon-wrapper {
+    left: 50%;
+    transform: translateX(-50%) translateY(10px); /* Center positioning */
+  }
+
   .email-icon-wrapper {
-    right: 30px; /* Position from right edge */
+    right: 20px; /* Position from right edge */
+    left: auto;
   }
-  
-  .email-icon, .ig-icon {
-    width: 420px; /* 3x size for vertical orientation */
-    height: 420px;
+
+  .email-icon, .ig-icon, .photo-icon {
+    width: 100px; /* Smaller size for mobile */
+    height: 100px;
     transition: width 0.5s ease, height 0.5s ease, transform 0.5s cubic-bezier(0.17, 0.67, 0.35, 0.97),
                 filter 0.8s cubic-bezier(0.17, 0.67, 0.35, 0.97); /* Smooth size changes */
   }
-  
+
   /* Ensure spacing is adequate between icons */
   body:has(#mirror-link.active) .email-icon-wrapper,
-  body:has(#mirror-link.active) .ig-icon-wrapper {
+  body:has(#mirror-link.active) .ig-icon-wrapper,
+  body:has(#mirror-link.active) .photo-icon-wrapper {
     transform: translateY(0);
+  }
+
+  body:has(#mirror-link.active) .photo-icon-wrapper {
+    transform: translateX(-50%) translateY(0);
   }
 }
 
 /* Mobile responsive styles - landscape orientation */
 @media (max-height: 500px) and (orientation: landscape) {
-  .email-icon-wrapper, .ig-icon-wrapper {
+  .email-icon-wrapper, .ig-icon-wrapper, .photo-icon-wrapper {
     bottom: calc(10px + env(safe-area-inset-bottom, 0px));
   }
-  
+
   .ig-icon-wrapper {
-    left: calc(25% - 20px); /* Further apart in landscape to avoid center space */
+    left: calc(25% - 60px); /* Further left to make room for center icon */
   }
-  
+
+  .photo-icon-wrapper {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
   .email-icon-wrapper {
-    left: calc(75% + 20px); /* Further apart in landscape to avoid center space */
+    left: calc(75% + 60px); /* Further right to make room for center icon */
   }
-  
-  .email-icon, .ig-icon {
-    width: 90px; /* Even smaller in landscape */
-    height: 90px;
+
+  .email-icon, .ig-icon, .photo-icon {
+    width: 70px; /* Even smaller in landscape */
+    height: 70px;
   }
 }
 
 /* Base icons */
-.email-icon, .ig-icon {
+.email-icon, .ig-icon, .photo-icon {
   display: block;
   width: 160px; /* 4x size */
   height: 160px; /* 4x size */
@@ -402,7 +424,8 @@ html, body {
 
 /* Show icons when portal is active */
 body:has(#mirror-link.active) .email-icon-wrapper,
-body:has(#mirror-link.active) .ig-icon-wrapper {
+body:has(#mirror-link.active) .ig-icon-wrapper,
+body:has(#mirror-link.active) .photo-icon-wrapper {
   opacity: 1;
   transform: translateY(0);
 }
@@ -559,7 +582,8 @@ body:has(#mirror-link.active) .ig-icon-wrapper {
 
 /* Text residue - subtle darkening that lingers after text fades */
 .ig-icon-wrapper::before,
-.email-icon-wrapper::before {
+.email-icon-wrapper::before,
+.photo-icon-wrapper::before {
   content: "";
   position: absolute;
   bottom: -15px;
@@ -573,7 +597,8 @@ body:has(#mirror-link.active) .ig-icon-wrapper {
 }
 
 .ig-icon-wrapper.text-residue::before,
-.email-icon-wrapper.text-residue::before {
+.email-icon-wrapper.text-residue::before,
+.photo-icon-wrapper.text-residue::before {
   opacity: 0.15; /* Slightly stronger for better visibility */
   transition: opacity 0.2s ease;
 }
@@ -581,7 +606,8 @@ body:has(#mirror-link.active) .ig-icon-wrapper {
 /* Adjust text residue size on small screens */
 @media (max-width: 350px) {
   .ig-icon-wrapper::before,
-  .email-icon-wrapper::before {
+  .email-icon-wrapper::before,
+  .photo-icon-wrapper::before {
     width: 80px;
     height: 12px;
     bottom: -12px;
@@ -695,7 +721,7 @@ body:has(#mirror-link.active) .ig-icon-wrapper {
 
 /* Accessibility - respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
-  .email-icon, .ig-icon,
+  .email-icon, .ig-icon, .photo-icon,
   .email-hover-text, .ig-hover-text,
   .emotional-text {
     transition-duration: 0.1s !important;

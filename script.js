@@ -295,8 +295,10 @@ let texturedPattern = null;
 // Palais de Tokyo: Sequential emergence of icons after portal activation
 const igIcon = document.getElementById('ig-icon');
 const mailIcon = document.getElementById('mail-icon');
+const photoIcon = document.getElementById('photo-icon');
 const igLink = document.getElementById('ig-link');
 const mailLink = document.getElementById('mail-link');
+const photoLink = document.getElementById('photo-link');
 
 // Store timers for sequential appearance
 let iconTimers = [];
@@ -305,19 +307,21 @@ function syncIconsWithPortal() {
   console.log('Portal state changed - active:', mirrorLink.classList.contains('active'));
   console.log('Icon elements found:', {
     igIcon: !!igIcon,
+    photoIcon: !!photoIcon,
     mailIcon: !!mailIcon,
     igLink: !!igLink,
+    photoLink: !!photoLink,
     mailLink: !!mailLink
   });
-  
+
   // Clear any existing timers
   iconTimers.forEach(timer => clearTimeout(timer));
   iconTimers = [];
-  
+
   // If portal is active, show icons sequentially
   if (mirrorLink.classList.contains('active')) {
     console.log('Portal is active - scheduling icon appearance');
-    
+
     // Instagram appears first after 750ms
     iconTimers.push(setTimeout(() => {
       console.log('Showing Instagram icon NOW');
@@ -331,8 +335,22 @@ function syncIconsWithPortal() {
         igLink.style.pointerEvents = 'auto';
       }
     }, 750));
-    
-    // Mail icon appears after 1500ms
+
+    // Photo icon appears second after 1125ms
+    iconTimers.push(setTimeout(() => {
+      console.log('Showing Photo icon NOW');
+      if (photoIcon) {
+        photoIcon.style.opacity = '1';
+        photoIcon.style.transform = 'translateY(0)';
+        photoIcon.style.pointerEvents = 'auto';
+      }
+      if (photoLink) {
+        photoLink.style.opacity = '1';
+        photoLink.style.pointerEvents = 'auto';
+      }
+    }, 1125));
+
+    // Mail icon appears last after 1500ms
     iconTimers.push(setTimeout(() => {
       console.log('Showing Mail icon NOW');
       if (mailIcon) {
@@ -353,12 +371,18 @@ function syncIconsWithPortal() {
       igIcon.style.transform = 'translateY(15px)';
       igIcon.style.pointerEvents = 'none';
     }
+    if (photoIcon) {
+      photoIcon.style.opacity = '0';
+      photoIcon.style.transform = 'translateY(15px)';
+      photoIcon.style.pointerEvents = 'none';
+    }
     if (mailIcon) {
       mailIcon.style.opacity = '0';
       mailIcon.style.transform = 'translateY(15px)';
       mailIcon.style.pointerEvents = 'none';
     }
     if (igLink) igLink.style.opacity = '0';
+    if (photoLink) photoLink.style.opacity = '0';
     if (mailLink) mailLink.style.opacity = '0';
   }
 }
@@ -738,14 +762,17 @@ function showMirrorLink() {
 
   // Choose a random rule-of-thirds intersection
   const intersection = intersections[Math.floor(Math.random() * intersections.length)];
-  
+
   // Place portal within an elliptical area around the intersection
   const ellipseRadiusX = 13; // percent
   const ellipseRadiusY = 13; // percent
   const pos = randomInEllipse(intersection, ellipseRadiusX, ellipseRadiusY);
 
+  // Constrain portal to stay away from bottom icons (max 65% down the page)
+  const constrainedTop = Math.min(pos.top, 65);
+
   mirrorLink.style.left = `${pos.left}%`;
-  mirrorLink.style.top = `${pos.top}%`;
+  mirrorLink.style.top = `${constrainedTop}%`;
 
   // Generate a new mask when threshold is reached
   applyRandomPortalMask(Date.now());
@@ -1277,6 +1304,8 @@ document.addEventListener('DOMContentLoaded', () => {
   applyTimeBasedStyles(); // Apply styles based on current time
 
   // --- Vimeo Modal on Portal Click --- //
+  // DISABLED: Portal link now goes directly to reflections.html instead of showing video modal
+  /*
   const modalIframe = document.getElementById('vimeo-modal-iframe');
   const modal = document.getElementById('vimeo-modal'); // Get the modal element
   const modalClose = document.getElementById('modal-close'); // Get the close button
@@ -1307,7 +1336,7 @@ document.addEventListener('DOMContentLoaded', () => {
         player.setCurrentTime(0).then(() => {
           console.log('Vimeo video time set to 0.');
           // Ensure video is unmuted (autoplay param should handle this, but be sure)
-          return player.setVolume(1); 
+          return player.setVolume(1);
         }).then(() => {
            return player.play();
         }).then(() => {
@@ -1335,6 +1364,7 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     console.error('Required elements for Vimeo modal interaction not found (portalLink, modalIframe, modal, or modalClose).');
   }
+  */
   // --- End Vimeo Modal Logic --- //
 });
 
@@ -1429,6 +1459,8 @@ document.addEventListener('DOMContentLoaded', () => {
   applyTimeBasedStyles(); // Apply styles based on current time
 
   // --- Vimeo Modal on Portal Click --- //
+  // DISABLED: Portal link now goes directly to reflections.html instead of showing video modal
+  /*
   const portalLink = document.getElementById('mirror-link');
   const modalIframe = document.getElementById('vimeo-modal-iframe');
   const modal = document.getElementById('vimeo-modal'); // Get the modal element
@@ -1460,7 +1492,7 @@ document.addEventListener('DOMContentLoaded', () => {
         player.setCurrentTime(0).then(() => {
           console.log('Vimeo video time set to 0.');
           // Ensure video is unmuted (autoplay param should handle this, but be sure)
-          return player.setVolume(1); 
+          return player.setVolume(1);
         }).then(() => {
            return player.play();
         }).then(() => {
@@ -1488,5 +1520,6 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     console.error('Required elements for Vimeo modal interaction not found (portalLink, modalIframe, modal, or modalClose).');
   }
+  */
   // --- End Vimeo Modal Logic --- //
 });
