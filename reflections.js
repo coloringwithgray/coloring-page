@@ -663,6 +663,7 @@ const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
 let elements;
 let paymentElement;
 let paymentRequest;
+let prButton; // Store payment request button reference
 let clientSecret;
 
 // Initialize payment when buttons are clicked
@@ -725,7 +726,7 @@ function setupPaymentRequest() {
     requestPayerEmail: true,
   });
 
-  const prButton = elements.create('paymentRequestButton', {
+  prButton = elements.create('paymentRequestButton', {
     paymentRequest,
   });
 
@@ -737,6 +738,7 @@ function setupPaymentRequest() {
     } else {
       // Hide the payment request button if not available
       document.getElementById('payment-request-button').style.display = 'none';
+      document.getElementById('or-divider').style.display = 'none';
     }
   });
 
@@ -876,7 +878,7 @@ addToCartBtn.addEventListener('click', async (e) => {
   document.getElementById('payment-form-container').style.display = 'block';
 });
 
-// Apple Pay button - opens payment form with Apple Pay ready
+// Apple Pay button - directly triggers Apple Pay
 const applePayBtn = document.getElementById('apple-pay-btn');
 applePayBtn.addEventListener('click', async (e) => {
   // Initialize payment if not already done
@@ -885,12 +887,19 @@ applePayBtn.addEventListener('click', async (e) => {
     if (!initialized) return;
   }
 
-  // Hide initial buttons and show payment form
-  document.getElementById('initial-buttons').style.display = 'none';
-  document.getElementById('payment-form-container').style.display = 'block';
-
-  // If Apple Pay is available, user can click the Apple Pay button
-  // Otherwise they'll see the card form
+  // Check if Apple Pay is available and trigger it directly
+  if (paymentRequest) {
+    const result = await paymentRequest.canMakePayment();
+    if (result && result.applePay) {
+      // Trigger Apple Pay directly
+      paymentRequest.show();
+    } else {
+      // If Apple Pay not available, show the payment form instead
+      document.getElementById('initial-buttons').style.display = 'none';
+      document.getElementById('payment-form-container').style.display = 'block';
+      showPaymentMessage('Apple Pay is not available on this device. Please use card payment.', 'error');
+    }
+  }
 });
 
 /*******************************
