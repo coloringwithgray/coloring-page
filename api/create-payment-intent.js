@@ -75,8 +75,8 @@ module.exports = async (req, res) => {
       res.status(401).json({
         error: 'Stripe authentication failed',
         type: 'authentication_error',
-        details: 'Invalid API key. Make sure STRIPE_SECRET_KEY in Vercel matches your live publishable key (pk_live_...)',
-        hint: 'Go to Stripe Dashboard > API Keys and copy the correct live secret key'
+        details: 'Invalid API key. Make sure STRIPE_SECRET_KEY in Vercel is set to your live secret key (should start with sk_live_...)',
+        hint: 'Go to Stripe Dashboard > Developers > API Keys and copy the "Secret key" from Live mode (NOT the publishable key)'
       });
       return;
     }

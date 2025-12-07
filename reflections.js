@@ -679,7 +679,7 @@ function closeVideoModal() {
  *******************************/
 
 // Initialize Stripe
-const STRIPE_PUBLISHABLE_KEY = 'pk_live_51SaiyeEPtwmOzHy2wZ5FqlemFCvdo1Vxs45PUqAJpplD1wfgGkVVVxfyoFzGacujSnLv7K5ZW9NpCz9U7C2O2ojz00Tm0PWXVX';
+const STRIPE_PUBLISHABLE_KEY = 'pk_live_51SaiyeEPtwmOzHy2hCtVWjeg7tGi78DHj76SWvlOoLif3JWgKMiORP2xXQXw42QpkvWsCpGlbbFCW1f1RPVRNwng00D6IvwXWL';
 const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
 
 // Payment state
