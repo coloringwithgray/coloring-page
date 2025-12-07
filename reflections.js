@@ -290,6 +290,16 @@ async function initiateShatter(target) {
     return;
   }
 
+  // Start loading bottle image now if targeting bottle (gives 3+ seconds to load during animation)
+  if (target === 'bottle') {
+    const bottleImg = document.getElementById('emerged-bottle');
+    if (bottleImg && bottleImg.hasAttribute('data-src')) {
+      console.log('Preloading bottle image during shatter animation...');
+      bottleImg.src = bottleImg.getAttribute('data-src');
+      bottleImg.removeAttribute('data-src');
+    }
+  }
+
   // Stop light hum and play shatter sound IMMEDIATELY
   lightHumAudio.pause();
   lightHumAudio.currentTime = 0;
@@ -618,14 +628,6 @@ function animateShatter() {
 }
 
 function showBottleCart() {
-  // Load bottle image now (only when user clicks - saves 2.2MB on initial load)
-  const bottleImg = document.getElementById('emerged-bottle');
-  if (bottleImg && bottleImg.hasAttribute('data-src')) {
-    console.log('Loading bottle image...');
-    bottleImg.src = bottleImg.getAttribute('data-src');
-    bottleImg.removeAttribute('data-src');
-  }
-
   bottleCartContainer.style.display = 'flex';
   // Trigger reflow for transition
   bottleCartContainer.offsetHeight;
