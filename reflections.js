@@ -897,21 +897,22 @@ function closeCart() {
 addToCartBtn.addEventListener('click', async (e) => {
   console.log('Cart button clicked!');
 
+  // Show payment form container immediately (don't wait for payment init)
+  console.log('Opening payment form...');
+  document.getElementById('initial-buttons').style.display = 'none';
+  document.getElementById('payment-form-container').style.display = 'block';
+
   // Initialize payment if not already done
   if (!elements) {
     console.log('Initializing payment...');
     const initialized = await initializePayment();
     if (!initialized) {
-      console.error('Payment initialization failed');
+      console.error('Payment initialization failed - showing error in form');
+      showPaymentMessage('Unable to load payment form. Please check your Stripe configuration.', 'error');
       return;
     }
     console.log('Payment initialized successfully');
   }
-
-  // Hide initial button and show payment form with all payment options
-  console.log('Showing payment form with Apple Pay, Link, and card options');
-  document.getElementById('initial-buttons').style.display = 'none';
-  document.getElementById('payment-form-container').style.display = 'block';
 });
 
 /*******************************
