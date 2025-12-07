@@ -803,6 +803,15 @@ function setupPaymentRequest() {
     },
     requestPayerName: true,
     requestPayerEmail: true,
+    requestShipping: true,
+    shippingOptions: [
+      {
+        id: 'standard',
+        label: 'Standard Shipping',
+        detail: 'Arrives in 5-7 business days',
+        amount: 0, // Free shipping
+      },
+    ],
   });
 
   prButton = elements.create('paymentRequestButton', {
@@ -824,10 +833,29 @@ function setupPaymentRequest() {
   // Handle payment confirmation for Apple Pay / Google Pay
   paymentRequest.on('paymentmethod', async (ev) => {
     try {
+      // Shipping address and payer info are available in ev.shippingAddress, ev.payerName, ev.payerEmail
+      console.log('Apple Pay/Google Pay shipping info:', {
+        name: ev.payerName,
+        email: ev.payerEmail,
+        shipping: ev.shippingAddress
+      });
+
       const { error: confirmError } = await stripe.confirmPayment({
         clientSecret,
         confirmParams: {
           payment_method: ev.paymentMethod.id,
+          shipping: {
+            name: ev.payerName,
+            address: {
+              line1: ev.shippingAddress.addressLine[0] || '',
+              line2: ev.shippingAddress.addressLine[1] || '',
+              city: ev.shippingAddress.city,
+              state: ev.shippingAddress.region,
+              postal_code: ev.shippingAddress.postalCode,
+              country: ev.shippingAddress.country,
+            },
+          },
+          receipt_email: ev.payerEmail,
         },
         redirect: 'if_required',
       });
