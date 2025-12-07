@@ -160,17 +160,30 @@ let assetsLoaded = {
 };
 
 function checkAllAssetsLoaded() {
+  console.log('Asset loading status:', assetsLoaded);
   const allLoaded = Object.values(assetsLoaded).every(loaded => loaded);
   if (allLoaded) {
     console.log('All assets loaded successfully');
-    setTimeout(() => {
-      loadingScreen.classList.add('fade-out');
-      setTimeout(() => {
-        loadingScreen.style.display = 'none';
-      }, 500);
-    }, 300); // Brief delay to ensure smooth transition
+    hideLoadingScreen();
   }
 }
+
+function hideLoadingScreen() {
+  setTimeout(() => {
+    loadingScreen.classList.add('fade-out');
+    setTimeout(() => {
+      loadingScreen.style.display = 'none';
+    }, 500);
+  }, 300); // Brief delay to ensure smooth transition
+}
+
+// Fallback: Force hide loading screen after 8 seconds on mobile (in case assets fail)
+setTimeout(() => {
+  if (loadingScreen && loadingScreen.style.display !== 'none') {
+    console.warn('Loading screen timeout - forcing hide after 8 seconds');
+    hideLoadingScreen();
+  }
+}, 8000);
 
 // Cache image on page load
 window.addEventListener('load', () => {
@@ -880,7 +893,7 @@ function closeCart() {
   }, 800);
 }
 
-// Handle "Buy Now" (cart button) - shows full payment form
+// Handle "Buy Now" (cart button) - shows full payment form with all options including Apple Pay
 addToCartBtn.addEventListener('click', async (e) => {
   console.log('Cart button clicked!');
 
@@ -895,48 +908,10 @@ addToCartBtn.addEventListener('click', async (e) => {
     console.log('Payment initialized successfully');
   }
 
-  // Hide initial buttons and show payment form
-  console.log('Showing payment form');
+  // Hide initial button and show payment form with all payment options
+  console.log('Showing payment form with Apple Pay, Link, and card options');
   document.getElementById('initial-buttons').style.display = 'none';
   document.getElementById('payment-form-container').style.display = 'block';
-});
-
-// Apple Pay button - triggers express checkout (Apple Pay/Google Pay/Link)
-const applePayBtn = document.getElementById('apple-pay-btn');
-applePayBtn.addEventListener('click', async (e) => {
-  console.log('Apple Pay button clicked!');
-
-  // Initialize payment if not already done
-  if (!elements) {
-    console.log('Initializing payment for Apple Pay...');
-    const initialized = await initializePayment();
-    if (!initialized) {
-      console.error('Payment initialization failed');
-      return;
-    }
-    console.log('Payment initialized successfully');
-  }
-
-  // Show the payment form
-  document.getElementById('initial-buttons').style.display = 'none';
-  document.getElementById('payment-form-container').style.display = 'block';
-
-  // Try to trigger the Stripe payment request button (Apple Pay/Google Pay) if available
-  setTimeout(() => {
-    const paymentRequestButton = document.querySelector('#payment-request-button button');
-    if (paymentRequestButton && paymentRequestButton.offsetParent !== null) {
-      // Payment request button is visible (Apple Pay or Google Pay available)
-      console.log('Triggering Stripe payment request button');
-      paymentRequestButton.click();
-    } else {
-      // No express payment available, scroll to Link button or show message
-      console.log('No express payment method available, showing form');
-      const linkButton = document.querySelector('[data-testid="payment-method-Link"]');
-      if (linkButton) {
-        linkButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }
-  }, 100);
 });
 
 /*******************************
