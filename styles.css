@@ -277,17 +277,18 @@ html, body {
 }
 
 .ig-icon-wrapper {
-  left: calc(50% - 240px);
+  left: calc(50% - 220px);
   transition-delay: 0.75s; /* Appear after portal */
 }
 
 .photo-icon-wrapper {
-  left: calc(50% - 0px);
+  left: 50%;
+  transform: translateX(-50%) translateY(15px); /* Center positioning */
   transition-delay: 1.125s; /* Appear between Instagram and Email */
 }
 
 .email-icon-wrapper {
-  left: calc(50% + 240px);
+  left: calc(50% + 220px);
   transition-delay: 1.5s; /* Appear after photo icon */
 }
 
@@ -322,6 +323,11 @@ html, body {
     height: 100px;
     transition: width 0.5s ease, height 0.5s ease, transform 0.5s cubic-bezier(0.17, 0.67, 0.35, 0.97),
                 filter 0.8s cubic-bezier(0.17, 0.67, 0.35, 0.97); /* Smooth size changes */
+  }
+
+  .photo-icon {
+    width: 75px; /* Even smaller in center for mobile */
+    height: 75px;
   }
 
   /* Ensure spacing is adequate between icons */
@@ -359,6 +365,11 @@ html, body {
     width: 70px; /* Even smaller in landscape */
     height: 70px;
   }
+
+  .photo-icon {
+    width: 55px; /* Smallest in center for landscape */
+    height: 55px;
+  }
 }
 
 /* Base icons */
@@ -371,6 +382,12 @@ html, body {
   transform-origin: center center; /* Ensure rotations appear natural */
   transition: transform 0.5s cubic-bezier(0.17, 0.67, 0.35, 0.97),
               filter 0.8s cubic-bezier(0.17, 0.67, 0.35, 0.97);
+}
+
+/* Photo icon is smaller to balance the center position */
+.photo-icon {
+  width: 120px;
+  height: 120px;
 }
 
 /* Icon animation states */
@@ -424,10 +441,14 @@ html, body {
 
 /* Show icons when portal is active */
 body:has(#mirror-link.active) .email-icon-wrapper,
-body:has(#mirror-link.active) .ig-icon-wrapper,
-body:has(#mirror-link.active) .photo-icon-wrapper {
+body:has(#mirror-link.active) .ig-icon-wrapper {
   opacity: 1;
   transform: translateY(0);
+}
+
+body:has(#mirror-link.active) .photo-icon-wrapper {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 /************************************
