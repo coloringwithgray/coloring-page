@@ -867,13 +867,21 @@ function closeCart() {
 
 // Handle "Buy Now" (cart button) - shows full payment form
 addToCartBtn.addEventListener('click', async (e) => {
+  console.log('Cart button clicked!');
+
   // Initialize payment if not already done
   if (!elements) {
+    console.log('Initializing payment...');
     const initialized = await initializePayment();
-    if (!initialized) return;
+    if (!initialized) {
+      console.error('Payment initialization failed');
+      return;
+    }
+    console.log('Payment initialized successfully');
   }
 
   // Hide initial buttons and show payment form
+  console.log('Showing payment form');
   document.getElementById('initial-buttons').style.display = 'none';
   document.getElementById('payment-form-container').style.display = 'block';
 });
@@ -881,24 +889,38 @@ addToCartBtn.addEventListener('click', async (e) => {
 // Apple Pay button - directly triggers Apple Pay
 const applePayBtn = document.getElementById('apple-pay-btn');
 applePayBtn.addEventListener('click', async (e) => {
+  console.log('Apple Pay button clicked!');
+
   // Initialize payment if not already done
   if (!elements) {
+    console.log('Initializing payment for Apple Pay...');
     const initialized = await initializePayment();
-    if (!initialized) return;
+    if (!initialized) {
+      console.error('Payment initialization failed');
+      return;
+    }
+    console.log('Payment initialized successfully');
   }
 
   // Check if Apple Pay is available and trigger it directly
   if (paymentRequest) {
+    console.log('Checking Apple Pay availability...');
     const result = await paymentRequest.canMakePayment();
+    console.log('Apple Pay availability:', result);
+
     if (result && result.applePay) {
       // Trigger Apple Pay directly
+      console.log('Triggering Apple Pay sheet');
       paymentRequest.show();
     } else {
       // If Apple Pay not available, show the payment form instead
+      console.log('Apple Pay not available, showing payment form');
       document.getElementById('initial-buttons').style.display = 'none';
       document.getElementById('payment-form-container').style.display = 'block';
       showPaymentMessage('Apple Pay is not available on this device. Please use card payment.', 'error');
     }
+  } else {
+    console.error('Payment request not initialized');
   }
 });
 
