@@ -671,6 +671,12 @@ videoModal.addEventListener('click', (e) => {
   }
 });
 
+// Prevent clicks on video content from closing the modal
+const videoEmergence = document.getElementById('video-emergence');
+videoEmergence.addEventListener('click', (e) => {
+  e.stopPropagation();
+});
+
 function closeVideoModal() {
   videoModal.classList.remove('visible');
 
@@ -893,6 +899,12 @@ bottleCartContainer.addEventListener('click', (e) => {
   if (e.target === bottleCartContainer) {
     closeCart();
   }
+});
+
+// Prevent clicks on content from closing the modal
+const bottleEmergence = document.getElementById('bottle-emergence');
+bottleEmergence.addEventListener('click', (e) => {
+  e.stopPropagation();
 });
 
 function closeCart() {

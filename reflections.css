@@ -226,6 +226,7 @@ body {
   transform: scale(0.05) translateY(0);
   transition: opacity 3.5s ease-out,
     transform 3.5s ease-out;
+  pointer-events: auto;
 }
 
 #bottle-emergence::before {
