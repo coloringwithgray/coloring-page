@@ -20,6 +20,7 @@ const ANIMATION_CONFIG = {
 // DOM References
 const loadingScreen = document.getElementById('loading-screen');
 const reflectionImage = document.getElementById('reflection-image');
+const emergentBottleImg = document.getElementById('emerged-bottle');
 const shatterCanvas = document.getElementById('shatter-canvas');
 const bottleCartContainer = document.getElementById('bottle-cart-container');
 const videoModal = document.getElementById('video-modal');
@@ -41,6 +42,13 @@ const glassShatterAudio = document.getElementById('glass-shatter-audio');
 // Set audio volumes
 lightHumAudio.volume = 0.6;
 glassShatterAudio.volume = 0.8;
+
+// Lazy load audio after critical assets
+function loadAudio() {
+  // Trigger audio loading
+  lightHumAudio.load();
+  glassShatterAudio.load();
+}
 
 // Debug audio loading and prime audio for instant playback
 lightHumAudio.addEventListener('canplaythrough', () => {
@@ -193,16 +201,20 @@ window.addEventListener('load', () => {
       capturedImage = canvas;
       assetsLoaded.image = true;
       console.log('Reflection image cached successfully');
+      // Load audio after image is cached
+      loadAudio();
       checkAllAssetsLoaded();
     }).catch(err => {
       console.error('Failed to cache reflection image:', err);
       assetsLoaded.image = true; // Continue anyway
+      loadAudio();
       checkAllAssetsLoaded();
     });
   } else {
     console.error('Reflection image failed to load');
     reflectionImage.addEventListener('error', () => {
       assetsLoaded.image = true; // Continue anyway
+      loadAudio();
       checkAllAssetsLoaded();
     });
   }

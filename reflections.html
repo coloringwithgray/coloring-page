@@ -7,6 +7,12 @@
 
   <meta name="description" content="Reflections: The other side of the portal.">
   <link rel="icon" type="image/png" href="assets/crayon-optimized.png" />
+
+  <!-- Preconnect to external domains for faster loading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://js.stripe.com">
+
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap" />
   <link rel="stylesheet" href="reflections.css" />
   <script src="https://js.stripe.com/v3/"></script>
@@ -23,9 +29,13 @@
 
   <div class="reflection-container">
     <!-- Main reflection image -->
-    <img id="reflection-image"
-         src="assets/ChatGPT Image Oct 25, 2025 at 04_54_16 PM.png"
-         alt="Reflection: Woman and bottle in shattered mirror" />
+    <picture>
+      <source media="(max-width: 768px)" srcset="assets/ChatGPT Image Oct 25, 2025 at 04_54_16 PM-mobile.jpg" type="image/jpeg">
+      <source media="(min-width: 769px)" srcset="assets/ChatGPT Image Oct 25, 2025 at 04_54_16 PM.jpg" type="image/jpeg">
+      <img id="reflection-image"
+           src="assets/ChatGPT Image Oct 25, 2025 at 04_54_16 PM.jpg"
+           alt="Reflection: Woman and bottle in shattered mirror" />
+    </picture>
 
     <!-- SVG Overlay for clickable hotspots -->
     <svg id="hotspot-overlay"
@@ -59,10 +69,10 @@
     <div id="woman-crack-glow"></div>
 
     <!-- Audio elements -->
-    <audio id="light-hum-audio" loop preload="auto">
+    <audio id="light-hum-audio" loop preload="none">
       <source src="assets/low%20hum.mp3" type="audio/mpeg">
     </audio>
-    <audio id="glass-shatter-audio" preload="auto">
+    <audio id="glass-shatter-audio" preload="none">
       <source src="assets/glass%20for%20site.mp3" type="audio/mpeg">
     </audio>
 
@@ -72,9 +82,14 @@
     <!-- Bottle emergence container (hidden initially) -->
     <div id="bottle-cart-container" style="display: none;">
       <div id="bottle-emergence">
-        <img src="assets/a9697fa4-5adc-46c3-aba9-692db7f2893c.png"
-             alt="Product bottle"
-             id="emerged-bottle" />
+        <picture>
+          <source media="(max-width: 768px)" srcset="assets/a9697fa4-5adc-46c3-aba9-692db7f2893c-mobile.jpg" type="image/jpeg">
+          <source media="(min-width: 769px)" srcset="assets/a9697fa4-5adc-46c3-aba9-692db7f2893c.jpg" type="image/jpeg">
+          <img src="assets/a9697fa4-5adc-46c3-aba9-692db7f2893c.jpg"
+               alt="Product bottle"
+               id="emerged-bottle"
+               loading="lazy" />
+        </picture>
 
         <!-- Payment form (hidden until user clicks a button) -->
         <div id="payment-form-container" style="display: none;">
