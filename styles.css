@@ -307,7 +307,7 @@ html, body {
   }
 
   .ig-icon-wrapper {
-    left: 20px; /* Position from left edge */
+    left: 10px; /* Position from left edge with more clearance */
   }
 
   .photo-icon-wrapper {
@@ -316,13 +316,13 @@ html, body {
   }
 
   .email-icon-wrapper {
-    right: 20px; /* Position from right edge */
+    right: 10px; /* Position from right edge with more clearance */
     left: auto;
   }
 
   .email-icon, .ig-icon, .photo-icon {
-    width: 65px; /* Optimal size for mobile */
-    height: 65px;
+    width: 50px; /* Smaller size to prevent overlap */
+    height: 50px;
     transition: width 0.5s ease, height 0.5s ease, transform 0.5s cubic-bezier(0.17, 0.67, 0.35, 0.97),
                 filter 0.8s cubic-bezier(0.17, 0.67, 0.35, 0.97); /* Smooth size changes */
   }
@@ -377,13 +377,6 @@ html, body {
   transform-origin: center center; /* Ensure rotations appear natural */
   transition: transform 0.5s cubic-bezier(0.17, 0.67, 0.35, 0.97),
               filter 0.8s cubic-bezier(0.17, 0.67, 0.35, 0.97);
-}
-
-/* Remove white backgrounds on modern browsers */
-@supports (mix-blend-mode: multiply) {
-  .email-icon, .ig-icon, .photo-icon {
-    mix-blend-mode: multiply;
-  }
 }
 
 
