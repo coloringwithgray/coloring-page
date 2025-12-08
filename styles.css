@@ -277,7 +277,8 @@ html, body {
 }
 
 .ig-icon-wrapper {
-  left: calc(50% - 220px);
+  left: calc(50% - 200px);
+  transform: translateX(-50%) translateY(15px); /* Center the icon itself */
   transition-delay: 0.75s; /* Appear after portal */
 }
 
@@ -288,7 +289,8 @@ html, body {
 }
 
 .email-icon-wrapper {
-  left: calc(50% + 220px);
+  left: calc(50% + 200px);
+  transform: translateX(-50%) translateY(15px); /* Center the icon itself */
   transition-delay: 1.5s; /* Appear after photo icon */
 }
 
@@ -344,7 +346,8 @@ html, body {
   }
 
   .ig-icon-wrapper {
-    left: calc(25% - 60px); /* Further left to make room for center icon */
+    left: 25%;
+    transform: translateX(-50%); /* Center the icon at 25% */
   }
 
   .photo-icon-wrapper {
@@ -353,7 +356,9 @@ html, body {
   }
 
   .email-icon-wrapper {
-    left: calc(75% + 60px); /* Further right to make room for center icon */
+    left: 75%;
+    transform: translateX(-50%); /* Center the icon at 75% */
+    right: auto;
   }
 
   .email-icon, .ig-icon, .photo-icon {
