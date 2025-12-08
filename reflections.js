@@ -631,6 +631,9 @@ function showBottleCart() {
   // Prevent body scroll
   document.body.style.overflow = 'hidden';
 
+  // Preload Stripe SDK when cart opens
+  loadStripe().catch(err => console.error('Failed to preload Stripe:', err));
+
   // Focus management - focus close button
   setTimeout(() => {
     closeCartBtn.focus();
@@ -708,19 +711,65 @@ function closeVideoModal() {
  *  STRIPE PAYMENT INTEGRATION
  *******************************/
 
-// Initialize Stripe
+// Stripe configuration
 const STRIPE_PUBLISHABLE_KEY = 'pk_live_51SaiyeEPtwmOzHy2hCtVWjeg7tGi78DHj76SWvlOoLif3JWgKMiORP2xXQXw42QpkvWsCpGlbbFCW1f1RPVRNwng00D6IvwXWL';
-const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
 
 // Payment state
+let stripe;
+let stripeLoading = false;
+let stripeLoaded = false;
 let elements;
 let paymentElement;
 let paymentRequest;
 let prButton; // Store payment request button reference
 let clientSecret;
 
+// Lazy load Stripe SDK
+async function loadStripe() {
+  if (stripeLoaded) return true;
+  if (stripeLoading) {
+    // Wait for existing load to complete
+    while (!stripeLoaded) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    return true;
+  }
+
+  stripeLoading = true;
+  try {
+    // Dynamically load Stripe SDK
+    const script = document.createElement('script');
+    script.src = 'https://js.stripe.com/v3/';
+    script.async = true;
+
+    await new Promise((resolve, reject) => {
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+
+    // Initialize Stripe once loaded
+    stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+    stripeLoaded = true;
+    console.log('Stripe SDK loaded successfully');
+    return true;
+  } catch (error) {
+    console.error('Failed to load Stripe SDK:', error);
+    stripeLoading = false;
+    return false;
+  }
+}
+
 // Initialize payment when buttons are clicked
 async function initializePayment() {
+  // Load Stripe if not already loaded
+  if (!stripeLoaded) {
+    const loaded = await loadStripe();
+    if (!loaded) {
+      console.error('Cannot initialize payment: Stripe SDK failed to load');
+      return;
+    }
+  }
   try {
     // Fetch client secret from serverless function
     const response = await fetch('/api/create-payment-intent', {
