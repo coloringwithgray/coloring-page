@@ -321,8 +321,8 @@ html, body {
   }
 
   .email-icon, .ig-icon, .photo-icon {
-    width: 80px; /* Smaller size for mobile to prevent overlap */
-    height: 80px;
+    width: 65px; /* Smaller size for mobile to prevent overlap */
+    height: 65px;
     transition: width 0.5s ease, height 0.5s ease, transform 0.5s cubic-bezier(0.17, 0.67, 0.35, 0.97),
                 filter 0.8s cubic-bezier(0.17, 0.67, 0.35, 0.97); /* Smooth size changes */
   }
