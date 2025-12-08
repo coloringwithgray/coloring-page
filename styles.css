@@ -321,8 +321,8 @@ html, body {
   }
 
   .email-icon, .ig-icon, .photo-icon {
-    width: 55px; /* Smaller size for mobile to prevent white square overlap */
-    height: 55px;
+    width: 65px; /* Optimal size for mobile */
+    height: 65px;
     transition: width 0.5s ease, height 0.5s ease, transform 0.5s cubic-bezier(0.17, 0.67, 0.35, 0.97),
                 filter 0.8s cubic-bezier(0.17, 0.67, 0.35, 0.97); /* Smooth size changes */
   }
@@ -377,6 +377,7 @@ html, body {
   transform-origin: center center; /* Ensure rotations appear natural */
   transition: transform 0.5s cubic-bezier(0.17, 0.67, 0.35, 0.97),
               filter 0.8s cubic-bezier(0.17, 0.67, 0.35, 0.97);
+  mix-blend-mode: multiply; /* Remove white background */
 }
 
 
