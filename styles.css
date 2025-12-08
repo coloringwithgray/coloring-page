@@ -377,7 +377,13 @@ html, body {
   transform-origin: center center; /* Ensure rotations appear natural */
   transition: transform 0.5s cubic-bezier(0.17, 0.67, 0.35, 0.97),
               filter 0.8s cubic-bezier(0.17, 0.67, 0.35, 0.97);
-  mix-blend-mode: multiply; /* Remove white background */
+}
+
+/* Remove white backgrounds on modern browsers */
+@supports (mix-blend-mode: multiply) {
+  .email-icon, .ig-icon, .photo-icon {
+    mix-blend-mode: multiply;
+  }
 }
 
 
