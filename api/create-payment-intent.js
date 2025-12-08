@@ -1,13 +1,6 @@
 // Vercel Serverless Function - Create Stripe Payment Intent
 
 module.exports = async (req, res) => {
-  // Debug logging
-  console.log('=== STRIPE DEBUG ===');
-  console.log('Environment variable exists:', !!process.env.STRIPE_SECRET_KEY);
-  console.log('Key starts with:', process.env.STRIPE_SECRET_KEY?.substring(0, 20) + '...');
-  console.log('Key length:', process.env.STRIPE_SECRET_KEY?.length);
-  console.log('====================');
-
   // Check if Stripe secret key is available
   if (!process.env.STRIPE_SECRET_KEY) {
     console.error('STRIPE_SECRET_KEY environment variable is not set');
