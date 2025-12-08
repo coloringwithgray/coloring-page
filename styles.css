@@ -433,7 +433,7 @@ html, body {
 body:has(#mirror-link.active) .email-icon-wrapper,
 body:has(#mirror-link.active) .ig-icon-wrapper {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateX(-50%) translateY(0);
 }
 
 body:has(#mirror-link.active) .photo-icon-wrapper {
