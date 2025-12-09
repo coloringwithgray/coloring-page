@@ -222,10 +222,11 @@ body {
   justify-content: center;
   max-width: 500px;
   padding: 40px;
-  opacity: 0.3;
-  transform: scale(0.05) translateY(0);
-  transition: opacity 3.5s ease-out,
-    transform 3.5s ease-out;
+  opacity: 0;
+  transform: scale(0.85) translateY(0);
+  transition: opacity 2s ease-out,
+    transform 2s ease-out;
+  will-change: opacity, transform;
   pointer-events: auto;
 }
 
@@ -578,6 +579,12 @@ body {
     padding: 20px;
     padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
     max-width: 100%;
+  }
+
+  /* Disable background glow on mobile for better performance */
+  #bottle-emergence::before {
+    animation: none;
+    opacity: 0.6;
   }
 
   #emerged-bottle {
