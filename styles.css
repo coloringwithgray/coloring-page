@@ -323,9 +323,16 @@ html, body {
     transform: translateY(10px) !important; /* No X translation needed */
   }
 
-  .email-icon, .ig-icon, .photo-icon {
-    width: 55px !important; /* Smaller to guarantee no overlap */
+  .email-icon, .ig-icon {
+    width: 55px !important;
     height: 55px !important;
+    transition: width 0.5s ease, height 0.5s ease, transform 0.5s cubic-bezier(0.17, 0.67, 0.35, 0.97),
+                filter 0.8s cubic-bezier(0.17, 0.67, 0.35, 0.97); /* Smooth size changes */
+  }
+
+  .photo-icon {
+    width: 65px !important; /* Slightly larger for Berlin icon */
+    height: 65px !important;
     transition: width 0.5s ease, height 0.5s ease, transform 0.5s cubic-bezier(0.17, 0.67, 0.35, 0.97),
                 filter 0.8s cubic-bezier(0.17, 0.67, 0.35, 0.97); /* Smooth size changes */
   }
