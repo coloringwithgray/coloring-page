@@ -645,9 +645,6 @@ function showBottleCart() {
  *******************************/
 
 function openVideoModal() {
-  // Set video source (Placeholder - user will add Vimeo URL later)
-  videoIframe.src = 'https://player.vimeo.com/video/PLACEHOLDER?h=PLACEHOLDER&badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1';
-
   videoModal.style.display = 'flex';
   // Trigger reflow for transition
   videoModal.offsetHeight;
@@ -688,7 +685,6 @@ function closeVideoModal() {
 
   setTimeout(() => {
     videoModal.style.display = 'none';
-    videoIframe.src = ''; // Stop video
 
     // Reset page state
     shatterCanvas.classList.remove('active');
