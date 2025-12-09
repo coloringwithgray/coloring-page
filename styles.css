@@ -307,33 +307,40 @@ html, body {
   }
 
   .ig-icon-wrapper {
-    left: 16.67%; /* Position in left third of screen */
-    transform: translateX(-50%) translateY(10px); /* Center icon in its zone */
+    left: 15% !important; /* Force left position */
+    right: auto !important;
+    transform: translateY(10px) !important; /* No X translation needed */
   }
 
   .photo-icon-wrapper {
-    left: 50%;
-    transform: translateX(-50%) translateY(10px); /* Center positioning */
+    left: 50% !important;
+    transform: translateX(-50%) translateY(10px) !important; /* Center positioning */
   }
 
   .email-icon-wrapper {
-    left: 83.33%; /* Position in right third of screen */
-    right: auto;
-    transform: translateX(-50%) translateY(10px); /* Center icon in its zone */
+    left: auto !important;
+    right: 15% !important; /* Force right position */
+    transform: translateY(10px) !important; /* No X translation needed */
   }
 
   .email-icon, .ig-icon, .photo-icon {
-    width: 60px; /* Optimal size with proper spacing */
-    height: 60px;
+    width: 55px !important; /* Smaller to guarantee no overlap */
+    height: 55px !important;
     transition: width 0.5s ease, height 0.5s ease, transform 0.5s cubic-bezier(0.17, 0.67, 0.35, 0.97),
                 filter 0.8s cubic-bezier(0.17, 0.67, 0.35, 0.97); /* Smooth size changes */
   }
 
   /* Ensure spacing is adequate between icons */
-  body:has(#mirror-link.active) .email-icon-wrapper,
-  body:has(#mirror-link.active) .ig-icon-wrapper,
+  body:has(#mirror-link.active) .ig-icon-wrapper {
+    transform: translateY(0) !important;
+  }
+
   body:has(#mirror-link.active) .photo-icon-wrapper {
-    transform: translateX(-50%) translateY(0);
+    transform: translateX(-50%) translateY(0) !important;
+  }
+
+  body:has(#mirror-link.active) .email-icon-wrapper {
+    transform: translateY(0) !important;
   }
 }
 
