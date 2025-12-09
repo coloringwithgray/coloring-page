@@ -23,6 +23,7 @@ const reflectionImage = document.getElementById('reflection-image');
 const shatterCanvas = document.getElementById('shatter-canvas');
 const bottleCartContainer = document.getElementById('bottle-cart-container');
 const videoModal = document.getElementById('video-modal');
+const videoIframe = document.getElementById('video-iframe');
 const videoCloseBtn = document.getElementById('video-close-btn');
 const closeCartBtn = document.getElementById('close-cart-btn');
 const addToCartBtn = document.getElementById('add-to-cart-btn');
@@ -211,6 +212,11 @@ window.addEventListener('load', () => {
       setTimeout(loadAudioLazy, 500);
     });
   }
+
+  // Add error handling for video iframe
+  videoIframe.addEventListener('error', () => {
+    console.error('Video failed to load');
+  });
 });
 
 // Capture the reflection image for use in shatter fragments
@@ -639,6 +645,9 @@ function showBottleCart() {
  *******************************/
 
 function openVideoModal() {
+  // Set video source (Placeholder - user will add Vimeo URL later)
+  videoIframe.src = 'https://player.vimeo.com/video/PLACEHOLDER?h=PLACEHOLDER&badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1';
+
   videoModal.style.display = 'flex';
   // Trigger reflow for transition
   videoModal.offsetHeight;
@@ -679,6 +688,7 @@ function closeVideoModal() {
 
   setTimeout(() => {
     videoModal.style.display = 'none';
+    videoIframe.src = ''; // Stop video
 
     // Reset page state
     shatterCanvas.classList.remove('active');
