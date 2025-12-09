@@ -374,10 +374,15 @@ body {
   visibility: visible;
   pointer-events: auto;
   transition: all 0.3s ease;
+  outline: none; /* Remove blue focus box */
 }
 
 #close-cart-btn:hover {
   transform: scale(1.1);
+}
+
+#close-cart-btn:focus {
+  outline: none; /* Remove blue focus box */
 }
 
 #close-cart-btn::before,
