@@ -1036,6 +1036,11 @@ function closeCart() {
 
 // Handle "Buy Now" (cart button) - shows full payment form with all options including Apple Pay
 addToCartBtn.addEventListener('click', async (e) => {
+  // TEMPORARILY DISABLED - Not ready to sell yet
+  console.log('Cart button clicked - currently disabled (coming soon)');
+  return;
+
+  /* KEEP ALL CODE BELOW - Re-enable when ready to sell
   console.log('Cart button clicked!');
 
   // Show payment form container immediately (don't wait for payment init)
@@ -1054,6 +1059,7 @@ addToCartBtn.addEventListener('click', async (e) => {
     }
     console.log('Payment initialized successfully');
   }
+  */
 });
 
 /*******************************
