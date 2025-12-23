@@ -338,7 +338,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: default; /* Disabled cursor since not ready to sell */
 }
 
 .cart-icon {
@@ -349,9 +348,8 @@ body {
 }
 
 .cart-btn:hover {
-  /* Disabled hover effect - coming soon */
-  /* background: #888; */
-  /* transform: scale(1.03); */
+  background: #888;
+  transform: scale(1.03);
 }
 
 .cart-btn:hover .cart-icon {
