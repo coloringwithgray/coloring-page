@@ -6,19 +6,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
 <title>Coloring with Gray</title>
 
-<!-- Meta description for Palais de Tokyo submission and SEO -->
-<meta name="description" content="Coloring with Gray: a meditative, interactive portal exploring absence, memory, and emergence. Palais de Tokyo digital submission.">
-<!-- Open Graph for social sharing -->
+<!-- Canonical -->
+<link rel="canonical" href="https://coloringwithgray.com/" />
+
+<!-- Meta description -->
+<meta name="description" content="An ongoing body of work exploring memory through interaction." />
+
+<!-- Open Graph -->
 <meta property="og:title" content="Coloring with Gray" />
-<meta property="og:description" content="A meditative, interactive portal exploring absence, memory, and emergence. Palais de Tokyo digital submission." />
+<meta property="og:description" content="An ongoing body of work exploring memory through interaction." />
 <meta property="og:type" content="website" />
-<meta property="og:image" content="assets/Gray+Crayon.png" />
-<meta property="og:url" content="https://your-vercel-domain.vercel.app/" />
+<meta property="og:url" content="https://coloringwithgray.com/" />
+<meta property="og:image" content="https://coloringwithgray.com/assets/Gray+Crayon.png" />
+
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Coloring with Gray" />
-<meta name="twitter:description" content="A meditative, interactive portal exploring absence, memory, and emergence." />
-<meta name="twitter:image" content="assets/Gray+Crayon.png" />
+<meta name="twitter:description" content="An ongoing body of work exploring memory through interaction." />
+<meta name="twitter:image" content="https://coloringwithgray.com/assets/Gray+Crayon.png" />
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  "name": "Coloring with Gray",
+  "description": "An ongoing body of work exploring memory through interaction.",
+  "url": "https://coloringwithgray.com/",
+  "creator": {
+    "@type": "Organization",
+    "name": "Coloring with Gray"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Coloring with Gray"
+  }
+}
+</script>
+
 <!-- Favicon -->
 <link rel="icon" type="image/png" href="assets/crayon-optimized.png" />
 <!-- Google Font -->
@@ -40,40 +65,46 @@
     <img
       id="crayon"
       src="assets/crayon-optimized.png"
-      alt="Crayon"
+      alt=""
       onclick="activateCrayon()"
     />
 
     <!-- Mirror link (initially hidden; revealed after threshold is met) -->
     <a id="mirror-link" href="reflections.html">
       <div id="mirror" aria-label="Portal to reflection site"></div>
-      <img id="mirror-iframe" src="assets/5B8E90A1-ED3D-4D25-B38B-EF54C42E97DF_1_201_a.jpeg" alt="Portal preview" />
+      <img id="mirror-iframe" src="assets/5B8E90A1-ED3D-4D25-B38B-EF54C42E97DF_1_201_a.jpeg" alt="Coloring with Gray" />
     </a>
     <!-- Modal for fullscreen Vimeo -->
     <div id="vimeo-modal" class="modal" aria-modal="true" aria-hidden="true" tabindex="-1" style="display:none;">
       <button id="modal-close" class="modal-close" aria-label="Close video">&times;</button>
       <iframe id="vimeo-modal-iframe" src="https://player.vimeo.com/video/1078880939?h=43345ed787&badge=0&autopause=0&player_id=0&app_id=58479" width="90%" height="90%" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" allowfullscreen title="Fullscreen portal video"></iframe>
     </div>
+
+    <!-- Berlin Commercial Icon Block - Film Portal -->
+    <a href="https://vimeo.com/1078880939" id="photo-link" class="photo-icon-wrapper" target="_blank" rel="noopener" aria-label="Berlin Commercial Video">
+      <img id="photo-icon" class="photo-icon" src="assets/clean-berlin.PNG" alt="" />
     </a>
+
     <!-- Instagram Icon Block - Memory Spiral -->
     <a href="https://instagram.com/coloringwithgray" id="ig-link" class="ig-icon-wrapper" target="_blank" rel="noopener" aria-label="Instagram">
-      <img id="ig-icon" class="ig-icon" src="assets/ig.PNG" alt="Memory spiral Instagram icon" />
+      <img id="ig-icon" class="ig-icon" src="assets/ig.PNG" alt="" />
       <div id="ig-hover-text" class="ig-hover-text">A version of a memory.</div>
       <div id="ig-gone-text" class="emotional-text">This is not how it happened</div>
     </a>
 
-    <!-- Berlin Commercial Icon Block - Film Portal -->
-    <a href="https://vimeo.com/1078880939" id="photo-link" class="photo-icon-wrapper" target="_blank" rel="noopener" aria-label="Berlin Commercial Video">
-      <img id="photo-icon" class="photo-icon" src="assets/clean-berlin.PNG" alt="Berlin Commercial Raw Selection 2025" />
-    </a>
 
     <!-- Email Icon Block - Fractured Mailbox -->
     <a href="mailto:contact@coloringwithgray.com" id="mail-link" class="email-icon-wrapper" aria-label="Email">
-      <img id="mail-icon" class="email-icon" src="assets/mail.PNG" alt="Fractured mailbox with unsent note" />
+      <img id="mail-icon" class="email-icon" src="assets/mail.PNG" alt="" />
       <div id="mail-hover-text" class="email-hover-text">Say it if you still want to.</div>
       <div id="mail-gone-text" class="emotional-text">It's gone now</div>
     </a>
   </div>
+
+  <footer>
+    <p>Coloring with Gray is an ongoing body of work exploring memory through interaction.</p>
+  </footer>
+
   <script src="https://player.vimeo.com/api/player.js" defer></script>
 </body>
 </html>

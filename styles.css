@@ -852,3 +852,35 @@ body:has(#mirror-link.active) .photo-icon-wrapper {
 #modal-close:hover {
   color: #fff; /* White on hover */
 }
+
+/************************************
+ *    FOOTER
+ ************************************/
+footer {
+  position: fixed;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  text-align: center;
+  pointer-events: none;
+}
+
+footer p {
+  font-family: 'lvvvdy', cursive, sans-serif;
+  font-size: 12px;
+  color: #999;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 767px) {
+  footer {
+    bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+  }
+
+  footer p {
+    font-size: 10px;
+    max-width: 80vw;
+  }
+}
