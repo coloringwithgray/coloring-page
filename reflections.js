@@ -650,8 +650,8 @@ function openVideoModal() {
   videoModal.offsetHeight;
   videoModal.classList.add('visible');
 
-  // Load and autoplay video when modal opens
-  videoIframe.src = 'https://www.youtube.com/embed/0ZRH3964D3E?autoplay=1&mute=1';
+  // Load and autoplay Vimeo video when modal opens
+  videoIframe.src = 'https://player.vimeo.com/video/1182058308?autoplay=1&muted=1&badge=0&autopause=0';
 
   // Prevent body scroll
   document.body.style.overflow = 'hidden';
