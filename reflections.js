@@ -650,6 +650,9 @@ function openVideoModal() {
   videoModal.offsetHeight;
   videoModal.classList.add('visible');
 
+  // Load and autoplay video when modal opens
+  videoIframe.src = 'https://www.youtube.com/embed/0ZRH3964D3E?autoplay=1&mute=1';
+
   // Prevent body scroll
   document.body.style.overflow = 'hidden';
 
@@ -679,6 +682,9 @@ videoEmergence.addEventListener('click', (e) => {
 
 function closeVideoModal() {
   videoModal.classList.remove('visible');
+
+  // Stop video by clearing src
+  videoIframe.src = '';
 
   // Restore body scroll
   document.body.style.overflow = '';
