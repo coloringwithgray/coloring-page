@@ -850,7 +850,7 @@ function setupPaymentRequest() {
     currency: 'usd',
     total: {
       label: 'Reflections Of You',
-      amount: 32400, // $324.00 in cents
+      amount: 324900, // $3249.00 in cents
     },
     requestPayerName: true,
     requestPayerEmail: true,
